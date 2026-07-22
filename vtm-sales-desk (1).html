@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VTM Sales Desk – Angebote, Verträge &amp; Rechnungen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* =========================================================
+     Design Tokens · VTM Brand Design System „Master Next"
+     ========================================================= */
+  :root{
+    /* Primitive Farben */
+    --c-cobalt-950:#121e39; --c-cobalt-900:#172645; --c-cobalt-800:#203255; --c-cobalt-700:#2c4065;
+    --c-blue-800:#0e3387; --c-blue-700:#123fa6; --c-blue-600:#2468e8; --c-blue-500:#427ef0;
+    --c-blue-100:#dce8ff; --c-blue-050:#f2f6ff;
+    --c-brass-700:#9b7017; --c-brass-600:#b48220; --c-brass-500:#c99b32; --c-brass-300:#e4c36e; --c-brass-100:#f8edcf;
+    --c-white:#ffffff; --c-paper:#fbfcfe; --c-paper-blue:#f7f9fd;
+    --c-neutral-100:#edf0f5; --c-neutral-200:#dce1e9; --c-neutral-300:#c7ced9;
+    --c-neutral-500:#6e7888; --c-neutral-700:#3f4958; --c-black:#080d18;
+    --c-success:#17663a; --c-success-bg:#e8f6ee;
+    --c-warning:#7a5200; --c-warning-bg:#fff3d2;
+    --c-danger:#a52626; --c-danger-bg:#fdeaea;
+
+    /* Semantik */
+    --surface-page:var(--c-white); --surface-soft:var(--c-paper);
+    --surface-muted:var(--c-paper-blue); --surface-dark:var(--c-cobalt-950);
+    --text-primary:var(--c-cobalt-950); --text-secondary:var(--c-neutral-700);
+    --text-muted:var(--c-neutral-500); --text-inverse:var(--c-white);
+    --border-soft:rgb(18 30 57 / 0.10); --border-medium:rgb(18 30 57 / 0.18);
+    --border-electric:rgb(18 63 166 / 0.24); --border-brass:rgb(155 112 23 / 0.26);
+    --action:var(--c-blue-700); --action-hover:var(--c-blue-800);
+    --action-soft:var(--c-blue-050); --focus:var(--c-blue-600);
+    --research:var(--c-brass-700);
+
+    /* Typografie */
+    --font-display:"Plus Jakarta Sans","Aptos Display","Segoe UI",Arial,sans-serif;
+    --font-body:"Inter","Aptos","Segoe UI",Arial,sans-serif;
+    --font-editorial:"Source Serif 4","Iowan Old Style","Palatino Linotype",Georgia,serif;
+    --font-mono:"IBM Plex Mono","SFMono-Regular",Consolas,"Liberation Mono",monospace;
+
+    /* Layout */
+    --radius-s:4px; --radius-m:6px; --radius-l:8px;
+    --shadow-soft:0 1px 2px rgb(18 30 57 / .04),0 12px 32px rgb(18 30 57 / .055);
+    --shadow-medium:0 2px 4px rgb(18 30 57 / .05),0 18px 48px rgb(18 30 57 / .10);
+    --gradient-brand:linear-gradient(135deg,var(--c-cobalt-950) 0%,var(--c-blue-700) 58%,var(--c-blue-600) 100%);
+    --gradient-signature:linear-gradient(135deg,var(--c-brass-300),var(--c-brass-500) 46%,var(--c-brass-700));
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{font-family:var(--font-body);background:var(--surface-muted);color:var(--text-primary);font-size:14px;line-height:1.55}
+  :focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+
+  /* ============ APP CHROME ============ */
+  .topbar{background:var(--surface-dark);color:var(--text-inverse);display:flex;align-items:center;gap:16px;padding:0 24px;height:58px;position:sticky;top:0;z-index:50;flex-wrap:wrap}
+  .topbar .brand{display:flex;align-items:baseline;gap:10px}
+  .topbar .brand b{font-family:var(--font-display);font-weight:800;font-size:16px;letter-spacing:-.01em}
+  .topbar .brand span{font-family:var(--font-mono);font-size:11px;color:var(--c-blue-100);letter-spacing:.14em;text-transform:uppercase}
+  .topbar .spacer{flex:1}
+  .topbar button{background:transparent;border:1px solid rgba(255,255,255,.28);color:#fff;font-family:var(--font-mono);font-size:11.5px;letter-spacing:.06em;padding:8px 13px;border-radius:var(--radius-m);cursor:pointer;transition:background .15s}
+  .topbar button:hover{background:rgba(255,255,255,.12)}
+  .topbar button.primary{background:var(--action);border-color:var(--action);color:#fff;font-weight:600}
+  .topbar button.primary:hover{background:var(--action-hover);border-color:var(--action-hover)}
+
+  .tabs{display:flex;gap:0;background:var(--surface-page);border-bottom:1px solid var(--c-neutral-200);padding:0 24px;position:sticky;top:58px;z-index:40}
+  .tabs button{background:none;border:none;border-bottom:2.5px solid transparent;padding:13px 18px;font-family:var(--font-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-secondary);cursor:pointer}
+  .tabs button.active{color:var(--action);border-bottom-color:var(--action);font-weight:600}
+
+  .layout{display:grid;grid-template-columns:minmax(390px,490px) 1fr;gap:0;min-height:calc(100vh - 100px)}
+  @media(max-width:980px){.layout{grid-template-columns:1fr}.previewpane{border-left:none;border-top:1px solid var(--c-neutral-200)}}
+
+  /* ============ FORM PANE ============ */
+  .formpane{padding:22px 24px 60px;background:var(--surface-page);overflow-y:auto}
+  #form-angebot,#form-vertrag,#form-rechnung{counter-reset:leg}
+  fieldset{border:none;margin-bottom:26px}
+  legend{font-family:var(--font-mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--action);font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px;width:100%}
+  legend::before{counter-increment:leg;content:counter(leg,decimal-leading-zero) " ·";color:var(--text-muted);font-weight:500}
+  legend::after{content:"";flex:1;height:1px;background:var(--border-soft)}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+  .row.single{grid-template-columns:1fr}
+  .row.thirds{grid-template-columns:1fr 1fr 1fr}
+  label{display:block}
+  label span{display:block;font-size:11.5px;color:var(--text-secondary);margin-bottom:4px;font-weight:500}
+  input[type=text],input[type=email],input[type=date],input[type=number],select,textarea{
+    width:100%;border:1px solid var(--c-neutral-200);border-radius:var(--radius-m);padding:8px 10px;font-family:var(--font-body);font-size:13.5px;color:var(--text-primary);background:var(--surface-soft);transition:border-color .15s}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--action);background:#fff}
+  textarea{resize:vertical;line-height:1.55}
+  .hint{font-size:11.5px;color:var(--text-muted);margin-top:4px}
+  .inline-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+  .btn{border:1px solid var(--c-neutral-200);background:#fff;color:var(--text-primary);font-size:12.5px;font-weight:600;padding:7px 12px;border-radius:var(--radius-m);cursor:pointer;transition:all .15s}
+  .btn:hover{border-color:var(--action);color:var(--action)}
+  .btn.ghost{border-style:dashed;color:var(--text-secondary)}
+  .btn.danger{color:var(--c-danger)}
+  .btn.danger:hover{border-color:var(--c-danger)}
+  .btn.blue{background:var(--action);border-color:var(--action);color:#fff}
+  .btn.blue:hover{background:var(--action-hover)}
+
+  /* Katalog */
+  .cat-group{font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-muted);margin:14px 0 6px}
+  .cat-group:first-child{margin-top:0}
+  .catalog{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .catalog button{text-align:left;border:1px solid var(--c-neutral-200);background:var(--surface-soft);border-radius:var(--radius-l);padding:9px 11px;cursor:pointer;transition:all .15s}
+  .catalog button:hover{border-color:var(--border-electric);background:var(--action-soft)}
+  .catalog b{display:block;font-size:12px;font-weight:700;color:var(--text-primary);line-height:1.3}
+  .catalog em{display:block;font-style:normal;font-family:var(--font-mono);font-size:10.5px;color:var(--action);margin-top:3px}
+  .bundles{display:grid;grid-template-columns:1fr;gap:8px;margin-bottom:6px}
+  .bundles button{text-align:left;border:1px solid var(--border-electric);background:var(--action-soft);border-radius:var(--radius-l);padding:10px 12px;cursor:pointer;transition:all .15s;display:flex;justify-content:space-between;align-items:center;gap:10px}
+  .bundles button:hover{background:#e9efff}
+  .bundles .bn b{display:block;font-family:var(--font-display);font-size:12.5px;font-weight:800}
+  .bundles .bn span{font-size:11.5px;color:var(--text-secondary)}
+  .bundles .bp{font-family:var(--font-mono);font-size:12px;color:var(--action);font-weight:600;white-space:nowrap}
+
+  /* Positionen */
+  .pos{border:1px solid var(--c-neutral-200);border-radius:var(--radius-l);padding:12px;margin-bottom:10px;background:var(--surface-soft);position:relative}
+  .pos .pos-head{display:grid;grid-template-columns:1fr 58px 92px 92px 62px 26px;gap:7px;align-items:end;margin-bottom:8px}
+  .pos .del{border:none;background:none;color:var(--c-neutral-300);font-size:16px;cursor:pointer;line-height:1;padding:6px 0}
+  .pos .del:hover{color:var(--c-danger)}
+  .totals{border-top:2px solid var(--text-primary);margin-top:14px;padding-top:10px;font-size:13.5px}
+  .totals .trow{display:flex;justify-content:space-between;padding:3px 0}
+  .totals .trow.grand{font-weight:800;font-size:15px;border-top:1px solid var(--border-soft);margin-top:6px;padding-top:8px}
+  .totals .trow .neg{color:var(--text-secondary)}
+
+  .switch{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-secondary);cursor:pointer;margin-bottom:8px}
+  .switch input{width:auto}
+
+  .notice{background:var(--action-soft);border:1px solid var(--border-electric);border-radius:var(--radius-l);padding:10px 12px;font-size:12.5px;color:var(--text-secondary);margin-bottom:16px}
+  .notice.warn{background:var(--c-warning-bg);border-color:rgb(122 82 0 / .25)}
+  .notice.warn b{color:var(--c-warning)}
+
+  /* ============ PREVIEW PANE ============ */
+  .previewpane{background:var(--c-neutral-100);border-left:1px solid var(--c-neutral-200);padding:28px 20px;overflow-y:auto;display:flex;flex-direction:column;align-items:center;gap:24px}
+  .sheet{background:#fff;width:210mm;max-width:100%;min-height:296mm;box-shadow:var(--shadow-medium);padding:20mm 18mm 26mm;position:relative;font-size:10.5pt;color:var(--text-primary)}
+
+  /* ---- Dokument-Typografie (Master Next) ---- */
+  .doc-band{background:var(--surface-dark);background-image:var(--gradient-brand);color:#fff;margin:-20mm -18mm 0;padding:9mm 18mm 8mm;display:flex;justify-content:space-between;align-items:flex-end;print-color-adjust:exact;-webkit-print-color-adjust:exact}
+  .doc-band .wordmark b{font-family:var(--font-display);font-size:17pt;font-weight:800;letter-spacing:-.01em;display:block;line-height:1.15}
+  .doc-band .wordmark i{font-style:italic;font-size:8.5pt;color:var(--c-blue-100);font-family:var(--font-editorial)}
+  .doc-band .doctype{text-align:right}
+  .doc-band .doctype b{font-family:var(--font-mono);font-size:12pt;letter-spacing:.28em;color:#fff;display:block}
+  .doc-band .doctype span{font-family:var(--font-mono);font-size:8pt;color:var(--c-blue-100);letter-spacing:.1em}
+
+  /* Signature: Signal Line – eine Linie, ein seltener Lichtimpuls */
+  .signal-line{height:2px;margin:0 -18mm 9mm;background:var(--gradient-brand);position:relative;overflow:hidden;print-color-adjust:exact;-webkit-print-color-adjust:exact}
+  .signal-line::after{content:"";position:absolute;top:0;bottom:0;width:90px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.9),transparent);animation:glint 14s ease-in-out infinite}
+  @keyframes glint{0%{transform:translateX(-120px)}16%{transform:translateX(calc(210mm + 120px))}100%{transform:translateX(calc(210mm + 120px))}}
+  @media (prefers-reduced-motion:reduce){.signal-line::after{animation:none;display:none}}
+
+  .eyebrow{font-family:var(--font-mono);font-size:7.5pt;letter-spacing:.18em;text-transform:uppercase;color:var(--action);font-weight:600;margin-bottom:2mm}
+  .eyebrow::before{content:"▪ ";color:var(--c-blue-600)}
+  .eyebrow.research{color:var(--research)}
+  .eyebrow.research::before{color:var(--c-brass-500)}
+  .doc h1{font-family:var(--font-display);font-size:16pt;font-weight:800;letter-spacing:-.01em;margin-bottom:1.5mm;line-height:1.2}
+  .doc .sub{color:var(--text-secondary);font-size:10pt;margin-bottom:6mm}
+  .doc h2{font-family:var(--font-mono);font-size:9pt;letter-spacing:.16em;text-transform:uppercase;color:var(--text-primary);font-weight:600;border-bottom:1px solid var(--border-medium);padding-bottom:1.5mm;margin:8mm 0 3.5mm}
+  .doc h2 .h2i{color:var(--text-muted);font-weight:500;margin-right:2.5mm}
+  .doc p{margin-bottom:2.5mm;line-height:1.6;color:var(--c-cobalt-900)}
+  .doc p.anschreiben{font-family:var(--font-editorial);font-size:10.5pt;line-height:1.7}
+  .meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:6mm;margin-bottom:7mm}
+  .meta-box{background:var(--action-soft);padding:4mm 5mm;border-left:2.5px solid var(--action);print-color-adjust:exact;-webkit-print-color-adjust:exact}
+  .meta-box .mb-label{font-family:var(--font-mono);font-size:7pt;letter-spacing:.16em;text-transform:uppercase;color:var(--action);margin-bottom:1.5mm}
+  .meta-box div{font-size:9.5pt;line-height:1.55}
+  .meta-line{display:flex;gap:4mm;flex-wrap:wrap;font-family:var(--font-mono);font-size:8pt;color:var(--text-secondary);margin-bottom:7mm}
+  .meta-line b{color:var(--text-primary)}
+
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:3mm;margin:2mm 0 6mm}
+  .kpi{background:var(--surface-dark);color:#fff;text-align:center;padding:4mm 2mm;print-color-adjust:exact;-webkit-print-color-adjust:exact}
+  .kpi b{display:block;font-family:var(--font-display);font-size:12.5pt;font-weight:800;color:#fff}
+  .kpi span{font-size:6.8pt;font-family:var(--font-mono);letter-spacing:.02em;color:var(--c-blue-100)}
+
+  table.postable{width:100%;border-collapse:collapse;margin:3mm 0 2mm;font-size:9.5pt}
+  table.postable th{font-family:var(--font-mono);font-size:7.5pt;letter-spacing:.12em;text-transform:uppercase;color:var(--text-secondary);text-align:left;border-bottom:1.5px solid var(--text-primary);padding:2mm 2mm 1.5mm}
+  table.postable td{border-bottom:1px solid var(--border-soft);padding:2.5mm 2mm;vertical-align:top}
+  table.postable .num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+  table.postable .pt-title{font-weight:700}
+  table.postable .pt-desc{color:var(--text-secondary);font-size:8.8pt;line-height:1.5;margin-top:1mm;white-space:pre-line}
+  table.postable .pt-rab{font-size:7.8pt;color:var(--text-muted);margin-top:.5mm}
+  .sumtable{width:62%;margin-left:auto;font-size:9.5pt;border-collapse:collapse}
+  .sumtable td{padding:1.6mm 2mm}
+  .sumtable .num{text-align:right;font-variant-numeric:tabular-nums}
+  .sumtable tr.grand td{border-top:2px solid var(--text-primary);font-weight:800;font-size:10.5pt;padding-top:2.5mm}
+  .taxnote{font-size:8pt;color:var(--text-secondary);text-align:right;margin-top:1.5mm;font-style:italic}
+
+  .paybox{background:var(--action-soft);border-left:2.5px solid var(--action);padding:4mm 5mm;margin-top:6mm;font-size:9.5pt;line-height:1.6;print-color-adjust:exact;-webkit-print-color-adjust:exact}
+  .paybox b{font-family:var(--font-mono);font-size:8.5pt}
+
+  .sig-grid{display:grid;grid-template-columns:1fr 1fr;gap:12mm;margin-top:16mm}
+  .sig-box{border-top:1px solid var(--text-primary);padding-top:2mm}
+  .sig-box .sg-label{font-family:var(--font-mono);font-size:7pt;letter-spacing:.14em;text-transform:uppercase;color:var(--text-secondary)}
+  .sig-box .sg-name{font-size:9.5pt;font-weight:600;margin-top:1mm}
+
+  .doc-footer{position:absolute;bottom:9mm;left:18mm;right:18mm;border-top:1px solid var(--border-soft);padding-top:2.5mm;font-family:var(--font-mono);font-size:6.6pt;color:var(--text-secondary);display:flex;justify-content:space-between;gap:5mm;line-height:1.6}
+
+  .contract-parties{margin:5mm 0 6mm;text-align:center}
+  .contract-parties .party{font-size:10pt;line-height:1.55}
+  .contract-parties .zw{font-family:var(--font-mono);font-size:8pt;letter-spacing:.14em;text-transform:uppercase;color:var(--text-secondary);margin:3mm 0}
+  .doc .para{margin-bottom:4.5mm}
+  .doc .para b.pnum{display:block;font-family:var(--font-mono);font-size:8.5pt;letter-spacing:.1em;color:var(--action);margin-bottom:1mm}
+
+  /* ============ DRAFTS MODAL ============ */
+  .modal-bg{position:fixed;inset:0;background:rgb(18 30 57 / .5);display:none;align-items:center;justify-content:center;z-index:100}
+  .modal-bg.open{display:flex}
+  .modal{background:#fff;border-radius:var(--radius-l);width:min(560px,92vw);max-height:80vh;overflow-y:auto;padding:22px;box-shadow:var(--shadow-medium)}
+  .modal h3{font-family:var(--font-display);font-size:15px;font-weight:800;margin-bottom:14px}
+  .draft-item{display:flex;justify-content:space-between;align-items:center;gap:10px;border:1px solid var(--c-neutral-200);border-radius:var(--radius-l);padding:10px 12px;margin-bottom:8px}
+  .draft-item .di-main b{display:block;font-size:13px}
+  .draft-item .di-main span{font-family:var(--font-mono);font-size:11px;color:var(--text-secondary)}
+  .empty{color:var(--text-secondary);font-size:13px;text-align:center;padding:20px 0}
+
+  .toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--surface-dark);color:#fff;font-size:13px;padding:10px 18px;border-radius:var(--radius-l);opacity:0;pointer-events:none;transition:opacity .25s;z-index:200}
+  .toast.show{opacity:1}
+
+  /* ============ PRINT ============ */
+  @media print{
+    body{background:#fff}
+    .topbar,.tabs,.formpane,.modal-bg,.toast{display:none !important}
+    .layout{display:block;min-height:auto}
+    .previewpane{background:#fff;border:none;padding:0;display:block}
+    .sheet{box-shadow:none;width:auto;min-height:auto;padding:0;margin:0}
+    .doc-band{margin:0;padding:9mm 12mm 8mm}
+    .signal-line{margin:0 0 9mm}
+    .signal-line::after{display:none}
+    .doc-footer{position:fixed;bottom:0;left:0;right:0}
+    body.print-angebot #sheet-vertrag,body.print-angebot #sheet-rechnung{display:none !important}
+    body.print-vertrag #sheet-angebot,body.print-vertrag #sheet-rechnung{display:none !important}
+    body.print-rechnung #sheet-angebot,body.print-rechnung #sheet-vertrag{display:none !important}
+    @page{size:A4;margin:16mm 16mm 22mm}
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand"><b>VersicherungsTech Magazin</b><span>Sales Desk</span></div>
+  <div class="spacer"></div>
+  <button onclick="app.newDoc()">＋ Neu</button>
+  <button onclick="app.openDrafts()">Entwürfe</button>
+  <button onclick="app.saveDraft()">Speichern</button>
+  <button onclick="app.exportWord()">Word-Export</button>
+  <button class="primary" onclick="app.print()">Als PDF drucken</button>
+</header>
+
+<nav class="tabs">
+  <button id="tab-angebot" class="active" onclick="app.setTab('angebot')">Angebot</button>
+  <button id="tab-vertrag" onclick="app.setTab('vertrag')">Vertrag</button>
+  <button id="tab-rechnung" onclick="app.setTab('rechnung')">Rechnung</button>
+</nav>
+
+<div class="layout">
+  <!-- ================= FORM ================= -->
+  <div class="formpane" id="formpane">
+
+    <div class="notice" id="storage-note" style="display:none"></div>
+
+    <!-- ===== ANGEBOT-FORMULAR ===== -->
+    <div id="form-angebot">
+      <fieldset>
+        <legend>Kunde</legend>
+        <div class="row">
+          <label class="single" style="grid-column:1/-1"><span>Firma</span><input type="text" data-k="kunde.firma" placeholder="Muster Versicherung AG"></label>
+        </div>
+        <div class="row">
+          <label><span>Anrede</span>
+            <select data-k="kunde.anrede"><option>Frau</option><option>Herr</option><option value="">Neutral</option></select></label>
+          <label><span>Ansprechpartner/in</span><input type="text" data-k="kunde.name" placeholder="Hanna Löbe"></label>
+        </div>
+        <div class="row">
+          <label><span>Funktion</span><input type="text" data-k="kunde.funktion" placeholder="Managerin Marketing"></label>
+          <label><span>E-Mail</span><input type="email" data-k="kunde.email" placeholder="h.loebe@..."></label>
+        </div>
+        <div class="row">
+          <label><span>Straße, Nr.</span><input type="text" data-k="kunde.strasse" placeholder="Riesstraße 25"></label>
+          <label><span>PLZ, Ort</span><input type="text" data-k="kunde.plzort" placeholder="80992 München"></label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Angebot</legend>
+        <div class="row thirds">
+          <label><span>Angebotsnr.</span><input type="text" data-k="meta.nr" placeholder="A-2026-042"></label>
+          <label><span>Datum</span><input type="date" data-k="meta.datum"></label>
+          <label><span>Gültig bis</span><input type="date" data-k="meta.gueltig"></label>
+        </div>
+        <div class="inline-actions"><button class="btn" onclick="app.pullNumber('angebot')">Nächste Nummer ziehen</button></div>
+        <div class="row" style="margin-top:10px">
+          <label class="single" style="grid-column:1/-1"><span>Betreff / Kampagnentitel</span><input type="text" data-k="meta.betreff" placeholder="Mediapaket zur Bewerbung der ..."></label>
+        </div>
+        <div class="row">
+          <label><span>Anlass / Event (optional)</span><input type="text" data-k="meta.anlass" placeholder="MMM Fachmesse, 21. April 2026"></label>
+          <label><span>Betreuung durch</span>
+            <select data-k="meta.betreuer">
+              <option>Maximilian Hempel</option>
+              <option>Maximilian Dahmen</option>
+              <option>Lukas Härle</option>
+              <option>Johannes Oberhofer</option>
+              <option>Karl Heinz Passler</option>
+            </select></label>
+        </div>
+        <label class="switch"><input type="checkbox" data-k="meta.kpi" checked> Reichweiten-Kennzahlen im Angebot zeigen</label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Anschreiben</legend>
+        <textarea data-k="anschreiben" rows="7" placeholder="Persönliches Anschreiben ..."></textarea>
+        <div class="inline-actions"><button class="btn" onclick="app.genAnschreiben()">Vorschlag aus Kundendaten erzeugen</button></div>
+        <div class="hint">Der Vorschlag ist ein Startpunkt. Bitte immer individuell anpassen.</div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Leistungskatalog (Stand: angebote.versicherungstech-magazin.de)</legend>
+        <div class="cat-group">Beliebte Kombinationen · 1 Klick, danach frei anpassbar</div>
+        <div class="bundles" id="bundles"></div>
+        <div id="catalog"></div>
+        <div class="inline-actions" style="margin-top:12px"><button class="btn ghost" onclick="app.addPos()">＋ Freie Position</button></div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Positionen &amp; Preis</legend>
+        <div id="poslist"></div>
+        <div class="row" style="margin-top:12px">
+          <label><span>Paketrabatt gesamt (%)</span><input type="number" min="0" max="100" step="0.5" data-k="rabatt"></label>
+          <label><span>Zahlungsziel (Tage)</span><input type="number" min="0" step="1" data-k="zahlungsziel"></label>
+        </div>
+        <div class="hint" style="margin-bottom:8px">Mengenrabatt für Sponsored LinkedIn Posts (ab 5 Posts −10 %, ab 10 Posts −20 %) wird automatisch als Positionsrabatt gesetzt.</div>
+        <div class="totals" id="totals"></div>
+      </fieldset>
+    </div>
+
+    <!-- ===== VERTRAG-FORMULAR ===== -->
+    <div id="form-vertrag" style="display:none">
+      <div class="notice">Kundendaten, Angebotsbezug und Vergütung werden automatisch aus dem Angebot übernommen. Hier nur die vertragsspezifischen Punkte ergänzen.</div>
+      <fieldset>
+        <legend>Vertragsdaten</legend>
+        <div class="row thirds">
+          <label><span>Vertrags-Nr.</span><input type="text" data-k="vertrag.nr" placeholder="V-2026-018"></label>
+          <label><span>Vertragsdatum</span><input type="date" data-k="vertrag.datum"></label>
+          <label><span>Gerichtsstand</span><input type="text" data-k="vertrag.gerichtsstand"></label>
+        </div>
+        <div class="inline-actions"><button class="btn" onclick="app.pullNumber('vertrag')">Nächste Nummer ziehen</button></div>
+      </fieldset>
+      <fieldset>
+        <legend>Laufzeit &amp; Kündigung</legend>
+        <div class="row">
+          <label><span>Beginn</span><input type="date" data-k="vertrag.beginn"></label>
+          <label><span>Ende</span><input type="date" data-k="vertrag.ende"></label>
+        </div>
+        <div class="row single">
+          <label><span>Kündigungsfrist</span><input type="text" data-k="vertrag.kuendigung" placeholder="drei Monate zum Laufzeitende"></label>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Ergänzende Regelungen (optional)</legend>
+        <textarea data-k="vertrag.zusatz" rows="4" placeholder="z. B. Freigabeprozesse, Materiallieferung, Reporting-Turnus ..."></textarea>
+      </fieldset>
+      <div class="notice warn"><b>Hinweis:</b> Dieses Dokument ist ein Vertragsentwurf auf Basis der VTM-Standardvorlage. Vor Versand an den Kunden gilt die interne Freigabe durch die Geschäftsführung; bei Abweichungen von der Standardvorlage zusätzlich rechtliche Prüfung.</div>
+    </div>
+
+    <!-- ===== RECHNUNG-FORMULAR ===== -->
+    <div id="form-rechnung" style="display:none">
+      <div class="notice">Empfänger und Positionen werden aus dem Angebot übernommen. Rechnungsnummernkreis: VTM-JJJJ-NNNN (fortlaufend mit den bestehenden Rechnungen).</div>
+      <fieldset>
+        <legend>Rechnungsdaten</legend>
+        <div class="row">
+          <label><span>Rechnungsnr.</span><input type="text" data-k="rechnung.nr" placeholder="VTM-2026-0028"></label>
+          <label><span>Rechnungsdatum</span><input type="date" data-k="rechnung.datum"></label>
+        </div>
+        <div class="inline-actions"><button class="btn" onclick="app.pullNumber('rechnung')">Nächste Nummer ziehen</button></div>
+        <div class="row" style="margin-top:10px">
+          <label><span>Leistungszeitraum von</span><input type="date" data-k="rechnung.von"></label>
+          <label><span>Leistungszeitraum bis</span><input type="date" data-k="rechnung.bis"></label>
+        </div>
+        <div class="row single">
+          <label><span>Bezug (optional, z. B. Angebots- oder Vertragsnummer)</span><input type="text" data-k="rechnung.bezug" placeholder="wird sonst automatisch aus dem Angebot übernommen"></label>
+        </div>
+        <div class="hint">Fälligkeitsdatum wird aus Rechnungsdatum + Zahlungsziel (Reiter Angebot) berechnet.</div>
+      </fieldset>
+      <div class="notice warn"><b>Interner Hinweis (nicht auf der Rechnung):</b> USt-Ausweis 19 % entspricht der aktuellen Praxis. Die Abgrenzung zur Kleinunternehmerregelung nach § 19 UStG ist beim Steuerberater in Klärung. Bis zur Klärung Rechnungen nur nach Rücksprache mit der Geschäftsführung versenden.</div>
+    </div>
+  </div>
+
+  <!-- ================= PREVIEW ================= -->
+  <div class="previewpane">
+    <div class="sheet doc" id="sheet-angebot"></div>
+    <div class="sheet doc" id="sheet-vertrag" style="display:none"></div>
+    <div class="sheet doc" id="sheet-rechnung" style="display:none"></div>
+  </div>
+</div>
+
+<!-- Entwürfe-Modal -->
+<div class="modal-bg" id="drafts-modal">
+  <div class="modal">
+    <h3>Gespeicherte Entwürfe</h3>
+    <div id="drafts-list"></div>
+    <div class="inline-actions" style="justify-content:flex-end;margin-top:12px">
+      <button class="btn" onclick="app.closeDrafts()">Schließen</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* =========================================================
+   VTM Sales Desk v3 · Master Next
+   Stammdaten, Live-Katalog (angebote.versicherungstech-magazin.de),
+   Dokumentlogik, Word-Export, Rechnungsmodul
+   ========================================================= */
+const FIRMA = {
+  name: "VersicherungsTech Media UG (haftungsbeschränkt)",
+  kurz: "VersicherungsTech Media UG",
+  strasse: "Moitzfeld 17",
+  plzort: "51429 Bergisch Gladbach",
+  hrb: "HRB 126738, Amtsgericht Köln",
+  gf: "Maximilian Hempel",
+  iban: "DE42 3707 0209 0079 5427 00",
+  stnr: "204/5723/2832",
+  mail: "info@versicherungstech-magazin.de",
+  web: "versicherungstech-magazin.de"
+};
+
+/* ---------- Katalog: Stand angebote.versicherungstech-magazin.de ---------- */
+const KATALOG = [
+  { group:"Magazin · Reichweite & Sichtbarkeit", items:[
+    { id:"banner", t:"Website-Werbebanner", p:1200, e:"Monat(e)",
+      d:"Ihr Banner auf allen Seiten von versicherungstech-magazin.de\nDauerhaft präsent im redaktionellen Umfeld\nReporting zu Impressionen und Klicks" },
+    { id:"bannerApp", t:"Werbebanner Website + VTM App", p:2000, e:"Monat(e)",
+      d:"Ihr Banner auf allen Webseiten und zusätzlich in der VTM App\nDirekt auf dem Startbildschirm der Entscheider\nReporting zu Impressionen und Klicks" },
+    { id:"newsletter", t:"Newsletter-Sponsoring", p:1900, e:"Monat(e)",
+      d:"Exklusive Präsenz im VTM Briefing\n6.000+ Empfänger, rund 50 % Öffnungsrate\nDirekt im Posteingang der Branche" }
+  ]},
+  { group:"Magazin · Content & Thought Leadership", items:[
+    { id:"fachartikel", t:"Fachartikel", p:900, e:"Artikel",
+      d:"Von der Redaktion geschriebener Fachbeitrag zu Ihrem Thema\nVeröffentlichung auf Website und in der VTM App\nAnteaser im Newsletter, Kennzeichnung als Sponsored Content" },
+    { id:"interview", t:"Executive Interview", p:1200, e:"Interview(s)",
+      d:"Ihre Führungskraft im redaktionellen Interview\nPositionierung über Person und Haltung statt Werbebotschaft" },
+    { id:"caseStudy", t:"Case Study inkl. Lead-Liste", p:3000, e:"Case Studies",
+      d:"Ihr Kundenprojekt als Erfolgsgeschichte\nInklusive Kontaktliste aller Interessenten, die den Bericht angefordert haben" },
+    { id:"liaas", t:"LinkedIn as a Service", p:2500, e:"Monat(e)",
+      d:"4 fertige LinkedIn-Beiträge pro Monat für die Profile Ihrer Vertriebs- und Führungskräfte\nExperten-Sichtbarkeit zu relevanten Versicherungsthemen" },
+    { id:"liPost", t:"Sponsored LinkedIn Post", p:750, e:"Post(s)", rule:"li",
+      d:"Ihr Beitrag über den VTM-Kanal, wo die Branche täglich mitliest\nMengenrabatt: ab 5 Posts −10 %, ab 10 Posts −20 %" }
+  ]},
+  { group:"Podcast & Audio · Insurance Monday, ca. 35.000 Downloads/Monat", items:[
+    { id:"quartal", t:"Quartalssponsoring Insurance Monday", p:30000, e:"Quartal(e)",
+      d:"3 komplette Podcast-Episoden zu Ihrem Thema\nBewerbung auf LinkedIn und allen gängigen Podcast-Plattformen\nProduktion Ihres Audio-Werbespots + Ausspielung in 30 weiteren Episoden (Mid-Roll)\nOffizielle Nennung als Sponsor auf allen Materialien" },
+    { id:"podcastEp", t:"Einzelne Podcast-Episode", p:3500, e:"Episode(n)",
+      d:"Ihr Experte im Gespräch bei Insurance Monday\nEine ganze Folge zu Ihrem Thema, erzählt an echten Fällen aus der Praxis" },
+    { id:"preroll", t:"Podcast-Werbespot (Pre-Roll)", p:2500, e:"Paket(e) à 3 Episoden",
+      d:"Ihr Werbespot am Anfang von drei Episoden\nDort, wo die Aufmerksamkeit am höchsten ist" }
+  ]},
+  { group:"Jahresprogramme (ab-Preise, individuell zugeschnitten)", items:[
+    { id:"progStartup", t:"VTM Startup Presence", p:12000, e:"Jahr(e)",
+      d:"1× Podcast-Episode bei Insurance Monday\n2× Fachartikel\n1× Gründerinterview oder Startup-Porträt\n12× LinkedIn-Post über den VTM-Kanal (1× pro Monat)\nMonatlich zahlbar" },
+    { id:"progCategory", t:"VTM Category Presence", p:25000, e:"Jahr(e)",
+      d:"Positionierungs-Workshop zum Start\n2× Podcast-Folge bei Insurance Monday\n12 Monate Werbebanner- und Newsletter-Präsenz in Ihrer Kategorie\n2× Executive Interview\n1× Deep-Dive-Webinar, moderiert vom VTM\n„sponsored by“-Logo auf allen Inhalten Ihrer Kategorie, 12 Monate" },
+    { id:"progAuthority", t:"VTM Authority Program", p:70000, e:"Jahr(e)",
+      d:"Quartalsweiser Workshop zur Markenpositionierung\n4× Podcast-Folge bei Insurance Monday\n12 Monate Banner auf VTM-Startseite und in der App\n4× große Fachinhalte (z. B. Studie, Whitepaper, Case Study)\n2× Deep-Dive-Webinar, moderiert vom VTM\nSponsorslot, Tickets und Ausstellerpaket beim Hamburger Insurance Innovation Day\n12 Monate LinkedIn as a Service für einen Mitarbeiter" }
+  ]},
+  { group:"Programm-Bausteine (Preis individuell, hier Betrag eintragen)", items:[
+    { id:"marktcheck", t:"Marktcheck im Entscheider-Panel", p:0, e:"pauschal",
+      d:"Befragung des VTM-Netzwerks aus Führungskräften der Versicherungsbranche zu Ihrem Thema\nErgebnis: eine zitierfähige Zahl für Presse und Vertrieb" },
+    { id:"webinar", t:"Fach-Webinar mit Teilnehmerliste", p:0, e:"pauschal",
+      d:"45 Minuten unter VTM-Flagge: Moderation durch das VTM, Ihr Experte zeigt die Lösung an einem konkreten Fall\nKomplette Anmeldeliste für Ihren Vertrieb" },
+    { id:"statements", t:"Experten-Statements", p:0, e:"pauschal",
+      d:"Kurze Zitate und Einschätzungen Ihres Experten in der laufenden VTM-Berichterstattung" },
+    { id:"exklusiv", t:"Kategorie-Exklusivität", p:0, e:"pauschal",
+      d:"In Ihrer Kategorie tritt kein weiterer Werbepartner im VTM auf" }
+  ]}
+];
+const KAT_INDEX = {};
+KATALOG.forEach(g=>g.items.forEach(it=>KAT_INDEX[it.id]=it));
+
+const BUNDLES = [
+  { name:"Sichtbarkeits-Start", sub:"Der kompakte Einstieg: gesehen werden, wo die Branche liest.", price:"9.975 € netto",
+    items:[["fachartikel",1],["newsletter",3],["liPost",5]] },
+  { name:"Thought-Leader-Paket", sub:"Ihr Kopf und Ihr Thema werden in der Branche verankert.", price:"21.500 € netto",
+    items:[["podcastEp",1],["interview",1],["fachartikel",2],["liaas",6]] },
+  { name:"Marktführer-Paket", sub:"Volle Sichtbarkeit über alle Kanäle, ein Quartal lang.", price:"44.700 € netto",
+    items:[["quartal",1],["newsletter",3],["bannerApp",3],["caseStudy",1]] }
+];
+
+const VAT = 0.19;
+const fmtEUR = v => new Intl.NumberFormat("de-DE",{style:"currency",currency:"EUR"}).format(v||0);
+const fmtDate = iso => { if(!iso) return "—"; const [y,m,d]=iso.split("-"); return `${d}.${m}.${y}`; };
+const addDays = (iso,n) => { if(!iso) return ""; const d=new Date(iso); d.setDate(d.getDate()+(n||0)); return d.toISOString().slice(0,10); };
+const esc = s => (s===undefined||s===null?"":String(s)).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+const nl = s => esc(s).replace(/\n/g,"<br>");
+
+function emptyState(){
+  const today = new Date(), plus14 = new Date(Date.now()+14*864e5);
+  const iso = d => d.toISOString().slice(0,10);
+  return {
+    kunde:{firma:"",anrede:"Frau",name:"",funktion:"",email:"",strasse:"",plzort:""},
+    meta:{nr:"",datum:iso(today),gueltig:iso(plus14),betreff:"",anlass:"",betreuer:"Maximilian Hempel",kpi:true},
+    anschreiben:"",
+    positionen:[],
+    rabatt:0, zahlungsziel:14,
+    vertrag:{nr:"",datum:iso(today),beginn:"",ende:"",kuendigung:"drei Monate zum Laufzeitende",gerichtsstand:"Köln",zusatz:""},
+    rechnung:{nr:"",datum:iso(today),von:"",bis:"",bezug:""},
+    _id:null, _saved:null
+  };
+}
+
+/* Mengenrabatt-Regel Sponsored LinkedIn Post */
+function liRabatt(menge){ return menge>=10?20:(menge>=5?10:0); }
+function lineNet(p){ return (p.menge||0)*(p.preis||0)*(1-(p.rab||0)/100); }
+
+const app = {
+  s: emptyState(),
+  tab: "angebot",
+  storageOk: null,
+
+  /* ---------- Init ---------- */
+  async init(){
+    this.renderCatalog();
+    this.bindInputs();
+    this.pushToInputs();
+    this.renderAll();
+    this.storageOk = await this.probeStorage();
+    if(!this.storageOk){
+      const n = document.getElementById("storage-note");
+      n.style.display="block";
+      n.innerHTML = "<b>Hinweis:</b> Der gemeinsame Speicher ist gerade nicht erreichbar. Entwürfe und der Nummernkreis sind deaktiviert. Nummern bitte manuell vergeben.";
+    }
+  },
+  async probeStorage(){
+    try{ if(!window.storage) return false;
+      await window.storage.set("vtmsd-ping","1",true); return true;
+    }catch(e){ return false; }
+  },
+
+  /* ---------- Data binding ---------- */
+  bindInputs(){
+    document.querySelectorAll("[data-k]").forEach(el=>{
+      const ev = (el.tagName==="SELECT"||el.type==="checkbox"||el.type==="date") ? "change":"input";
+      el.addEventListener(ev, ()=>{
+        const path = el.getAttribute("data-k").split(".");
+        let ref=this.s;
+        for(let i=0;i<path.length-1;i++) ref=ref[path[i]];
+        const key=path[path.length-1];
+        if(el.type==="checkbox") ref[key]=el.checked;
+        else if(el.type==="number") ref[key]=parseFloat(el.value)||0;
+        else ref[key]=el.value;
+        this.renderAll();
+      });
+    });
+  },
+  pushToInputs(){
+    document.querySelectorAll("[data-k]").forEach(el=>{
+      const path = el.getAttribute("data-k").split(".");
+      let v=this.s;
+      for(const p of path){ v = (v||{})[p]; }
+      if(el.type==="checkbox") el.checked=!!v;
+      else el.value = (v===undefined||v===null)?"":v;
+    });
+  },
+
+  /* ---------- Tabs ---------- */
+  setTab(t){
+    this.tab=t;
+    ["angebot","vertrag","rechnung"].forEach(x=>{
+      document.getElementById("tab-"+x).classList.toggle("active",t===x);
+      document.getElementById("form-"+x).style.display = t===x?"":"none";
+      document.getElementById("sheet-"+x).style.display = t===x?"":"none";
+    });
+    this.renderAll();
+  },
+
+  /* ---------- Katalog, Bundles, Positionen ---------- */
+  renderCatalog(){
+    document.getElementById("bundles").innerHTML = BUNDLES.map((b,i)=>`
+      <button onclick="app.addBundle(${i})">
+        <span class="bn"><b>${esc(b.name)}</b><span>${esc(b.sub)}</span></span>
+        <span class="bp">${esc(b.price)}</span>
+      </button>`).join("");
+    document.getElementById("catalog").innerHTML = KATALOG.map((g,gi)=>`
+      <div class="cat-group">${esc(g.group)}</div>
+      <div class="catalog">${g.items.map((k,i)=>
+        `<button onclick="app.addFromCatalog(${gi},${i})"><b>${esc(k.t)}</b><em>${k.p>0?fmtEUR(k.p)+" / "+esc(k.e):"auf Anfrage"}</em></button>`
+      ).join("")}</div>`).join("");
+  },
+  makePos(k,qty){
+    const menge = qty||1;
+    const rab = k.rule==="li" ? liRabatt(menge) : 0;
+    return {titel:k.t, beschr:k.d, menge, einheit:k.e, preis:k.p, rab, _rule:k.rule||""};
+  },
+  addFromCatalog(gi,i){
+    const k=KATALOG[gi].items[i];
+    this.s.positionen.push(this.makePos(k,1));
+    this.renderAll(); this.toast("Position hinzugefügt");
+  },
+  addBundle(i){
+    const b=BUNDLES[i];
+    b.items.forEach(([id,qty])=>{
+      const k=KAT_INDEX[id];
+      if(k) this.s.positionen.push(this.makePos(k,qty));
+    });
+    if(!this.s.meta.betreff) { this.s.meta.betreff = b.name; this.pushToInputs(); }
+    this.renderAll(); this.toast(`Paket „${b.name}" übernommen`);
+  },
+  addPos(){
+    this.s.positionen.push({titel:"", beschr:"", menge:1, einheit:"pauschal", preis:0, rab:0, _rule:""});
+    this.renderAll();
+  },
+  delPos(i){ this.s.positionen.splice(i,1); this.renderAll(); },
+  updPos(i,field,val){
+    const p=this.s.positionen[i];
+    if(field==="menge"||field==="preis"||field==="rab") p[field]=parseFloat(val)||0;
+    else p[field]=val;
+    if(field==="menge" && p._rule==="li"){
+      p.rab = liRabatt(p.menge);
+      const rabEl = document.getElementById("pos-rab-"+i);
+      if(rabEl) rabEl.value = p.rab;
+    }
+    this.renderPreview(); this.renderTotals();
+  },
+
+  renderPositions(){
+    const host=document.getElementById("poslist");
+    if(!this.s.positionen.length){
+      host.innerHTML = `<div class="empty">Noch keine Positionen. Paket oder Einzelleistung aus dem Katalog wählen, oder frei anlegen.</div>`;
+      return;
+    }
+    host.innerHTML = this.s.positionen.map((p,i)=>`
+      <div class="pos">
+        <div class="pos-head">
+          <label><span>Leistung</span><input type="text" value="${esc(p.titel)}" oninput="app.updPos(${i},'titel',this.value)"></label>
+          <label><span>Menge</span><input type="number" min="0" step="1" value="${p.menge}" oninput="app.updPos(${i},'menge',this.value)"></label>
+          <label><span>Einheit</span><input type="text" value="${esc(p.einheit)}" oninput="app.updPos(${i},'einheit',this.value)"></label>
+          <label><span>Einzelpreis €</span><input type="number" min="0" step="50" value="${p.preis}" oninput="app.updPos(${i},'preis',this.value)"></label>
+          <label><span>Rabatt %</span><input type="number" id="pos-rab-${i}" min="0" max="100" step="1" value="${p.rab||0}" oninput="app.updPos(${i},'rab',this.value)"></label>
+          <button class="del" title="Position entfernen" onclick="app.delPos(${i})">✕</button>
+        </div>
+        <label><span>Beschreibung (eine Zeile je Leistungsbestandteil)</span>
+          <textarea rows="3" oninput="app.updPos(${i},'beschr',this.value)">${esc(p.beschr)}</textarea></label>
+      </div>`).join("");
+  },
+
+  calc(){
+    const netto = this.s.positionen.reduce((a,p)=>a+lineNet(p),0);
+    const rabatt = netto*(this.s.rabatt||0)/100;
+    const nettoR = netto-rabatt;
+    const mwst = nettoR*VAT;
+    return {netto,rabatt,nettoR,mwst,brutto:nettoR+mwst};
+  },
+  renderTotals(){
+    const c=this.calc();
+    document.getElementById("totals").innerHTML = `
+      <div class="trow"><span>Zwischensumme (netto, inkl. Positionsrabatte)</span><b>${fmtEUR(c.netto)}</b></div>
+      ${c.rabatt>0?`<div class="trow"><span>Paketrabatt (${(this.s.rabatt||0).toLocaleString("de-DE")} %)</span><b class="neg">− ${fmtEUR(c.rabatt)}</b></div>`:""}
+      <div class="trow"><span>Netto</span><b>${fmtEUR(c.nettoR)}</b></div>
+      <div class="trow"><span>zzgl. 19 % MwSt.</span><b>${fmtEUR(c.mwst)}</b></div>
+      <div class="trow grand"><span>Gesamt (brutto)</span><b>${fmtEUR(c.brutto)}</b></div>`;
+  },
+
+  /* ---------- Anschreiben ---------- */
+  genAnschreiben(){
+    const k=this.s.kunde, m=this.s.meta;
+    const anredeZeile = k.anrede==="Frau" ? `Sehr geehrte Frau ${lastName(k.name)},`
+                     : k.anrede==="Herr" ? `Sehr geehrter Herr ${lastName(k.name)},`
+                     : `Guten Tag ${k.name||""},`.replace(" ,",",");
+    const anlass = m.anlass ? ` rund um ${m.anlass}` : "";
+    this.s.anschreiben =
+`${anredeZeile}
+
+vielen Dank für Ihr Interesse an einer Zusammenarbeit mit dem VersicherungsTech Magazin. Unsere Leserinnen und Leser sind IT- und Innovationsverantwortliche, Vorstände und Fachbereichsleitungen von Versicherungsunternehmen in der DACH-Region. Genau diese Zielgruppe erreichen Sie mit den nachfolgend zusammengestellten Maßnahmen${anlass}.
+
+Das Angebot ist modular aufgebaut. Einzelne Positionen lassen sich jederzeit anpassen oder kombinieren. Erste Inhalte gehen in der Regel innerhalb von 10 Werktagen nach Beauftragung live. Gerne besprechen wir die Details in einem kurzen Abstimmungscall.`;
+    this.pushToInputs(); this.renderAll();
+  },
+
+  /* ---------- Nummernkreis (shared storage) ---------- */
+  async pullNumber(kind){
+    const year = new Date().getFullYear();
+    if(!this.storageOk){ this.toast("Speicher nicht verfügbar. Nummer bitte manuell vergeben."); return; }
+    const key = `vtmsd-counter-${kind}-${year}`;
+    let cur = null;
+    try{ const r = await window.storage.get(key,true); cur = r?parseInt(r.value,10):null; }catch(e){ cur=null; }
+    /* Startwerte gemäß letzter bekannter Belege: A-2026-041, V-2026-017, VTM-2026-0027 */
+    if(cur===null||isNaN(cur)) cur = kind==="angebot"?41:(kind==="vertrag"?17:27);
+    const next = cur+1;
+    try{ await window.storage.set(key,String(next),true); }
+    catch(e){ this.toast("Nummer konnte nicht reserviert werden"); return; }
+    let nr;
+    if(kind==="angebot"){ nr=`A-${year}-${String(next).padStart(3,"0")}`; this.s.meta.nr=nr; }
+    else if(kind==="vertrag"){ nr=`V-${year}-${String(next).padStart(3,"0")}`; this.s.vertrag.nr=nr; }
+    else { nr=`VTM-${year}-${String(next).padStart(4,"0")}`; this.s.rechnung.nr=nr; }
+    this.pushToInputs(); this.renderAll();
+    this.toast(`Nummer ${nr} reserviert`);
+  },
+
+  /* ---------- Entwürfe (shared storage) ---------- */
+  async saveDraft(){
+    if(!this.storageOk){ this.toast("Speicher nicht verfügbar"); return; }
+    if(!this.s._id) this.s._id = "d"+Date.now().toString(36);
+    this.s._saved = new Date().toISOString();
+    try{
+      const r = await window.storage.get("vtmsd-drafts",true).catch(()=>null);
+      const list = r?JSON.parse(r.value):[];
+      const idx = list.findIndex(d=>d._id===this.s._id);
+      const slim = JSON.parse(JSON.stringify(this.s));
+      if(idx>=0) list[idx]=slim; else list.unshift(slim);
+      await window.storage.set("vtmsd-drafts",JSON.stringify(list.slice(0,40)),true);
+      this.toast("Entwurf gespeichert (für das Team sichtbar)");
+    }catch(e){ this.toast("Speichern fehlgeschlagen"); }
+  },
+  async openDrafts(){
+    const host=document.getElementById("drafts-list");
+    document.getElementById("drafts-modal").classList.add("open");
+    if(!this.storageOk){ host.innerHTML=`<div class="empty">Speicher nicht verfügbar.</div>`; return; }
+    host.innerHTML=`<div class="empty">Lade ...</div>`;
+    let list=[];
+    try{ const r=await window.storage.get("vtmsd-drafts",true); list=r?JSON.parse(r.value):[]; }catch(e){ list=[]; }
+    if(!list.length){ host.innerHTML=`<div class="empty">Noch keine Entwürfe gespeichert.</div>`; return; }
+    host.innerHTML = list.map(d=>`
+      <div class="draft-item">
+        <div class="di-main">
+          <b>${esc(d.kunde.firma||"(ohne Firma)")} ${d.meta.nr?("· "+esc(d.meta.nr)):""}</b>
+          <span>${esc(d.meta.betreff||"")} · gespeichert ${fmtDate((d._saved||"").slice(0,10))}</span>
+        </div>
+        <div class="inline-actions">
+          <button class="btn blue" onclick='app.loadDraft("${d._id}")'>Öffnen</button>
+          <button class="btn danger" onclick='app.deleteDraft("${d._id}")'>Löschen</button>
+        </div>
+      </div>`).join("");
+  },
+  async loadDraft(id){
+    try{
+      const r=await window.storage.get("vtmsd-drafts",true);
+      const list=r?JSON.parse(r.value):[];
+      const d=list.find(x=>x._id===id);
+      if(d){
+        const base=emptyState();
+        this.s = Object.assign(base, d);
+        this.s.rechnung = Object.assign(base.rechnung, d.rechnung||{});
+        this.pushToInputs(); this.renderAll(); this.closeDrafts(); this.toast("Entwurf geladen");
+      }
+    }catch(e){ this.toast("Laden fehlgeschlagen"); }
+  },
+  async deleteDraft(id){
+    if(!confirm("Diesen Entwurf endgültig löschen?")) return;
+    try{
+      const r=await window.storage.get("vtmsd-drafts",true);
+      let list=r?JSON.parse(r.value):[];
+      list=list.filter(x=>x._id!==id);
+      await window.storage.set("vtmsd-drafts",JSON.stringify(list),true);
+      this.openDrafts();
+    }catch(e){ this.toast("Löschen fehlgeschlagen"); }
+  },
+  closeDrafts(){ document.getElementById("drafts-modal").classList.remove("open"); },
+
+  newDoc(){
+    if(this.s.positionen.length||this.s.kunde.firma){
+      if(!confirm("Neues Dokument beginnen? Nicht gespeicherte Änderungen gehen verloren.")) return;
+    }
+    this.s = emptyState(); this.pushToInputs(); this.renderAll(); this.setTab("angebot");
+  },
+
+  /* ---------- Gemeinsame Bausteine ---------- */
+  band(doctype, nr, datum){
+    return `<div class="doc-band">
+        <div class="wordmark"><b>VersicherungsTech<br>Magazin</b><i>Technologie verstehen. Versicherung gestalten.</i></div>
+        <div class="doctype"><b>${doctype}</b><span>${esc(nr)||"—"} · ${fmtDate(datum)}</span></div>
+      </div>
+      <div class="signal-line" aria-hidden="true"></div>`;
+  },
+  posRowsHTML(){
+    return this.s.positionen.map((p,i)=>`
+      <tr>
+        <td class="num" style="width:8mm;color:var(--text-muted)">${i+1}</td>
+        <td><div class="pt-title">${esc(p.titel)||"—"}</div>${p.beschr?`<div class="pt-desc">${nl(p.beschr)}</div>`:""}${p.rab>0?`<div class="pt-rab">inkl. ${p.rab.toLocaleString("de-DE")} % Positionsrabatt</div>`:""}</td>
+        <td class="num">${p.menge} ${esc(p.einheit&&p.einheit!=="pauschal"?p.einheit:"")}</td>
+        <td class="num">${fmtEUR(p.preis)}</td>
+        <td class="num"><b>${fmtEUR(lineNet(p))}</b></td>
+      </tr>`).join("");
+  },
+  sumTableHTML(c){
+    return `<table class="sumtable">
+      <tr><td>Zwischensumme (netto)</td><td class="num">${fmtEUR(c.netto)}</td></tr>
+      ${c.rabatt>0?`<tr><td>Paketrabatt (${(this.s.rabatt||0).toLocaleString("de-DE")} %)</td><td class="num" style="color:var(--text-secondary)">− ${fmtEUR(c.rabatt)}</td></tr>
+      <tr><td><b>Netto nach Rabatt</b></td><td class="num"><b>${fmtEUR(c.nettoR)}</b></td></tr>`:""}
+      <tr><td>zzgl. 19 % USt.</td><td class="num">${fmtEUR(c.mwst)}</td></tr>
+      <tr class="grand"><td>Gesamtbetrag</td><td class="num">${fmtEUR(c.brutto)}</td></tr>
+    </table>`;
+  },
+  footerHTML(withStnr){
+    return `<div class="doc-footer">
+      <div>${FIRMA.kurz} · ${FIRMA.strasse}, ${FIRMA.plzort}<br>${FIRMA.hrb}${withStnr?` · St.-Nr. ${FIRMA.stnr}`:""} · Geschäftsführer: ${FIRMA.gf}</div>
+      <div style="text-align:right">IBAN ${FIRMA.iban}<br>${FIRMA.mail} · ${FIRMA.web}</div>
+    </div>`;
+  },
+
+  /* ---------- Rendering: Angebot ---------- */
+  renderAngebot(){
+    const s=this.s, k=s.kunde, m=s.meta, c=this.calc();
+    let sec=0;
+    const H2 = t => `<h2><span class="h2i">${String(++sec).padStart(2,"0")} ·</span>${t}</h2>`;
+    const kpi = m.kpi ? `
+      <div class="eyebrow research" style="margin-top:4mm">VTM Reichweitendaten · eigene Erhebung</div>
+      <div class="kpis">
+        <div class="kpi"><b>35.000</b><span>Podcast-Downloads/Monat</span></div>
+        <div class="kpi"><b>6.000+</b><span>Newsletter-Empfänger</span></div>
+        <div class="kpi"><b>~50 %</b><span>Öffnungsrate Newsletter</span></div>
+        <div class="kpi"><b>20.000+</b><span>LinkedIn Follower (Team)</span></div>
+      </div>` : "";
+
+    document.getElementById("sheet-angebot").innerHTML = `
+      ${this.band("ANGEBOT", m.nr||"A-2026-XXX", m.datum)}
+
+      <div class="eyebrow">Kooperationsangebot</div>
+      <h1>${esc(m.betreff)||"Medienkooperation mit dem VersicherungsTech Magazin"}</h1>
+      ${m.anlass?`<div class="sub">${esc(m.anlass)}</div>`:""}
+
+      <div class="meta-grid">
+        <div class="meta-box">
+          <div class="mb-label">Auftraggeber</div>
+          <div><b>${esc(k.firma)||"—"}</b><br>
+          ${k.name?esc((k.anrede?k.anrede+" ":"")+k.name)+(k.funktion?", "+esc(k.funktion):"")+"<br>":""}
+          ${k.strasse?esc(k.strasse)+"<br>":""}${esc(k.plzort)||""}
+          ${k.email?`<br><span style="font-family:var(--font-mono);font-size:8pt">${esc(k.email)}</span>`:""}</div>
+        </div>
+        <div class="meta-box">
+          <div class="mb-label">Anbieter</div>
+          <div><b>${FIRMA.kurz}</b><br>${FIRMA.strasse}<br>${FIRMA.plzort}<br>
+          Ihr Kontakt: ${esc(m.betreuer)}<br>
+          <span style="font-family:var(--font-mono);font-size:8pt">${FIRMA.mail}</span></div>
+        </div>
+      </div>
+      <div class="meta-line">
+        <span>Angebotsnr.: <b>${esc(m.nr)||"—"}</b></span>
+        <span>Datum: <b>${fmtDate(m.datum)}</b></span>
+        <span>Gültig bis: <b>${fmtDate(m.gueltig)}</b></span>
+      </div>
+
+      ${s.anschreiben?H2("Persönliches Anschreiben")+`<p class="anschreiben" style="white-space:pre-line">${esc(s.anschreiben)}</p>`:""}
+
+      ${m.kpi?H2("Warum VersicherungsTech Magazin")+kpi:""}
+
+      ${H2("Leistungen &amp; Konditionen")}
+      <table class="postable">
+        <thead><tr><th>Pos.</th><th>Leistung</th><th class="num">Menge</th><th class="num">Einzelpreis</th><th class="num">Gesamt</th></tr></thead>
+        <tbody>${this.posRowsHTML()||`<tr><td colspan="5" style="color:var(--text-secondary);text-align:center;padding:6mm">Noch keine Positionen erfasst.</td></tr>`}</tbody>
+      </table>
+      ${this.sumTableHTML(c)}
+      <div class="taxnote">Alle Preise verstehen sich netto zzgl. gesetzlicher Umsatzsteuer.</div>
+
+      ${H2("Konditionen &amp; nächste Schritte")}
+      <p>Dieses Angebot ist gültig bis zum <b>${fmtDate(m.gueltig)}</b>. Das Zahlungsziel beträgt <b>${s.zahlungsziel||14} Tage netto</b> nach Rechnungsstellung. Erste Inhalte gehen in der Regel innerhalb von 10 Werktagen nach Beauftragung live. Werbliche Formate werden als solche gekennzeichnet; die redaktionelle Unabhängigkeit des VersicherungsTech Magazins bleibt unberührt.</p>
+      <p>Zur Beauftragung genügt eine kurze Bestätigung per E-Mail. Anschließend stimmen wir Zeitplan und benötigte Materialien mit Ihnen ab.</p>
+
+      <p style="margin-top:8mm">Mit freundlichen Grüßen</p>
+      <p><b>${esc(m.betreuer)}</b><br><span style="color:var(--text-secondary)">VersicherungsTech Magazin</span></p>
+      ${this.footerHTML(false)}`;
+  },
+
+  /* ---------- Rendering: Vertrag ---------- */
+  renderVertrag(){
+    const s=this.s, k=s.kunde, v=s.vertrag, c=this.calc();
+    const leistungen = s.positionen.length
+      ? s.positionen.map(p=>`${p.menge>1?p.menge+"× ":""}${p.titel}`).join(", ")
+      : "die im Angebot beschriebenen Leistungen";
+
+    document.getElementById("sheet-vertrag").innerHTML = `
+      ${this.band("VERTRAG", v.nr||"V-2026-XXX", v.datum)}
+
+      <div class="eyebrow">Kooperationsvertrag</div>
+      <h1>${esc(s.meta.betreff)||"Medienkooperation"}</h1>
+      <div class="sub">Vertrags-Nr. ${esc(v.nr)||"—"} · ${fmtDate(v.datum)}</div>
+
+      <div class="contract-parties">
+        <div class="party"><b>${esc(k.firma)||"[Auftraggeberin]"}</b><br>${esc(k.strasse)||"[Straße Nr.]"} · ${esc(k.plzort)||"[PLZ Ort]"}<br><span style="color:var(--text-secondary)">— nachfolgend „Auftraggeberin" —</span></div>
+        <div class="zw">und</div>
+        <div class="party"><b>${FIRMA.name}</b><br>${FIRMA.strasse} · ${FIRMA.plzort}<br>vertreten durch den Geschäftsführer ${FIRMA.gf}<br><span style="color:var(--text-secondary)">— nachfolgend „Auftragnehmerin" —</span></div>
+      </div>
+      <p style="text-align:center;margin-bottom:6mm">wird folgender Vertrag geschlossen:</p>
+
+      <div class="para"><b class="pnum">§ 1 Vertragsgegenstand</b>
+        <p>(1) Gegenstand des Vertrags ist die Durchführung einer Medienkooperation gemäß Angebot <b>${esc(s.meta.nr)||"[Angebotsnr.]"}</b> vom ${fmtDate(s.meta.datum)}. (2) Das Angebot ist Bestandteil dieses Vertrags.</p></div>
+
+      <div class="para"><b class="pnum">§ 2 Leistungen</b>
+        <p>Die Auftragnehmerin erbringt die im Angebot beschriebenen Leistungen (${esc(leistungen)}). Werbliche Formate werden als solche gekennzeichnet; die redaktionelle Unabhängigkeit bleibt unberührt. Von der Auftraggeberin bereitgestellte Inhalte werden inhaltlich unverändert übernommen und ausschließlich gestalterisch an das Erscheinungsbild des VersicherungsTech Magazins angepasst. Die Veröffentlichung gekennzeichneter Inhalte erfolgt erst nach schriftlicher Freigabe durch die Auftraggeberin.</p></div>
+
+      <div class="para"><b class="pnum">§ 3 Vergütung</b>
+        <p>Die Vergütung beträgt <b>${fmtEUR(c.nettoR)}</b> zzgl. gesetzlicher Umsatzsteuer${c.rabatt>0?` (bereits berücksichtigt: Paketrabatt von ${(s.rabatt||0).toLocaleString("de-DE")} %)`:""}. Das Zahlungsziel beträgt ${s.zahlungsziel||14} Tage netto nach Rechnungsstellung.</p></div>
+
+      <div class="para"><b class="pnum">§ 4 Laufzeit und Kündigung</b>
+        <p>Der Vertrag beginnt am <b>${fmtDate(v.beginn)}</b> und läuft bis zum <b>${fmtDate(v.ende)}</b>. Er kann mit einer Frist von ${esc(v.kuendigung)||"drei Monaten zum Laufzeitende"} gekündigt werden. Das Recht zur außerordentlichen Kündigung bleibt unberührt.</p></div>
+
+      <div class="para"><b class="pnum">§ 5 Vertraulichkeit</b>
+        <p>Die Parteien behandeln vertrauliche Informationen der jeweils anderen Partei auch nach Vertragsende vertraulich.</p></div>
+
+      ${v.zusatz?`<div class="para"><b class="pnum">§ 6 Ergänzende Regelungen</b><p style="white-space:pre-line">${esc(v.zusatz)}</p></div>`:""}
+
+      <div class="para"><b class="pnum">§ ${v.zusatz?"7":"6"} Schlussbestimmungen</b>
+        <p>Änderungen und Ergänzungen bedürfen der Textform. Gerichtsstand ist ${esc(v.gerichtsstand)||"Köln"}. Sollten einzelne Bestimmungen unwirksam sein, bleibt der Vertrag im Übrigen wirksam.</p></div>
+
+      <div class="sig-grid">
+        <div class="sig-box"><div class="sg-label">Ort, Datum · Unterschrift Auftraggeberin</div><div class="sg-name">${esc(k.firma)||"[Auftraggeberin]"}</div></div>
+        <div class="sig-box"><div class="sg-label">Ort, Datum · Unterschrift Auftragnehmerin</div><div class="sg-name">${FIRMA.kurz} · ${FIRMA.gf}</div></div>
+      </div>
+      ${this.footerHTML(false)}`;
+  },
+
+  /* ---------- Rendering: Rechnung ---------- */
+  renderRechnung(){
+    const s=this.s, k=s.kunde, r=s.rechnung, c=this.calc();
+    const faellig = addDays(r.datum, s.zahlungsziel||14);
+    const bezug = r.bezug || (s.meta.nr?`Angebot ${s.meta.nr}${s.vertrag.nr?` / Vertrag ${s.vertrag.nr}`:""}`:"");
+    const zeitraum = (r.von||r.bis) ? `${fmtDate(r.von)} bis ${fmtDate(r.bis)}` : "";
+
+    document.getElementById("sheet-rechnung").innerHTML = `
+      ${this.band("RECHNUNG", r.nr||"VTM-2026-XXXX", r.datum)}
+
+      <div style="font-family:var(--font-mono);font-size:7pt;color:var(--text-secondary);margin-bottom:2mm">${FIRMA.kurz} · ${FIRMA.strasse} · ${FIRMA.plzort}</div>
+      <div class="meta-grid">
+        <div class="meta-box">
+          <div class="mb-label">Rechnungsempfänger</div>
+          <div><b>${esc(k.firma)||"—"}</b><br>
+          ${k.name?esc((k.anrede?k.anrede+" ":"")+k.name)+"<br>":""}
+          ${k.strasse?esc(k.strasse)+"<br>":""}${esc(k.plzort)||""}</div>
+        </div>
+        <div class="meta-box">
+          <div class="mb-label">Rechnungsdaten</div>
+          <div>Rechnungsnr.: <b>${esc(r.nr)||"—"}</b><br>
+          Rechnungsdatum: <b>${fmtDate(r.datum)}</b><br>
+          Zahlungsziel: <b>${fmtDate(faellig)}</b> (${s.zahlungsziel||14} Tage netto)
+          ${zeitraum?`<br>Leistungszeitraum: <b>${zeitraum}</b>`:""}</div>
+        </div>
+      </div>
+
+      ${bezug?`<p style="margin-bottom:4mm">Wir erlauben uns, die folgenden Leistungen gemäß ${esc(bezug)} in Rechnung zu stellen:</p>`
+             :`<p style="margin-bottom:4mm">Wir erlauben uns, die folgenden Leistungen in Rechnung zu stellen:</p>`}
+
+      <table class="postable">
+        <thead><tr><th>Pos.</th><th>Leistung</th><th class="num">Menge</th><th class="num">Einzelpreis</th><th class="num">Gesamt</th></tr></thead>
+        <tbody>${this.posRowsHTML()||`<tr><td colspan="5" style="color:var(--text-secondary);text-align:center;padding:6mm">Keine Positionen. Bitte im Reiter „Angebot" erfassen.</td></tr>`}</tbody>
+      </table>
+      ${this.sumTableHTML(c)}
+
+      <div class="paybox">
+        Bitte überweisen Sie den Rechnungsbetrag von <b>${fmtEUR(c.brutto)}</b> bis zum <b>${fmtDate(faellig)}</b> unter Angabe der Rechnungsnummer auf folgendes Konto:<br>
+        <b>${FIRMA.kurz}</b> · IBAN <b>${FIRMA.iban}</b>
+      </div>
+
+      <p style="margin-top:6mm">Vielen Dank für die gute Zusammenarbeit.</p>
+      <p><b>${FIRMA.gf}</b><br><span style="color:var(--text-secondary)">Geschäftsführer, ${FIRMA.kurz}</span></p>
+      ${this.footerHTML(true)}`;
+  },
+
+  renderPreview(){ this.renderAngebot(); this.renderVertrag(); this.renderRechnung(); },
+  renderAll(){ this.renderPositions(); this.renderTotals(); this.renderPreview(); },
+
+  /* ---------- Drucken ---------- */
+  print(){
+    document.body.classList.remove("print-angebot","print-vertrag","print-rechnung");
+    document.body.classList.add("print-"+this.tab);
+    window.print();
+  },
+
+  /* =========================================================
+     Word-Export (.doc)
+     Word-kompatibles HTML: reine Tabellen, Inline-Styles.
+     Farbrollen gemäß Master Next: Cobalt als Anker,
+     Electric für Struktur-Akzente, Brass nur für Research.
+     ========================================================= */
+  exportWord(){
+    const body = this.tab==="angebot" ? this.wordAngebot()
+               : this.tab==="vertrag" ? this.wordVertrag()
+               : this.wordRechnung();
+    const title = this.tab==="angebot" ? "Angebot" : this.tab==="vertrag" ? "Vertrag" : "Rechnung";
+    const nr = this.tab==="angebot" ? this.s.meta.nr : this.tab==="vertrag" ? this.s.vertrag.nr : this.s.rechnung.nr;
+    const firma = (this.s.kunde.firma||"Kunde").replace(/[^\wäöüÄÖÜß -]/g,"").replace(/\s+/g,"_");
+    const html = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+<head><meta charset="utf-8"><title>${esc(title)} ${esc(nr||"")}</title>
+<!--[if gte mso 9]><xml><w:WordDocument><w:View>Print</w:View><w:Zoom>100</w:Zoom><w:DoNotOptimizeForBrowser/></w:WordDocument></xml><![endif]-->
+<style>
+  @page{size:A4;margin:2cm 2cm 2.4cm}
+  body{font-family:Inter,Aptos,"Segoe UI",Arial,sans-serif;font-size:10pt;color:#121E39;line-height:1.5}
+  table{border-collapse:collapse}
+  p{margin:0 0 8pt 0}
+</style></head><body>${body}</body></html>`;
+    const blob = new Blob(["\ufeff"+html],{type:"application/msword;charset=utf-8"});
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = `${title}_${nr||"Entwurf"}_${firma}.doc`;
+    document.body.appendChild(a); a.click();
+    setTimeout(()=>{URL.revokeObjectURL(a.href); a.remove();},500);
+    this.toast("Word-Datei heruntergeladen");
+  },
+
+  /* Word-Bausteine (E-Mail-sichere Tabellenlogik) */
+  wBand(doctype, nr, datum){
+    return `<table width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#121E39" style="background-color:#121E39"><tr>
+      <td style="padding:14pt 16pt">
+        <span style="color:#FFFFFF;font-size:15pt;font-weight:bold">VersicherungsTech Magazin</span><br>
+        <span style="color:#DCE8FF;font-size:8pt;font-style:italic">Technologie verstehen. Versicherung gestalten.</span></td>
+      <td align="right" style="padding:14pt 16pt">
+        <span style="color:#FFFFFF;font-size:12pt;font-weight:bold;letter-spacing:3pt">${esc(doctype)}</span><br>
+        <span style="color:#DCE8FF;font-size:8pt">${esc(nr)||"—"} · ${fmtDate(datum)}</span></td>
+    </tr></table>
+    <table width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td height="2" bgcolor="#123FA6" style="background-color:#123FA6;font-size:1pt;line-height:1pt">&nbsp;</td></tr></table>
+    <p>&nbsp;</p>`;
+  },
+  wH2(idx,t){
+    return `<table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:12pt"><tr>
+      <td style="border-bottom:1pt solid #C7CED9;padding-bottom:3pt;font-size:9pt;font-weight:bold;letter-spacing:2pt;color:#121E39"><span style="color:#6E7888;font-weight:normal">${idx} · </span>${esc(t).toUpperCase()}</td></tr></table><p style="margin:4pt 0 0 0">&nbsp;</p>`;
+  },
+  wPosTable(){
+    const rows = this.s.positionen.map((p,i)=>`<tr>
+      <td valign="top" align="right" style="border-bottom:.75pt solid #DCE1E9;padding:5pt 6pt;color:#6E7888">${i+1}</td>
+      <td valign="top" style="border-bottom:.75pt solid #DCE1E9;padding:5pt 6pt">
+        <b>${esc(p.titel)||"—"}</b>${p.beschr?`<br><span style="font-size:8.5pt;color:#3F4958">${nl(p.beschr)}</span>`:""}${p.rab>0?`<br><span style="font-size:8pt;color:#6E7888">inkl. ${p.rab.toLocaleString("de-DE")} % Positionsrabatt</span>`:""}</td>
+      <td valign="top" align="right" style="border-bottom:.75pt solid #DCE1E9;padding:5pt 6pt;white-space:nowrap">${p.menge} ${esc(p.einheit&&p.einheit!=="pauschal"?p.einheit:"")}</td>
+      <td valign="top" align="right" style="border-bottom:.75pt solid #DCE1E9;padding:5pt 6pt;white-space:nowrap">${fmtEUR(p.preis)}</td>
+      <td valign="top" align="right" style="border-bottom:.75pt solid #DCE1E9;padding:5pt 6pt;white-space:nowrap"><b>${fmtEUR(lineNet(p))}</b></td>
+    </tr>`).join("");
+    const th = 'style="border-bottom:1.5pt solid #121E39;padding:4pt 6pt;font-size:8pt;letter-spacing:1pt;color:#3F4958;text-transform:uppercase"';
+    return `<table width="100%" cellpadding="0" cellspacing="0" border="0">
+      <tr><td ${th}>Pos.</td><td ${th}>Leistung</td><td align="right" ${th}>Menge</td><td align="right" ${th}>Einzelpreis</td><td align="right" ${th}>Gesamt</td></tr>
+      ${rows||`<tr><td colspan="5" style="padding:10pt;color:#3F4958" align="center">Keine Positionen erfasst.</td></tr>`}
+    </table>`;
+  },
+  wSumTable(c){
+    const td='style="padding:3pt 6pt"';
+    return `<table align="right" cellpadding="0" cellspacing="0" border="0" width="60%" style="margin-top:6pt">
+      <tr><td ${td}>Zwischensumme (netto)</td><td align="right" ${td}>${fmtEUR(c.netto)}</td></tr>
+      ${c.rabatt>0?`<tr><td ${td}>Paketrabatt (${(this.s.rabatt||0).toLocaleString("de-DE")} %)</td><td align="right" ${td} style="color:#3F4958">− ${fmtEUR(c.rabatt)}</td></tr>
+      <tr><td ${td}><b>Netto nach Rabatt</b></td><td align="right" ${td}><b>${fmtEUR(c.nettoR)}</b></td></tr>`:""}
+      <tr><td ${td}>zzgl. 19 % USt.</td><td align="right" ${td}>${fmtEUR(c.mwst)}</td></tr>
+      <tr><td style="padding:5pt 6pt;border-top:1.5pt solid #121E39"><b>Gesamtbetrag</b></td><td align="right" style="padding:5pt 6pt;border-top:1.5pt solid #121E39"><b>${fmtEUR(c.brutto)}</b></td></tr>
+    </table><br clear="all">`;
+  },
+  wFooter(withStnr){
+    return `<p>&nbsp;</p><table width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+      <td style="border-top:.75pt solid #DCE1E9;padding-top:5pt;font-size:7.5pt;color:#3F4958">
+        ${FIRMA.kurz} · ${FIRMA.strasse}, ${FIRMA.plzort} · ${FIRMA.hrb}${withStnr?` · St.-Nr. ${FIRMA.stnr}`:""} · Geschäftsführer: ${FIRMA.gf}<br>
+        IBAN ${FIRMA.iban} · ${FIRMA.mail} · ${FIRMA.web}</td></tr></table>`;
+  },
+
+  wordAngebot(){
+    const s=this.s,k=s.kunde,m=s.meta,c=this.calc();
+    let sec=0; const H2=t=>this.wH2(String(++sec).padStart(2,"0"),t);
+    const kpi = m.kpi?`<p style="font-size:8pt;letter-spacing:1.5pt;color:#9B7017;font-weight:bold">▪ VTM REICHWEITENDATEN · EIGENE ERHEBUNG</p>
+      <table width="100%" cellpadding="0" cellspacing="4" border="0"><tr>
+      ${[["35.000","Podcast-Downloads/Monat"],["6.000+","Newsletter-Empfänger"],["~50 %","Öffnungsrate Newsletter"],["20.000+","LinkedIn Follower (Team)"]].map(x=>
+        `<td width="25%" align="center" bgcolor="#121E39" style="background-color:#121E39;padding:8pt 4pt">
+          <span style="color:#FFFFFF;font-size:12pt;font-weight:bold">${x[0]}</span><br>
+          <span style="color:#DCE8FF;font-size:7pt">${x[1]}</span></td>`).join("")}
+    </tr></table>`:"";
+    return `${this.wBand("ANGEBOT",m.nr,m.datum)}
+      <p style="font-size:14pt;font-weight:bold;margin-bottom:2pt">${esc(m.betreff)||"Medienkooperation mit dem VersicherungsTech Magazin"}</p>
+      ${m.anlass?`<p style="color:#3F4958">${esc(m.anlass)}</p>`:""}
+      <table width="100%" cellpadding="0" cellspacing="6" border="0"><tr>
+        <td width="50%" valign="top" bgcolor="#F2F6FF" style="background-color:#F2F6FF;border-left:2pt solid #123FA6;padding:8pt 10pt">
+          <span style="font-size:7.5pt;letter-spacing:1.5pt;color:#123FA6;font-weight:bold">AUFTRAGGEBER</span><br>
+          <b>${esc(k.firma)||"—"}</b><br>${k.name?esc((k.anrede?k.anrede+" ":"")+k.name)+(k.funktion?", "+esc(k.funktion):"")+"<br>":""}${k.strasse?esc(k.strasse)+"<br>":""}${esc(k.plzort)||""}${k.email?"<br>"+esc(k.email):""}</td>
+        <td width="50%" valign="top" bgcolor="#F2F6FF" style="background-color:#F2F6FF;border-left:2pt solid #123FA6;padding:8pt 10pt">
+          <span style="font-size:7.5pt;letter-spacing:1.5pt;color:#123FA6;font-weight:bold">ANBIETER</span><br>
+          <b>${FIRMA.kurz}</b><br>${FIRMA.strasse}<br>${FIRMA.plzort}<br>Ihr Kontakt: ${esc(m.betreuer)}<br>${FIRMA.mail}</td>
+      </tr></table>
+      <p style="font-size:9pt;color:#3F4958">Angebotsnr.: <b>${esc(m.nr)||"—"}</b> &nbsp;·&nbsp; Datum: <b>${fmtDate(m.datum)}</b> &nbsp;·&nbsp; Gültig bis: <b>${fmtDate(m.gueltig)}</b></p>
+      ${s.anschreiben?H2("Persönliches Anschreiben")+`<p style="font-family:'Source Serif 4','Palatino Linotype',Georgia,serif;font-size:10.5pt">${nl(s.anschreiben)}</p>`:""}
+      ${m.kpi?H2("Warum VersicherungsTech Magazin")+kpi:""}
+      ${H2("Leistungen & Konditionen")}
+      ${this.wPosTable()}
+      ${this.wSumTable(c)}
+      <p align="right" style="font-size:8pt;color:#3F4958;font-style:italic">Alle Preise verstehen sich netto zzgl. gesetzlicher Umsatzsteuer.</p>
+      ${H2("Konditionen & nächste Schritte")}
+      <p>Dieses Angebot ist gültig bis zum <b>${fmtDate(m.gueltig)}</b>. Das Zahlungsziel beträgt <b>${s.zahlungsziel||14} Tage netto</b> nach Rechnungsstellung. Erste Inhalte gehen in der Regel innerhalb von 10 Werktagen nach Beauftragung live. Werbliche Formate werden als solche gekennzeichnet; die redaktionelle Unabhängigkeit des VersicherungsTech Magazins bleibt unberührt.</p>
+      <p>Zur Beauftragung genügt eine kurze Bestätigung per E-Mail. Anschließend stimmen wir Zeitplan und benötigte Materialien mit Ihnen ab.</p>
+      <p>&nbsp;</p><p>Mit freundlichen Grüßen</p>
+      <p><b>${esc(m.betreuer)}</b><br><span style="color:#3F4958">VersicherungsTech Magazin</span></p>
+      ${this.wFooter(false)}`;
+  },
+
+  wordVertrag(){
+    const s=this.s,k=s.kunde,v=s.vertrag,c=this.calc();
+    const leistungen = s.positionen.length? s.positionen.map(p=>`${p.menge>1?p.menge+"× ":""}${p.titel}`).join(", ") : "die im Angebot beschriebenen Leistungen";
+    const par=(n,t,body)=>`<p style="margin-top:10pt"><b style="color:#123FA6;font-size:9.5pt">§ ${n} ${t}</b><br>${body}</p>`;
+    return `${this.wBand("VERTRAG",v.nr,v.datum)}
+      <p style="font-size:14pt;font-weight:bold">${esc(s.meta.betreff)||"Medienkooperation"}</p>
+      <p style="color:#3F4958">Kooperationsvertrag · Vertrags-Nr. ${esc(v.nr)||"—"} · ${fmtDate(v.datum)}</p>
+      <p align="center" style="margin-top:12pt"><b>${esc(k.firma)||"[Auftraggeberin]"}</b><br>${esc(k.strasse)||"[Straße Nr.]"} · ${esc(k.plzort)||"[PLZ Ort]"}<br><span style="color:#3F4958">— nachfolgend „Auftraggeberin" —</span></p>
+      <p align="center" style="letter-spacing:2pt;color:#3F4958;font-size:8.5pt">UND</p>
+      <p align="center"><b>${FIRMA.name}</b><br>${FIRMA.strasse} · ${FIRMA.plzort}<br>vertreten durch den Geschäftsführer ${FIRMA.gf}<br><span style="color:#3F4958">— nachfolgend „Auftragnehmerin" —</span></p>
+      <p align="center" style="margin:10pt 0">wird folgender Vertrag geschlossen:</p>
+      ${par(1,"Vertragsgegenstand",`(1) Gegenstand des Vertrags ist die Durchführung einer Medienkooperation gemäß Angebot <b>${esc(s.meta.nr)||"[Angebotsnr.]"}</b> vom ${fmtDate(s.meta.datum)}. (2) Das Angebot ist Bestandteil dieses Vertrags.`)}
+      ${par(2,"Leistungen",`Die Auftragnehmerin erbringt die im Angebot beschriebenen Leistungen (${esc(leistungen)}). Werbliche Formate werden als solche gekennzeichnet; die redaktionelle Unabhängigkeit bleibt unberührt. Von der Auftraggeberin bereitgestellte Inhalte werden inhaltlich unverändert übernommen und ausschließlich gestalterisch an das Erscheinungsbild des VersicherungsTech Magazins angepasst. Die Veröffentlichung gekennzeichneter Inhalte erfolgt erst nach schriftlicher Freigabe durch die Auftraggeberin.`)}
+      ${par(3,"Vergütung",`Die Vergütung beträgt <b>${fmtEUR(c.nettoR)}</b> zzgl. gesetzlicher Umsatzsteuer${c.rabatt>0?` (bereits berücksichtigt: Paketrabatt von ${(s.rabatt||0).toLocaleString("de-DE")} %)`:""}. Das Zahlungsziel beträgt ${s.zahlungsziel||14} Tage netto nach Rechnungsstellung.`)}
+      ${par(4,"Laufzeit und Kündigung",`Der Vertrag beginnt am <b>${fmtDate(v.beginn)}</b> und läuft bis zum <b>${fmtDate(v.ende)}</b>. Er kann mit einer Frist von ${esc(v.kuendigung)||"drei Monaten zum Laufzeitende"} gekündigt werden. Das Recht zur außerordentlichen Kündigung bleibt unberührt.`)}
+      ${par(5,"Vertraulichkeit",`Die Parteien behandeln vertrauliche Informationen der jeweils anderen Partei auch nach Vertragsende vertraulich.`)}
+      ${v.zusatz?par(6,"Ergänzende Regelungen",nl(v.zusatz)):""}
+      ${par(v.zusatz?7:6,"Schlussbestimmungen",`Änderungen und Ergänzungen bedürfen der Textform. Gerichtsstand ist ${esc(v.gerichtsstand)||"Köln"}. Sollten einzelne Bestimmungen unwirksam sein, bleibt der Vertrag im Übrigen wirksam.`)}
+      <p>&nbsp;</p><p>&nbsp;</p>
+      <table width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+        <td width="46%" style="border-top:.75pt solid #121E39;padding-top:4pt;font-size:7.5pt;color:#3F4958">ORT, DATUM · UNTERSCHRIFT AUFTRAGGEBERIN<br><span style="font-size:9.5pt;color:#121E39"><b>${esc(k.firma)||"[Auftraggeberin]"}</b></span></td>
+        <td width="8%">&nbsp;</td>
+        <td width="46%" style="border-top:.75pt solid #121E39;padding-top:4pt;font-size:7.5pt;color:#3F4958">ORT, DATUM · UNTERSCHRIFT AUFTRAGNEHMERIN<br><span style="font-size:9.5pt;color:#121E39"><b>${FIRMA.kurz} · ${FIRMA.gf}</b></span></td>
+      </tr></table>
+      ${this.wFooter(false)}`;
+  },
+
+  wordRechnung(){
+    const s=this.s,k=s.kunde,r=s.rechnung,c=this.calc();
+    const faellig = addDays(r.datum, s.zahlungsziel||14);
+    const bezug = r.bezug || (s.meta.nr?`Angebot ${s.meta.nr}${s.vertrag.nr?` / Vertrag ${s.vertrag.nr}`:""}`:"");
+    const zeitraum = (r.von||r.bis) ? `${fmtDate(r.von)} bis ${fmtDate(r.bis)}` : "";
+    return `${this.wBand("RECHNUNG",r.nr,r.datum)}
+      <p style="font-size:7.5pt;color:#3F4958">${FIRMA.kurz} · ${FIRMA.strasse} · ${FIRMA.plzort}</p>
+      <table width="100%" cellpadding="0" cellspacing="6" border="0"><tr>
+        <td width="50%" valign="top" bgcolor="#F2F6FF" style="background-color:#F2F6FF;border-left:2pt solid #123FA6;padding:8pt 10pt">
+          <span style="font-size:7.5pt;letter-spacing:1.5pt;color:#123FA6;font-weight:bold">RECHNUNGSEMPFÄNGER</span><br>
+          <b>${esc(k.firma)||"—"}</b><br>${k.name?esc((k.anrede?k.anrede+" ":"")+k.name)+"<br>":""}${k.strasse?esc(k.strasse)+"<br>":""}${esc(k.plzort)||""}</td>
+        <td width="50%" valign="top" bgcolor="#F2F6FF" style="background-color:#F2F6FF;border-left:2pt solid #123FA6;padding:8pt 10pt">
+          <span style="font-size:7.5pt;letter-spacing:1.5pt;color:#123FA6;font-weight:bold">RECHNUNGSDATEN</span><br>
+          Rechnungsnr.: <b>${esc(r.nr)||"—"}</b><br>Rechnungsdatum: <b>${fmtDate(r.datum)}</b><br>Zahlungsziel: <b>${fmtDate(faellig)}</b> (${s.zahlungsziel||14} Tage netto)${zeitraum?`<br>Leistungszeitraum: <b>${zeitraum}</b>`:""}</td>
+      </tr></table>
+      <p>Wir erlauben uns, die folgenden Leistungen${bezug?` gemäß ${esc(bezug)}`:""} in Rechnung zu stellen:</p>
+      ${this.wPosTable()}
+      ${this.wSumTable(c)}
+      <table width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+        <td bgcolor="#F2F6FF" style="background-color:#F2F6FF;border-left:2pt solid #123FA6;padding:8pt 10pt">
+          Bitte überweisen Sie den Rechnungsbetrag von <b>${fmtEUR(c.brutto)}</b> bis zum <b>${fmtDate(faellig)}</b> unter Angabe der Rechnungsnummer auf folgendes Konto:<br>
+          <b>${FIRMA.kurz}</b> · IBAN <b>${FIRMA.iban}</b></td></tr></table>
+      <p style="margin-top:10pt">Vielen Dank für die gute Zusammenarbeit.</p>
+      <p><b>${FIRMA.gf}</b><br><span style="color:#3F4958">Geschäftsführer, ${FIRMA.kurz}</span></p>
+      ${this.wFooter(true)}`;
+  },
+
+  toast(msg){
+    const t=document.getElementById("toast");
+    t.textContent=msg; t.classList.add("show");
+    clearTimeout(this._tt); this._tt=setTimeout(()=>t.classList.remove("show"),2600);
+  }
+};
+
+function lastName(full){
+  if(!full) return "";
+  const parts = full.trim().split(/\s+/);
+  return parts[parts.length-1];
+}
+
+app.init();
+</script>
+</body>
+</html>
