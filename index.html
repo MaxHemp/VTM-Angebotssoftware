@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>VTM Angebotsdesk · Angebote, Verträge &amp; Rechnungen</title>
+<link rel="icon" type="image/png" href="assets/vtm-logo-color.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+
+<!-- ================= LOGIN ================= -->
+<div class="login-screen" id="login-screen">
+  <form class="login-card" id="login-form" novalidate>
+    <div class="lc-brand">
+      <img src="assets/vtm-logo-color.png" alt="">
+      <b>VersicherungsTech<br>Magazin</b>
+    </div>
+    <div class="lc-sub">Angebotsdesk · Team-Login</div>
+    <div class="login-error" id="login-error" role="alert"></div>
+    <div class="login-info" id="login-info"></div>
+    <label><span>E-Mail-Adresse</span>
+      <input type="email" id="login-email" autocomplete="username" placeholder="vorname.nachname@versicherungstech-magazin.de" required>
+    </label>
+    <label id="login-pass-wrap"><span id="login-pass-label">Passwort</span>
+      <input type="password" id="login-pass" autocomplete="current-password" required>
+    </label>
+    <label id="login-pass2-wrap" style="display:none"><span>Passwort wiederholen</span>
+      <input type="password" id="login-pass2" autocomplete="new-password">
+    </label>
+    <label class="login-remember"><input type="checkbox" id="login-remember"> Auf diesem Gerät angemeldet bleiben</label>
+    <button type="submit" class="btn blue" id="login-submit">Anmelden</button>
+    <div class="lc-foot">Zugang nur für das VTM-Team. Neue Zugänge legt die Administration unter <b>Einstellungen → Benutzer</b> an. Beim ersten Login wird das persönliche Passwort festgelegt.</div>
+  </form>
+</div>
+
+<!-- ================= APP ================= -->
+<div class="app" id="app">
+  <aside class="sidebar">
+    <div class="sb-brand">
+      <img src="assets/vtm-logo-white.png" alt="">
+      <div><b>VTM Angebotsdesk</b><span>Sales · Master Next</span></div>
+    </div>
+    <nav id="mainnav" aria-label="Hauptnavigation">
+      <a href="#/dashboard" data-nav="dashboard">Dashboard</a>
+      <a href="#/angebote" data-nav="angebote">Angebote</a>
+      <a href="#/neu" data-nav="neu">＋ Neues Angebot</a>
+      <a href="#/kunden" data-nav="kunden">Kunden</a>
+      <a href="#/katalog" data-nav="katalog">Produkte &amp; Leistungen</a>
+      <a href="#/freigaben" data-nav="freigaben">Freigaben <span class="nv-count" id="nav-freigaben-count" style="display:none"></span></a>
+      <a href="#/vorlagen" data-nav="vorlagen">Vorlagen</a>
+      <div class="nv-sep">Verwaltung</div>
+      <a href="#/einstellungen" data-nav="einstellungen">Einstellungen</a>
+    </nav>
+    <div class="sb-user">
+      <b id="sb-user-name">—</b>
+      <span id="sb-user-role">—</span>
+      <button onclick="Auth.logout()">Abmelden</button>
+    </div>
+  </aside>
+
+  <div class="main">
+
+    <!-- ===== DASHBOARD ===== -->
+    <section class="view" id="view-dashboard" hidden>
+      <div class="pagehead">
+        <div><h1>Dashboard</h1><div class="ph-sub" id="dash-greeting"></div></div>
+        <div class="spacer"></div>
+        <button class="btn blue" onclick="Views.newOffer()">＋ Neues Angebot</button>
+      </div>
+      <div class="content" id="dash-content"></div>
+    </section>
+
+    <!-- ===== ANGEBOTE ===== -->
+    <section class="view" id="view-angebote" hidden>
+      <div class="pagehead">
+        <div><h1>Angebote</h1><div class="ph-sub">Alle Angebote des Teams, mit Status und Freigabestand</div></div>
+        <div class="spacer"></div>
+        <button class="btn" onclick="Views.exportOffersCSV()">CSV-Export</button>
+        <button class="btn blue" onclick="Views.newOffer()">＋ Neues Angebot</button>
+      </div>
+      <div class="content">
+        <div class="toolbar">
+          <input type="search" id="offers-search" placeholder="Suchen: Nummer, Kunde, Betreff …" aria-label="Angebote durchsuchen">
+          <select id="offers-status" aria-label="Nach Status filtern">
+            <option value="">Alle Status</option>
+            <option value="entwurf">Entwurf</option>
+            <option value="pruefung">In Prüfung</option>
+            <option value="freigegeben">Freigegeben</option>
+            <option value="versendet">Versendet</option>
+            <option value="angenommen">Angenommen</option>
+            <option value="abgelehnt">Abgelehnt</option>
+          </select>
+          <select id="offers-betreuer" aria-label="Nach Betreuung filtern"><option value="">Alle Betreuer</option></select>
+          <div class="spacer"></div>
+          <span class="result-count" id="offers-count"></span>
+        </div>
+        <div class="card table-scroll" id="offers-table"></div>
+      </div>
+    </section>
+
+    <!-- ===== EDITOR ===== -->
+    <section class="view" id="view-editor" hidden>
+      <div class="editor-bar">
+        <button class="btn" onclick="Editor.backToList()">← Angebote</button>
+        <span class="eb-id" id="editor-id">—</span>
+        <span id="editor-status"></span>
+        <div class="spacer"></div>
+        <span class="autosave" id="editor-autosave"></span>
+        <button class="btn" onclick="Editor.save(true)">Speichern</button>
+        <span id="editor-workflow-actions"></span>
+        <button class="btn" onclick="Editor.mailText()">E-Mail-Text</button>
+        <button class="btn" onclick="Editor.exportWord()">Word-Export</button>
+        <button class="btn blue" onclick="Editor.print()">Als PDF drucken</button>
+      </div>
+      <nav class="tabs" aria-label="Dokumenttyp">
+        <button id="tab-angebot" class="active" onclick="Editor.setTab('angebot')">Angebot</button>
+        <button id="tab-vertrag" onclick="Editor.setTab('vertrag')">Vertrag</button>
+        <button id="tab-rechnung" onclick="Editor.setTab('rechnung')">Rechnung</button>
+      </nav>
+
+      <div class="editor-layout">
+        <div class="formpane" id="formpane">
+
+          <div class="notice warn" id="freigabe-note" style="display:none"></div>
+
+          <!-- ===== ANGEBOT-FORMULAR ===== -->
+          <div id="form-angebot">
+            <fieldset>
+              <legend>Kunde</legend>
+              <div class="row">
+                <label><span>Aus Kundenliste übernehmen</span>
+                  <select id="kunde-select" onchange="Editor.pickCustomer(this.value)"><option value="">— Kunde wählen —</option></select></label>
+                <label><span>&nbsp;</span><button type="button" class="btn" style="width:100%" onclick="Editor.saveAsCustomer()">Als Kunde speichern</button></label>
+              </div>
+              <div class="row">
+                <label class="single" style="grid-column:1/-1"><span>Firma</span><input type="text" data-k="kunde.firma" placeholder="Muster Versicherung AG"></label>
+              </div>
+              <div class="row">
+                <label><span>Anrede</span>
+                  <select data-k="kunde.anrede"><option>Frau</option><option>Herr</option><option value="">Neutral</option></select></label>
+                <label><span>Ansprechpartner/in</span><input type="text" data-k="kunde.name" placeholder="Hanna Löbe"></label>
+              </div>
+              <div class="row">
+                <label><span>Funktion</span><input type="text" data-k="kunde.funktion" placeholder="Managerin Marketing"></label>
+                <label><span>E-Mail</span><input type="email" data-k="kunde.email" placeholder="h.loebe@..."></label>
+              </div>
+              <div class="row">
+                <label><span>Straße, Nr.</span><input type="text" data-k="kunde.strasse" placeholder="Riesstraße 25"></label>
+                <label><span>PLZ, Ort</span><input type="text" data-k="kunde.plzort" placeholder="80992 München"></label>
+              </div>
+            </fieldset>
+
+            <fieldset>
+              <legend>Angebot</legend>
+              <div class="row thirds">
+                <label><span>Angebotsnr.</span><input type="text" data-k="meta.nr" placeholder="A-2026-042"></label>
+                <label><span>Datum</span><input type="date" data-k="meta.datum"></label>
+                <label><span>Gültig bis</span><input type="date" data-k="meta.gueltig"></label>
+              </div>
+              <div class="inline-actions"><button type="button" class="btn" onclick="Editor.pullNumber('angebot')">Nächste Nummer ziehen</button></div>
+              <div class="row" style="margin-top:10px">
+                <label class="single" style="grid-column:1/-1"><span>Betreff / Kampagnentitel</span><input type="text" data-k="meta.betreff" placeholder="Mediapaket zur Bewerbung der ..."></label>
+              </div>
+              <div class="row">
+                <label><span>Anlass / Event (optional)</span><input type="text" data-k="meta.anlass" placeholder="MMM Fachmesse, 21. April 2026"></label>
+                <label><span>Betreuung durch</span>
+                  <select data-k="meta.betreuer" id="betreuer-select"></select></label>
+              </div>
+              <label class="switch"><input type="checkbox" data-k="meta.kpi" checked> Reichweiten-Kennzahlen im Angebot zeigen</label>
+            </fieldset>
+
+            <fieldset>
+              <legend>Anschreiben</legend>
+              <div class="row">
+                <label><span>Vorlage</span><select id="anschreiben-tpl"></select></label>
+                <label><span>&nbsp;</span><button type="button" class="btn" style="width:100%" onclick="Editor.applyTemplate()">Vorlage einsetzen</button></label>
+              </div>
+              <textarea data-k="anschreiben" rows="7" placeholder="Persönliches Anschreiben ..."></textarea>
+              <div class="inline-actions"><button type="button" class="btn" onclick="Editor.genAnschreiben()">Vorschlag aus Kundendaten erzeugen</button></div>
+              <div class="hint">Der Vorschlag ist ein Startpunkt. Bitte immer individuell anpassen.</div>
+            </fieldset>
+
+            <fieldset>
+              <legend>Leistungskatalog</legend>
+              <div class="cat-group">Beliebte Kombinationen · 1 Klick, danach frei anpassbar</div>
+              <div class="bundles" id="bundles"></div>
+              <div id="catalog"></div>
+              <div class="inline-actions" style="margin-top:12px"><button type="button" class="btn ghost" onclick="Editor.addPos()">＋ Freie Position</button></div>
+            </fieldset>
+
+            <fieldset>
+              <legend>Positionen &amp; Preis</legend>
+              <div id="poslist"></div>
+              <div class="row" style="margin-top:12px">
+                <label><span>Paketrabatt gesamt (%)</span><input type="number" min="0" max="100" step="0.5" data-k="rabatt"></label>
+                <label><span>Zahlungsziel (Tage)</span><input type="number" min="0" step="1" data-k="zahlungsziel"></label>
+              </div>
+              <div class="hint" style="margin-bottom:8px">Mengenrabatt für Sponsored LinkedIn Posts (ab 5 Posts −10 %, ab 10 Posts −20 %) wird automatisch als Positionsrabatt gesetzt.</div>
+              <div class="totals" id="totals"></div>
+            </fieldset>
+
+            <fieldset>
+              <legend>Interne Steuerung (erscheint nicht im Dokument)</legend>
+              <div class="row">
+                <label><span>Wiedervorlage am</span><input type="date" data-k="intern.wiedervorlage"></label>
+                <label><span>Abschlusswahrscheinlichkeit</span>
+                  <select data-k="intern.chance">
+                    <option value="">—</option><option value="25">25 % · Erstkontakt</option>
+                    <option value="50">50 % · Angebot besprochen</option>
+                    <option value="75">75 % · Mündliche Zusage</option>
+                  </select></label>
+              </div>
+              <label class="single"><span>Interne Notiz</span><textarea data-k="intern.notiz" rows="3" placeholder="Gesprächsnotizen, nächste Schritte …"></textarea></label>
+            </fieldset>
+          </div>
+
+          <!-- ===== VERTRAG-FORMULAR ===== -->
+          <div id="form-vertrag" style="display:none">
+            <div class="notice">Kundendaten, Angebotsbezug und Vergütung werden automatisch aus dem Angebot übernommen. Hier nur die vertragsspezifischen Punkte ergänzen.</div>
+            <fieldset>
+              <legend>Vertragsdaten</legend>
+              <div class="row thirds">
+                <label><span>Vertrags-Nr.</span><input type="text" data-k="vertrag.nr" placeholder="V-2026-018"></label>
+                <label><span>Vertragsdatum</span><input type="date" data-k="vertrag.datum"></label>
+                <label><span>Gerichtsstand</span><input type="text" data-k="vertrag.gerichtsstand"></label>
+              </div>
+              <div class="inline-actions"><button type="button" class="btn" onclick="Editor.pullNumber('vertrag')">Nächste Nummer ziehen</button></div>
+            </fieldset>
+            <fieldset>
+              <legend>Laufzeit &amp; Kündigung</legend>
+              <div class="row">
+                <label><span>Beginn</span><input type="date" data-k="vertrag.beginn"></label>
+                <label><span>Ende</span><input type="date" data-k="vertrag.ende"></label>
+              </div>
+              <div class="row single">
+                <label><span>Kündigungsfrist</span><input type="text" data-k="vertrag.kuendigung" placeholder="drei Monate zum Laufzeitende"></label>
+              </div>
+            </fieldset>
+            <fieldset>
+              <legend>Ergänzende Regelungen (optional)</legend>
+              <textarea data-k="vertrag.zusatz" rows="4" placeholder="z. B. Freigabeprozesse, Materiallieferung, Reporting-Turnus ..."></textarea>
+            </fieldset>
+            <div class="notice warn"><b>Hinweis:</b> Dieses Dokument ist ein Vertragsentwurf auf Basis der VTM-Standardvorlage. Vor Versand an den Kunden gilt die interne Freigabe durch die Geschäftsführung; bei Abweichungen von der Standardvorlage zusätzlich rechtliche Prüfung.</div>
+          </div>
+
+          <!-- ===== RECHNUNG-FORMULAR ===== -->
+          <div id="form-rechnung" style="display:none">
+            <div class="notice">Empfänger und Positionen werden aus dem Angebot übernommen. Rechnungsnummernkreis: VTM-JJJJ-NNNN (fortlaufend mit den bestehenden Rechnungen).</div>
+            <fieldset>
+              <legend>Rechnungsdaten</legend>
+              <div class="row">
+                <label><span>Rechnungsnr.</span><input type="text" data-k="rechnung.nr" placeholder="VTM-2026-0028"></label>
+                <label><span>Rechnungsdatum</span><input type="date" data-k="rechnung.datum"></label>
+              </div>
+              <div class="inline-actions"><button type="button" class="btn" onclick="Editor.pullNumber('rechnung')">Nächste Nummer ziehen</button></div>
+              <div class="row" style="margin-top:10px">
+                <label><span>Leistungszeitraum von</span><input type="date" data-k="rechnung.von"></label>
+                <label><span>Leistungszeitraum bis</span><input type="date" data-k="rechnung.bis"></label>
+              </div>
+              <div class="row single">
+                <label><span>Bezug (optional, z. B. Angebots- oder Vertragsnummer)</span><input type="text" data-k="rechnung.bezug" placeholder="wird sonst automatisch aus dem Angebot übernommen"></label>
+              </div>
+              <div class="hint">Fälligkeitsdatum wird aus Rechnungsdatum + Zahlungsziel (Reiter Angebot) berechnet.</div>
+            </fieldset>
+            <div class="notice warn"><b>Interner Hinweis (nicht auf der Rechnung):</b> USt-Ausweis 19 % entspricht der aktuellen Praxis. Die Abgrenzung zur Kleinunternehmerregelung nach § 19 UStG ist beim Steuerberater in Klärung. Bis zur Klärung Rechnungen nur nach Rücksprache mit der Geschäftsführung versenden.</div>
+          </div>
+        </div>
+
+        <!-- ===== PREVIEW ===== -->
+        <div class="previewpane">
+          <div class="sheet doc" id="sheet-angebot"></div>
+          <div class="sheet doc" id="sheet-vertrag" style="display:none"></div>
+          <div class="sheet doc" id="sheet-rechnung" style="display:none"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== KUNDEN ===== -->
+    <section class="view" id="view-kunden" hidden>
+      <div class="pagehead">
+        <div><h1>Kunden</h1><div class="ph-sub">Gemeinsamer Kundenstamm des Teams</div></div>
+        <div class="spacer"></div>
+        <button class="btn blue" onclick="Views.editCustomer()">＋ Neuer Kunde</button>
+      </div>
+      <div class="content">
+        <div class="toolbar">
+          <input type="search" id="kunden-search" placeholder="Suchen: Firma, Ansprechpartner, Ort …" aria-label="Kunden durchsuchen">
+          <div class="spacer"></div>
+          <span class="result-count" id="kunden-count"></span>
+        </div>
+        <div class="card table-scroll" id="kunden-table"></div>
+      </div>
+    </section>
+
+    <!-- ===== KATALOG ===== -->
+    <section class="view" id="view-katalog" hidden>
+      <div class="pagehead">
+        <div><h1>Produkte &amp; Leistungen</h1><div class="ph-sub">Leistungskatalog und Paket-Kombinationen · Preise netto zzgl. USt.</div></div>
+      </div>
+      <div class="content" id="katalog-content"></div>
+    </section>
+
+    <!-- ===== FREIGABEN ===== -->
+    <section class="view" id="view-freigaben" hidden>
+      <div class="pagehead">
+        <div><h1>Freigaben</h1><div class="ph-sub" id="freigaben-sub"></div></div>
+      </div>
+      <div class="content" id="freigaben-content"></div>
+    </section>
+
+    <!-- ===== VORLAGEN ===== -->
+    <section class="view" id="view-vorlagen" hidden>
+      <div class="pagehead">
+        <div><h1>Vorlagen</h1><div class="ph-sub">Textbausteine für Anschreiben und E-Mails</div></div>
+        <div class="spacer"></div>
+        <button class="btn blue" onclick="Views.editTemplate()">＋ Neue Vorlage</button>
+      </div>
+      <div class="content" id="vorlagen-content"></div>
+    </section>
+
+    <!-- ===== EINSTELLUNGEN ===== -->
+    <section class="view" id="view-einstellungen" hidden>
+      <div class="pagehead">
+        <div><h1>Einstellungen</h1><div class="ph-sub" id="settings-sub"></div></div>
+      </div>
+      <div class="content" id="settings-content"></div>
+    </section>
+
+  </div>
+</div>
+
+<!-- Generisches Modal -->
+<div class="modal-bg" id="modal-bg">
+  <div class="modal" id="modal" role="dialog" aria-modal="true"></div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
