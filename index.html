@@ -33,7 +33,11 @@
     </label>
     <label class="login-remember"><input type="checkbox" id="login-remember"> Auf diesem Gerät angemeldet bleiben</label>
     <button type="submit" class="btn blue" id="login-submit">Anmelden</button>
-    <div class="lc-foot">Zugang nur für das VTM-Team. Neue Zugänge legt die Administration unter <b>Einstellungen → Benutzer</b> an. Beim ersten Login wird das persönliche Passwort festgelegt.</div>
+    <div class="inline-actions" style="margin-top:14px;justify-content:center">
+      <button type="button" class="btn" onclick="document.getElementById('login-import').click()">Team-Daten importieren (JSON)</button>
+      <input type="file" id="login-import" accept="application/json" style="display:none">
+    </div>
+    <div class="lc-foot">Zugang nur für das VTM-Team. Neue Zugänge legt die Administration unter <b>Einstellungen → Benutzer</b> an; anschließend die exportierte Team-Datei (Einstellungen → Datensicherung) an die Person schicken und hier vor dem ersten Login importieren. Beim ersten Login wird das persönliche Passwort festgelegt.</div>
   </form>
 </div>
 

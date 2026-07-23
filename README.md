@@ -69,6 +69,26 @@ Research) und der Struktur des **VTM Sales Desk**.
 > zusätzlich absichern (z. B. Cloudflare Access, Netlify
 > Password/Identity oder Basic Auth des Webservers).
 
+## Team-Onboarding (neue Geräte)
+
+Die App verschickt **keine Einladungs-E-Mails** – es gibt keinen
+Server, der senden könnte. Neue Teammitglieder werden so
+freigeschaltet:
+
+1. Administration: **Einstellungen → Benutzer** → Person anlegen
+   bzw. E-Mail-Adresse hinterlegen.
+2. Administration: **Einstellungen → Datensicherung → Backup
+   exportieren (JSON)** und die Datei an die Person schicken
+   (Mail/Teams).
+3. Person: Software im Browser öffnen → auf dem Login-Screen
+   **„Team-Daten importieren (JSON)"** → Datei auswählen.
+4. Person: mit der eigenen E-Mail anmelden – beim ersten Login wird
+   das persönliche Passwort festgelegt.
+
+Ohne Schritt 2/3 kennt der Browser der Person die neuen Benutzer
+nicht („E-Mail-Adresse ist auf diesem Gerät nicht hinterlegt") –
+siehe Datenhaltung.
+
 ## Datenhaltung
 
 Alle Daten (Angebote, Kunden, Katalog, Benutzer, Einstellungen)

@@ -197,10 +197,35 @@ const Auth = {
         passEl.autocomplete="current-password"; submit.textContent="Anmelden"; }
     });
 
+    /* Team-Daten-Import direkt am Login (Onboarding neuer Geräte).
+       Natives confirm(), da der Login-Screen über dem Modal-Layer liegt. */
+    const imp=document.getElementById("login-import");
+    imp.addEventListener("change",()=>{
+      const file=imp.files && imp.files[0];
+      imp.value="";
+      if(!file) return;
+      const reader=new FileReader();
+      reader.onload=()=>{
+        let data;
+        try{ data=JSON.parse(reader.result); }
+        catch(e){ showErr("Die Datei ist kein gültiges JSON-Backup."); return; }
+        if(!data || !Array.isArray(data.users) || !Array.isArray(data.offers)){
+          showErr("Die Datei ist keine Angebotsdesk-Team-Datei."); return;
+        }
+        const hasLocal=Store.state.offers.length||Store.state.kunden.length;
+        if(hasLocal && !confirm(`Auf diesem Gerät liegen bereits Daten (${Store.state.offers.length} Angebote). Durch den Import werden sie ersetzt. Fortfahren?`)) return;
+        localStorage.setItem(Store.KEY, JSON.stringify(data));
+        sessionStorage.removeItem("vtmdesk-session");
+        localStorage.removeItem("vtmdesk-session");
+        location.reload();
+      };
+      reader.readAsText(file);
+    });
+
     form.addEventListener("submit", async ev=>{
       ev.preventDefault(); clearMsg();
       const u=this.findUser(emailEl.value);
-      if(!u || u.active===false){ showErr("Diese E-Mail-Adresse ist nicht als Teammitglied hinterlegt. Bitte an die Administration wenden."); return; }
+      if(!u || u.active===false){ showErr("Diese E-Mail-Adresse ist auf diesem Gerät nicht als Teammitglied hinterlegt. Bitte unten die von der Administration erhaltene Team-Datei importieren – oder den Zugang von der Administration anlegen lassen."); return; }
 
       if(!u.passHash && !setupMode){
         setupMode=true;
@@ -890,7 +915,7 @@ const Views = {
     </div>`;
 
     const backupCard=`<div class="card"><h2>Datensicherung</h2>
-      <p style="font-size:12.5px;color:var(--text-secondary);margin-bottom:10px">Alle Daten (Angebote, Kunden, Katalog, Benutzer, Einstellungen) liegen im Browser dieses Geräts. Regelmäßig exportieren – der Export dient auch zum Übertragen auf andere Geräte bzw. an Teammitglieder.</p>
+      <p style="font-size:12.5px;color:var(--text-secondary);margin-bottom:10px">Alle Daten (Angebote, Kunden, Katalog, Benutzer, Einstellungen) liegen im Browser dieses Geräts. Regelmäßig exportieren! Der Export ist zugleich die <b>Team-Datei fürs Onboarding</b>: Nach dem Anlegen neuer Benutzer die Datei an die Person schicken – sie importiert sie auf dem Login-Screen über „Team-Daten importieren" und meldet sich dann mit ihrer E-Mail an.</p>
       <div class="inline-actions">
         <button class="btn blue" onclick="Store.exportJSON()">Backup exportieren (JSON)</button>
         ${admin?`<button class="btn" onclick="document.getElementById('st-import').click()">Backup importieren</button>
