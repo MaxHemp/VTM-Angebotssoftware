@@ -218,7 +218,7 @@ const Auth = {
     });
     document.getElementById("ls-connect").addEventListener("click", async ()=>{
       clearMsg();
-      const url=document.getElementById("ls-url").value.trim();
+      const url=Sync.normalizeUrl(document.getElementById("ls-url").value);
       const key=document.getElementById("ls-key").value.trim();
       if(!url||!key){ showErr("Bitte Server-URL und Zugangsschlüssel eintragen."); return; }
       const btn=document.getElementById("ls-connect");
@@ -1008,9 +1008,9 @@ const Views = {
   },
 
   async connectSync(){
-    const url=document.getElementById("st-sync-url").value.trim();
+    const url=Sync.normalizeUrl(document.getElementById("st-sync-url").value);
     const key=document.getElementById("st-sync-key").value.trim();
-    if(!url||!key){ toast("Bitte Server-URL und Zugangsschlüssel eintragen"); return; }
+    if(!url||!key){ toast("Bitte Server-URL und Zugangsschlüssel eintragen"); Sync.lastError="Bitte beide Felder ausfüllen."; Sync.updateUI(); return; }
     try{ await Sync.test(url,key); }
     catch(e){ toast(e.message); Sync.lastError=e.message; Sync.updateUI(); return; }
     Sync.saveConfig({url,key,enabled:true});

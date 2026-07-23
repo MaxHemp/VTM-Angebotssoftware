@@ -36,7 +36,12 @@ const Sync = {
     const c=this.config();
     return Object.assign({ "apikey":c.key, "Authorization":"Bearer "+c.key, "Content-Type":"application/json" }, extra||{});
   },
-  base(url){ return (url||this.config().url).replace(/\/+$/,"")+"/rest/v1/desk_state"; },
+  /* URL säubern: Leerzeichen, Slashes am Ende, versehentlich
+     mitkopierte /rest/v1-Pfade */
+  normalizeUrl(url){
+    return (url||"").trim().replace(/\/rest\/v1.*$/,"").replace(/\/+$/,"");
+  },
+  base(url){ return this.normalizeUrl(url||this.config().url)+"/rest/v1/desk_state"; },
 
   /* ---------- REST ---------- */
   async fetchRow(){
@@ -61,13 +66,20 @@ const Sync = {
   },
   /* Verbindungstest, auch vom Login-Screen genutzt */
   async test(url,key){
+    url=this.normalizeUrl(url);
+    if(/supabase\.com/i.test(url))
+      throw new Error("Das ist die Adresse des Supabase-Dashboards. Benötigt wird die Project URL (Settings → API bzw. Data API) – sie sieht so aus: https://abcdefgh.supabase.co");
+    if(!/^https?:\/\//i.test(url))
+      throw new Error("Die Server-URL muss mit https:// beginnen, z. B. https://abcdefgh.supabase.co");
+    if(/^ey[A-Za-z0-9_-]{10}/.test(url))
+      throw new Error("Im URL-Feld steht offenbar der Schlüssel – bitte die Felder tauschen.");
     let r;
     try{
       r=await fetch(this.base(url)+"?id=eq.main&select=rev",
         {headers:{"apikey":key,"Authorization":"Bearer "+key}});
-    }catch(e){ throw new Error("Server nicht erreichbar – URL prüfen."); }
-    if(r.status===404) throw new Error("Tabelle desk_state fehlt – bitte das SQL-Setup in Supabase ausführen (siehe Anleitung).");
-    if(r.status===401||r.status===403) throw new Error("Zugangsschlüssel wird nicht akzeptiert – anon key prüfen.");
+    }catch(e){ throw new Error("Server nicht erreichbar – bitte die Project URL prüfen (https://…supabase.co)."); }
+    if(r.status===404) throw new Error("Verbindung steht, aber die Tabelle desk_state fehlt – bitte das SQL-Setup im Supabase SQL Editor ausführen und die Warnung dort mit „Run query“ bestätigen.");
+    if(r.status===401||r.status===403) throw new Error("Zugangsschlüssel wird nicht akzeptiert – bitte den anon public key verwenden (Settings → API Keys).");
     if(!r.ok) throw new Error("Verbindung fehlgeschlagen (HTTP "+r.status+").");
     return true;
   },
@@ -210,10 +222,11 @@ const Sync = {
     }
     const st=document.getElementById("st-sync-status");
     if(st){
-      st.innerHTML=!this.enabled()
-        ? "Nicht verbunden."
-        : this.lastError
-          ? `<span style="color:var(--c-danger)">Fehler: ${this.lastError}</span>`
+      const safe=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+      st.innerHTML=this.lastError
+        ? `<span style="color:var(--c-danger)"><b>Fehler:</b> ${safe(this.lastError)}</span>`
+        : !this.enabled()
+          ? "Nicht verbunden."
           : `<span style="color:var(--c-success)">Verbunden.</span> Letzte Synchronisation: ${this.lastSync?this.lastSync.toLocaleTimeString("de-DE"):"—"}`;
     }
   }
