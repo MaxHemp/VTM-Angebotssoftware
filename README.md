@@ -90,18 +90,31 @@ unten in der Seitenleiste sichtbar.
 4. In der App: **Einstellungen → Team-Synchronisation** → beide
    Werte eintragen → „Speichern & verbinden".
 
-**Onboarding neuer Teammitglieder:**
+**Onboarding neuer Teammitglieder (mit E-Mail-Einladung):**
 
 1. Administration legt die Person unter **Einstellungen →
-   Benutzer** mit E-Mail-Adresse an (synchronisiert automatisch).
-2. Administration schickt der Person Server-URL + Zugangsschlüssel
-   (oder alternativ die exportierte Team-Datei).
-3. Person: Login-Screen → **„Mit Team-Server verbinden"** → beide
-   Werte eintragen → mit der eigenen E-Mail anmelden; beim ersten
-   Login wird das persönliche Passwort festgelegt.
+   Benutzer** mit E-Mail-Adresse an. Die App erzeugt automatisch
+   ein Einmalpasswort und der Team-Server verschickt die
+   **Einladungs-E-Mail** (Link zu ADAM, Benutzername = E-Mail,
+   Einmalpasswort). Das Einmalpasswort wird der Administration
+   zusätzlich einmalig als Fallback angezeigt.
+2. Person: Link öffnen → ggf. am Login **„Mit Team-Server
+   verbinden"** (Server-URL + Zugangsschlüssel von der
+   Administration, nur beim allerersten Mal auf einem Gerät) →
+   mit E-Mail + Einmalpasswort anmelden.
+3. Beim ersten Login **erzwingt** die App das Festlegen eines
+   eigenen Passworts; das Einmalpasswort wird damit ungültig.
+   „Neues Einmalpasswort senden" in der Benutzerverwaltung setzt
+   ein vergessenes Passwort zurück.
 
-Einladungs-E-Mails verschickt die App nicht selbst – die
-Zugangsdaten schickt die Administration einmalig per Mail/Teams.
+**Mailversand einrichten (einmalig):** Einstellungen →
+**E-Mail-Einladungen** → Resend-API-Key (nur Versandrecht)
+eintragen → „SQL erzeugen" → Script im Supabase SQL Editor
+ausführen (`supabase-mail-setup.sql` ist die Vorlage). Versand
+läuft über einen Datenbank-Trigger (pg_net → Resend) mit der
+verifizierten Absender-Domain `versicherungstech-magazin.de`;
+der Key liegt nur in Supabase (RLS-geschützt, per API nicht
+auslesbar), Empfänger sind auf konfigurierte Domains beschränkt.
 
 **Konfliktverhalten:** Pro Angebot/Kunde/Benutzer/Vorlage gewinnt
 die zuletzt gespeicherte Änderung; Katalog und Einstellungen als
@@ -150,6 +163,7 @@ Build-Schritt; Schriften kommen von Google Fonts.
 | `app.js` | Store, Auth/Rollen, Router, Views, Editor, Word-Export |
 | `sync.js` | Team-Synchronisation: Supabase-Anbindung, Merge-Logik, Statusanzeige |
 | `supabase-setup.sql` | Einmaliges SQL-Setup für das Backend |
+| `supabase-mail-setup.sql` | Vorlage für den Einladungs-Mailversand (pg_net → Resend) |
 | `data.js` | Seed-Daten: Katalog, Bundles, Vorlagen, Firma, Benutzer, Nummernkreise |
 | `assets/` | VTM-Logos (farbig/weiß) |
 

@@ -22,6 +22,13 @@ function toast(msg){
   clearTimeout(toast._tt); toast._tt=setTimeout(()=>t.classList.remove("show"),2600);
 }
 
+/* Lesbares Einmalpasswort ohne verwechselbare Zeichen */
+function genOtp(){
+  const cs="abcdefghjkmnpqrstuvwxyz23456789";
+  const part=n=>Array.from({length:n},()=>cs[Math.floor(Math.random()*cs.length)]).join("");
+  return "adam-"+part(4)+"-"+part(4);
+}
+
 /* Mengenrabatt-Regel Sponsored LinkedIn Post */
 function liRabatt(menge){ return menge>=10?20:(menge>=5?10:0); }
 function lineNet(p){ return (p.menge||0)*(p.preis||0)*(1-(p.rab||0)/100); }
@@ -198,17 +205,18 @@ const Auth = {
     const err=document.getElementById("login-error");
     const info=document.getElementById("login-info");
     const submit=document.getElementById("login-submit");
-    let setupMode=false;
+    let setupMode=false, changeMode=false;
 
     const showErr=m=>{err.textContent=m;err.classList.add("show");};
     const clearMsg=()=>{err.classList.remove("show");info.classList.remove("show");};
+    const resetModes=()=>{
+      setupMode=false; changeMode=false;
+      pass2Wrap.style.display="none";
+      document.getElementById("login-pass-label").textContent="Passwort";
+      passEl.autocomplete="current-password"; submit.textContent="Anmelden";
+    };
 
-    emailEl.addEventListener("input",()=>{
-      clearMsg();
-      if(setupMode){ setupMode=false; pass2Wrap.style.display="none";
-        document.getElementById("login-pass-label").textContent="Passwort";
-        passEl.autocomplete="current-password"; submit.textContent="Anmelden"; }
-    });
+    emailEl.addEventListener("input",()=>{ clearMsg(); if(setupMode||changeMode) resetModes(); });
 
     /* Team-Server-Verbindung direkt am Login (Onboarding ohne Datei) */
     document.getElementById("login-sync-toggle").addEventListener("click",()=>{
@@ -281,16 +289,32 @@ const Auth = {
         return;
       }
 
-      if(setupMode){
+      if(setupMode || changeMode){
         if((passEl.value||"").length<8){ showErr("Das Passwort muss mindestens 8 Zeichen lang sein."); return; }
         if(passEl.value!==pass2El.value){ showErr("Die Passwörter stimmen nicht überein."); return; }
+        if(changeMode && await this.hash(passEl.value, u.salt||"")===u.passHash){
+          showErr("Das neue Passwort muss sich vom Einmalpasswort unterscheiden."); return;
+        }
         u.salt = uid("s");
         u.passHash = await this.hash(passEl.value, u.salt);
+        u.mustChange = false;
         u.updatedAt = new Date().toISOString();
         Store.save();
       } else {
         const h = await this.hash(passEl.value||"", u.salt||"");
         if(h!==u.passHash){ showErr("E-Mail-Adresse oder Passwort ist nicht korrekt."); return; }
+        if(u.mustChange){
+          /* Einmalpasswort aus der Einladung: eigenes Passwort erzwingen */
+          changeMode=true;
+          pass2Wrap.style.display="";
+          document.getElementById("login-pass-label").textContent="Eigenes Passwort (mind. 8 Zeichen)";
+          passEl.value=""; pass2El.value=""; passEl.autocomplete="new-password";
+          submit.textContent="Passwort festlegen & anmelden";
+          info.textContent="Einmalpasswort korrekt! Bitte jetzt das persönliche Passwort festlegen – das Einmalpasswort wird damit ungültig.";
+          info.classList.add("show");
+          passEl.focus();
+          return;
+        }
       }
 
       this.user=u;
@@ -943,14 +967,16 @@ const Views = {
         <td><b>${esc(u.name)}</b></td>
         <td class="mono">${esc(u.email)||"<span style='color:var(--text-muted)'>kein Login hinterlegt</span>"}</td>
         <td>${u.role==="admin"?"Administration":"Vertrieb"}</td>
-        <td>${u.active===false?'<span class="badge st-abgelehnt">deaktiviert</span>':(u.passHash?'<span class="badge st-angenommen">aktiv</span>':'<span class="badge st-entwurf">wartet auf 1. Login</span>')}</td>
+        <td>${u.active===false?'<span class="badge st-abgelehnt">deaktiviert</span>'
+            :u.mustChange?'<span class="badge st-pruefung">Einladung offen</span>'
+            :(u.passHash?'<span class="badge st-angenommen">aktiv</span>':'<span class="badge st-entwurf">kein Zugang</span>')}</td>
         <td class="num">
           <button class="btn" onclick="Views.editUser('${u.id}')">Bearbeiten</button>
-          ${u.passHash?`<button class="btn" onclick="Views.resetUserPass('${u.id}')">Passwort zurücksetzen</button>`:""}
+          ${u.email?`<button class="btn" onclick="Views.inviteUser('${u.id}')">${u.passHash&&!u.mustChange?"Neues Einmalpasswort senden":(u.mustChange?"Einladung erneut senden":"Einladung senden")}</button>`:""}
           ${u.id!==Auth.user.id?`<button class="btn ${u.active===false?"":"danger"}" onclick="Views.toggleUser('${u.id}')">${u.active===false?"Aktivieren":"Deaktivieren"}</button>`:""}
         </td></tr>`).join("")}</tbody></table></div>
       <div class="inline-actions" style="margin-top:10px"><button class="btn blue" onclick="Views.editUser()">＋ Benutzer anlegen</button></div>
-      <div class="hint">Neue Benutzer legen beim ersten Login ihr Passwort selbst fest. Ohne hinterlegte E-Mail ist kein Login möglich (Name erscheint trotzdem in der Betreuer-Auswahl).</div>
+      <div class="hint">Beim Anlegen mit E-Mail-Adresse wird automatisch eine Einladung mit Einmalpasswort verschickt (Versand-Einrichtung: Karte „E-Mail-Einladungen"). Beim ersten Login muss die Person ein eigenes Passwort festlegen. Ohne E-Mail kein Login (Name erscheint trotzdem in der Betreuer-Auswahl).</div>
     </div>`:"";
 
     const sc=(typeof Sync!=="undefined" && Sync.config())||{};
@@ -980,6 +1006,20 @@ const Views = {
       :`<div class="hint">Die Verbindung zum Team-Server richtet die Administration ein. Änderungen werden automatisch mit dem Team synchronisiert.</div>`}
     </div>`;
 
+    const mailCard=admin?`<div class="card"><h2>E-Mail-Einladungen</h2>
+      <p style="font-size:12.5px;color:var(--text-secondary);margin-bottom:10px">Beim Anlegen eines Benutzers mit E-Mail-Adresse verschickt der Team-Server automatisch die Einladung mit Link, Benutzername und Einmalpasswort (Versand über Resend, Absender-Domain versicherungstech-magazin.de). <b>Einmalige Einrichtung:</b> Felder prüfen → „SQL erzeugen" → Script im Supabase SQL Editor ausführen.</p>
+      <div class="row">
+        <label><span>Resend API-Key (nur Versandrecht)</span><input type="text" id="ml-key" placeholder="re_…"></label>
+        <label><span>Absender</span><input type="text" id="ml-from" value="${esc('ADAM · VTM Angebotsdesk <adam@versicherungstech-magazin.de>')}"></label>
+      </div>
+      <div class="row single"><label><span>Erlaubte Empfänger-Domains (Komma-getrennt, Schutz vor Missbrauch)</span><input type="text" id="ml-domains" value="versicherungstech-magazin.de"></label></div>
+      <div class="inline-actions"><button class="btn blue" onclick="Views.buildMailSQL()">SQL erzeugen</button></div>
+      <div id="ml-out" style="display:none;margin-top:10px">
+        <textarea readonly rows="12" id="ml-sql" style="font-family:var(--font-mono);font-size:10.5px" onclick="this.select()"></textarea>
+        <div class="hint">Alles kopieren → Supabase SQL Editor → „Run query" (Warnung bestätigen). Der Key wird nur in Supabase gespeichert – nicht in der App und nicht im Code.</div>
+      </div>
+    </div>`:"";
+
     const accountCard=`<div class="card"><h2>Eigenes Konto</h2>
       <p style="font-size:13px;margin-bottom:10px"><b>${esc(Auth.user.name)}</b> · <span class="mono" style="font-family:var(--font-mono);font-size:12px">${esc(Auth.user.email)}</span> · ${Auth.isAdmin()?"Administration":"Vertrieb"}</p>
       <div class="row">
@@ -1003,8 +1043,19 @@ const Views = {
       `<div class="cardgrid cols-2">${syncCard}${accountCard}</div>
        <div style="height:16px"></div><div class="cardgrid cols-2">${backupCard}${admin?rulesCard:""}</div>
        ${admin?`<div style="height:16px"></div><div class="cardgrid cols-2">${firmaCard}${countersCard}</div>
-       <div style="height:16px"></div>${usersCard}`:""}`;
+       <div style="height:16px"></div>${usersCard}<div style="height:16px"></div>${mailCard}`:""}`;
     if(typeof Sync!=="undefined") Sync.updateUI();
+  },
+
+  buildMailSQL(){
+    const key=document.getElementById("ml-key").value.trim();
+    const from=document.getElementById("ml-from").value.trim();
+    const domains=document.getElementById("ml-domains").value.trim();
+    if(!key){ toast("Bitte den Resend API-Key eintragen"); document.getElementById("ml-key").focus(); return; }
+    if(!from||!domains){ toast("Bitte Absender und Empfänger-Domains ausfüllen"); return; }
+    document.getElementById("ml-sql").value=buildMailSetupSQL(key,from,domains);
+    document.getElementById("ml-out").style.display="";
+    document.getElementById("ml-sql").focus(); document.getElementById("ml-sql").select();
   },
 
   async connectSync(){
@@ -1081,27 +1132,69 @@ const Views = {
         toast("Diese E-Mail-Adresse ist bereits vergeben"); return;
       }
       const role=document.getElementById("us-role").value;
+      let target;
       if(id){
         if(u.id===Auth.user.id && role!=="admin" && Auth.isAdmin() &&
            Store.state.users.filter(x=>x.role==="admin"&&x.active!==false).length<=1){
           toast("Der letzte Admin kann sich nicht selbst herabstufen"); return;
         }
         u.name=name; u.email=email; u.role=role; u.updatedAt=new Date().toISOString();
+        target=u;
       } else {
-        Store.state.users.push({id:uid("u"),name,email,role,active:true,passHash:null,salt:null,updatedAt:new Date().toISOString()});
+        target={id:uid("u"),name,email,role,active:true,passHash:null,salt:null,updatedAt:new Date().toISOString()};
+        Store.state.users.push(target);
       }
       Store.save(); Modal.close(); toast("Benutzer gespeichert"); this.settings(); Editor.fillBetreuerSelect();
+      /* Neue E-Mail ohne bestehenden Zugang → direkt Einladung verschicken */
+      if(target.email && !target.passHash) this.inviteUser(target.id, true);
     };
   },
 
-  resetUserPass(id){
-    const u=Store.state.users.find(x=>x.id===id); if(!u) return;
-    Modal.confirm("Passwort zurücksetzen?",
-      `<b>${esc(u.name)}</b> legt beim nächsten Login ein neues Passwort fest. Die aktuelle Anmeldung wird ungültig.`,
-      "Zurücksetzen",()=>{
-        u.passHash=null; u.salt=null; u.updatedAt=new Date().toISOString(); Store.save();
-        toast("Passwort zurückgesetzt"); this.settings();
-      });
+  async inviteUser(id, skipConfirm){
+    const u=Store.state.users.find(x=>x.id===id);
+    if(!u) return;
+    if(!u.email){ toast("Bitte zuerst eine E-Mail-Adresse hinterlegen"); return; }
+    const doInvite=async ()=>{
+      const otp=genOtp();
+      u.salt=uid("s");
+      u.passHash=await Auth.hash(otp,u.salt);
+      u.mustChange=true;
+      u.updatedAt=new Date().toISOString();
+      Store.save();
+      const res=await this.sendInvite(u,otp);
+      Modal.open(`<h3>${res.ok?"Einladung versendet":"Einladung erstellt – Mail nicht versendet"}</h3>
+        ${res.ok
+          ?`<p style="font-size:13px;line-height:1.6"><b>${esc(u.name)}</b> erhält in wenigen Augenblicken eine E-Mail an <b>${esc(u.email)}</b> mit dem Link zu ADAM, dem Benutzernamen und einem Einmalpasswort. Beim ersten Login muss ein eigenes Passwort festgelegt werden.</p>`
+          :`<div class="notice danger" style="margin-bottom:12px"><b>Mail-Versand:</b> ${esc(res.msg)}</div>
+           <p style="font-size:13px;line-height:1.6">Der Zugang ist trotzdem aktiv – bitte die Zugangsdaten manuell übermitteln.</p>`}
+        <div class="notice" style="margin-top:10px">
+          Benutzername: <b>${esc(u.email)}</b><br>
+          Einmalpasswort: <b style="font-family:var(--font-mono)">${esc(otp)}</b><br>
+          <span style="font-size:11.5px;color:var(--text-muted)">Fallback zum Notieren – wird aus Sicherheitsgründen nicht erneut angezeigt.</span>
+        </div>
+        <div class="modal-actions"><button class="btn blue" onclick="Modal.close()">Verstanden</button></div>`);
+      this.settings();
+    };
+    if(u.passHash && !u.mustChange && !skipConfirm){
+      Modal.confirm("Neues Einmalpasswort senden?",
+        `Das bisherige Passwort von <b>${esc(u.name)}</b> wird ungültig; die Person erhält per E-Mail ein neues Einmalpasswort und legt danach ein eigenes Passwort fest.`,
+        "Einmalpasswort senden", doInvite);
+    } else {
+      doInvite();
+    }
+  },
+
+  async sendInvite(u,otp){
+    if(!Sync.enabled()) return {ok:false,msg:"Kein Team-Server verbunden (Einstellungen → Team-Synchronisation)."};
+    try{
+      const appUrl=location.origin+location.pathname.replace(/index\.html$/,"");
+      const r=await fetch(Sync.rest("invites"),{method:"POST",
+        headers:Sync.headers({"Prefer":"return=minimal"}),
+        body:JSON.stringify({email:u.email,name:u.name,otp,invited_by:Auth.user.name,app_url:appUrl})});
+      if(r.status===404) return {ok:false,msg:"Mail-Versand noch nicht eingerichtet – bitte einmalig das SQL aus der Karte „E-Mail-Einladungen“ in Supabase ausführen."};
+      if(!r.ok) return {ok:false,msg:"Versand fehlgeschlagen (HTTP "+r.status+")."};
+      return {ok:true};
+    }catch(e){ return {ok:false,msg:"Team-Server nicht erreichbar."}; }
   },
 
   toggleUser(id){
