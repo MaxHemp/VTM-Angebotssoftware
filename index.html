@@ -34,10 +34,18 @@
     <label class="login-remember"><input type="checkbox" id="login-remember"> Auf diesem Gerät angemeldet bleiben</label>
     <button type="submit" class="btn blue" id="login-submit">Anmelden</button>
     <div class="inline-actions" style="margin-top:14px;justify-content:center">
-      <button type="button" class="btn" onclick="document.getElementById('login-import').click()">Team-Daten importieren (JSON)</button>
+      <button type="button" class="btn" id="login-sync-toggle">Mit Team-Server verbinden</button>
+      <button type="button" class="btn" onclick="document.getElementById('login-import').click()">Team-Datei importieren</button>
       <input type="file" id="login-import" accept="application/json" style="display:none">
     </div>
-    <div class="lc-foot">Zugang nur für das VTM-Team. Neue Zugänge legt die Administration unter <b>Einstellungen → Benutzer</b> an; anschließend die exportierte Team-Datei (Einstellungen → Datensicherung) an die Person schicken und hier vor dem ersten Login importieren. Beim ersten Login wird das persönliche Passwort festgelegt.</div>
+    <div id="login-sync-form" style="display:none;margin-top:12px;border-top:1px solid var(--c-neutral-200);padding-top:12px">
+      <label><span>Server-URL (von der Administration erhalten)</span>
+        <input type="text" id="ls-url" placeholder="https://xxxx.supabase.co"></label>
+      <label><span>Zugangsschlüssel</span>
+        <input type="text" id="ls-key" placeholder="anon public key"></label>
+      <button type="button" class="btn blue" style="width:100%" id="ls-connect">Verbinden &amp; Team-Daten laden</button>
+    </div>
+    <div class="lc-foot">Zugang nur für das VTM-Team. Erster Login auf einem neuen Gerät: über <b>„Mit Team-Server verbinden"</b> die von der Administration erhaltenen Zugangsdaten eintragen (alternativ Team-Datei importieren), danach mit der eigenen E-Mail anmelden und das persönliche Passwort festlegen.</div>
   </form>
 </div>
 
@@ -62,6 +70,7 @@
     <div class="sb-user">
       <b id="sb-user-name">—</b>
       <span id="sb-user-role">—</span>
+      <div class="sync-status" id="sync-status"></div>
       <button onclick="Auth.logout()">Abmelden</button>
     </div>
   </aside>
@@ -345,6 +354,7 @@
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script src="data.js"></script>
+<script src="sync.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

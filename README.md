@@ -69,41 +69,61 @@ Research) und der Struktur des **VTM Sales Desk**.
 > zusätzlich absichern (z. B. Cloudflare Access, Netlify
 > Password/Identity oder Basic Auth des Webservers).
 
-## Team-Onboarding (neue Geräte)
+## Team-Synchronisation (Backend)
 
-Die App verschickt **keine Einladungs-E-Mails** – es gibt keinen
-Server, der senden könnte. Neue Teammitglieder werden so
-freigeschaltet:
+Die App synchronisiert den kompletten Datenbestand (Angebote,
+Kunden, Katalog, Benutzer, Einstellungen) über ein **kleines
+Supabase-Backend** (kostenloser Tarif). Synchronisiert wird
+automatisch: nach jeder Änderung (leicht verzögert), alle
+45 Sekunden und beim Fokus-Wechsel ins Fenster. Der Status ist
+unten in der Seitenleiste sichtbar.
 
-1. Administration: **Einstellungen → Benutzer** → Person anlegen
-   bzw. E-Mail-Adresse hinterlegen.
-2. Administration: **Einstellungen → Datensicherung → Backup
-   exportieren (JSON)** und die Datei an die Person schicken
-   (Mail/Teams).
-3. Person: Software im Browser öffnen → auf dem Login-Screen
-   **„Team-Daten importieren (JSON)"** → Datei auswählen.
-4. Person: mit der eigenen E-Mail anmelden – beim ersten Login wird
-   das persönliche Passwort festgelegt.
+**Einmalige Einrichtung (Administration, ca. 5 Minuten):**
 
-Ohne Schritt 2/3 kennt der Browser der Person die neuen Benutzer
-nicht („E-Mail-Adresse ist auf diesem Gerät nicht hinterlegt") –
-siehe Datenhaltung.
+1. Auf [supabase.com](https://supabase.com) ein Projekt anlegen
+   (Free-Tarif genügt).
+2. Im Projekt **SQL Editor** öffnen und `supabase-setup.sql`
+   ausführen (liegt im Repo; identisch in der App unter
+   Einstellungen → Team-Synchronisation).
+3. **Settings → API**: *Project URL* und *anon public key*
+   kopieren.
+4. In der App: **Einstellungen → Team-Synchronisation** → beide
+   Werte eintragen → „Speichern & verbinden".
+
+**Onboarding neuer Teammitglieder:**
+
+1. Administration legt die Person unter **Einstellungen →
+   Benutzer** mit E-Mail-Adresse an (synchronisiert automatisch).
+2. Administration schickt der Person Server-URL + Zugangsschlüssel
+   (oder alternativ die exportierte Team-Datei).
+3. Person: Login-Screen → **„Mit Team-Server verbinden"** → beide
+   Werte eintragen → mit der eigenen E-Mail anmelden; beim ersten
+   Login wird das persönliche Passwort festgelegt.
+
+Einladungs-E-Mails verschickt die App nicht selbst – die
+Zugangsdaten schickt die Administration einmalig per Mail/Teams.
+
+**Konfliktverhalten:** Pro Angebot/Kunde/Benutzer/Vorlage gewinnt
+die zuletzt gespeicherte Änderung; Katalog und Einstellungen als
+Ganzes ebenso. Nummernkreise werden auf das Maximum zusammengeführt,
+damit parallel gezogene Nummern nicht doppelt vergeben werden.
+Löschungen synchronisieren über Lösch-Markierungen (Tombstones).
+Schreibkonflikte verhindert eine optimistische Sperre (`rev`-Spalte)
+mit automatischem Merge-Retry.
 
 ## Datenhaltung
 
-Alle Daten (Angebote, Kunden, Katalog, Benutzer, Einstellungen)
-liegen im **localStorage des jeweiligen Browsers** – es gibt
-bewusst kein Backend, damit die Software ohne Betriebskosten sofort
-läuft. Konsequenzen:
+Jedes Gerät hält eine lokale Kopie im **localStorage** (die App
+funktioniert damit auch offline weiter) und gleicht sie mit dem
+Team-Server ab. Ohne konfigurierten Server arbeitet die App rein
+lokal – dann gilt: Austausch über **Einstellungen → Datensicherung**
+(JSON-Export/-Import) und regelmäßig exportieren (Backup!).
 
-- Pro Gerät/Browser ein eigener Datenbestand. Austausch im Team
-  über **Einstellungen → Datensicherung** (JSON-Export/-Import).
-- Regelmäßig exportieren (Backup!). Browserdaten löschen = Daten weg.
-- Späterer Ausbau: Die gesamte Persistenz läuft über das
-  `Store`-Objekt in `app.js` (`Store.load`/`Store.save`). Wer eine
-  echte Team-Synchronisation möchte, ersetzt diese zwei Methoden
-  durch API-Aufrufe (z. B. Supabase, Firebase, eigener Endpoint) –
-  der Rest der Anwendung bleibt unverändert.
+Hinweis zum Zugriffsschutz: Der *anon public key* berechtigt zum
+Lesen/Schreiben der Team-Daten und wird deshalb nur intern geteilt
+(er steht bewusst **nicht** im Code des Repos, sondern wird pro
+Gerät hinterlegt). Wer den Schlüssel rotieren will: in Supabase
+unter Settings → API neu generieren und im Team neu verteilen.
 
 ## Deployment
 
@@ -128,6 +148,8 @@ Build-Schritt; Schriften kommen von Google Fonts.
 | `index.html` | Markup: Login, App-Shell, alle Bereiche, Editor, A4-Vorschau |
 | `app.css` | Design-Tokens „Master Next" + UI- und Dokument-Styles + Print |
 | `app.js` | Store, Auth/Rollen, Router, Views, Editor, Word-Export |
+| `sync.js` | Team-Synchronisation: Supabase-Anbindung, Merge-Logik, Statusanzeige |
+| `supabase-setup.sql` | Einmaliges SQL-Setup für das Backend |
 | `data.js` | Seed-Daten: Katalog, Bundles, Vorlagen, Firma, Benutzer, Nummernkreise |
 | `assets/` | VTM-Logos (farbig/weiß) |
 

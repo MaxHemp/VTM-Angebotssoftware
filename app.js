@@ -76,9 +76,15 @@ const Store = {
       this.state = this.seed();
     }
   },
-  save(){
+  /* persist = nur lokal schreiben (auch von Sync genutzt);
+     save = lokal schreiben + Team-Sync anstoßen */
+  persist(){
     try{ localStorage.setItem(this.KEY, JSON.stringify(this.state)); }
-    catch(e){ console.error("Store.save", e); toast("Speichern fehlgeschlagen – Speicher voll?"); }
+    catch(e){ console.error("Store.persist", e); toast("Speichern fehlgeschlagen – Speicher voll?"); }
+  },
+  save(){
+    this.persist();
+    if(typeof Sync!=="undefined") Sync.onLocalChange();
   },
 
   katIndex(){
@@ -87,8 +93,13 @@ const Store = {
     return idx;
   },
 
-  offer(id){ return this.state.offers.find(o=>o.id===id); },
-  kunde(id){ return this.state.kunden.find(k=>k.id===id); },
+  /* Tombstones ({deleted:true}) bleiben für den Sync erhalten,
+     sind aber überall ausgeblendet */
+  activeOffers(){ return this.state.offers.filter(o=>!o.deleted); },
+  activeKunden(){ return this.state.kunden.filter(k=>!k.deleted); },
+  activeTemplates(){ return this.state.templates.filter(t=>!t.deleted); },
+  offer(id){ return this.state.offers.find(o=>o.id===id && !o.deleted); },
+  kunde(id){ return this.state.kunden.find(k=>k.id===id && !k.deleted); },
   userByName(name){ return this.state.users.find(u=>u.name===name); },
 
   calc(doc){
@@ -101,7 +112,9 @@ const Store = {
   },
 
   exportJSON(){
-    const blob = new Blob([JSON.stringify(this.state,null,2)],{type:"application/json"});
+    const dump=JSON.parse(JSON.stringify(this.state));
+    if(typeof Sync!=="undefined" && Sync.config()) dump._sync=Sync.config();
+    const blob = new Blob([JSON.stringify(dump,null,2)],{type:"application/json"});
     const a=document.createElement("a");
     a.href=URL.createObjectURL(blob);
     a.download=`vtm-angebotsdesk-backup-${todayISO()}.json`;
@@ -197,6 +210,34 @@ const Auth = {
         passEl.autocomplete="current-password"; submit.textContent="Anmelden"; }
     });
 
+    /* Team-Server-Verbindung direkt am Login (Onboarding ohne Datei) */
+    document.getElementById("login-sync-toggle").addEventListener("click",()=>{
+      const f=document.getElementById("login-sync-form");
+      f.style.display = f.style.display==="none" ? "" : "none";
+      if(f.style.display==="") document.getElementById("ls-url").focus();
+    });
+    document.getElementById("ls-connect").addEventListener("click", async ()=>{
+      clearMsg();
+      const url=document.getElementById("ls-url").value.trim();
+      const key=document.getElementById("ls-key").value.trim();
+      if(!url||!key){ showErr("Bitte Server-URL und Zugangsschlüssel eintragen."); return; }
+      const btn=document.getElementById("ls-connect");
+      btn.disabled=true; btn.textContent="Verbinde …";
+      try{
+        await Sync.test(url,key);
+        Sync.saveConfig({url,key,enabled:true});
+        const row=await Sync.fetchRow();
+        if(row){ Store.state=Sync.mergeState(Store.state,row.data); Store.persist(); }
+        Sync.startLoop(); Sync.ok();
+        document.getElementById("login-sync-form").style.display="none";
+        info.textContent = row
+          ? "Verbunden – Team-Daten geladen. Jetzt oben mit der eigenen E-Mail anmelden."
+          : "Verbunden. Auf dem Server liegen noch keine Team-Daten – nach dem ersten Login werden sie automatisch hochgeladen.";
+        info.classList.add("show");
+      }catch(e){ showErr(e.message); }
+      finally{ btn.disabled=false; btn.textContent="Verbinden & Team-Daten laden"; }
+    });
+
     /* Team-Daten-Import direkt am Login (Onboarding neuer Geräte).
        Natives confirm(), da der Login-Screen über dem Modal-Layer liegt. */
     const imp=document.getElementById("login-import");
@@ -214,6 +255,7 @@ const Auth = {
         }
         const hasLocal=Store.state.offers.length||Store.state.kunden.length;
         if(hasLocal && !confirm(`Auf diesem Gerät liegen bereits Daten (${Store.state.offers.length} Angebote). Durch den Import werden sie ersetzt. Fortfahren?`)) return;
+        if(data._sync){ Sync.saveConfig(data._sync); delete data._sync; }
         localStorage.setItem(Store.KEY, JSON.stringify(data));
         sessionStorage.removeItem("vtmdesk-session");
         localStorage.removeItem("vtmdesk-session");
@@ -244,6 +286,7 @@ const Auth = {
         if(passEl.value!==pass2El.value){ showErr("Die Passwörter stimmen nicht überein."); return; }
         u.salt = uid("s");
         u.passHash = await this.hash(passEl.value, u.salt);
+        u.updatedAt = new Date().toISOString();
         Store.save();
       } else {
         const h = await this.hash(passEl.value||"", u.salt||"");
@@ -260,6 +303,7 @@ const Auth = {
   async setPassword(user, pw){
     user.salt = uid("s");
     user.passHash = await this.hash(pw, user.salt);
+    user.updatedAt = new Date().toISOString();
     Store.save();
   },
 
@@ -347,7 +391,7 @@ const Views = {
   },
 
   updateNavCounts(){
-    const pending = Store.state.offers.filter(o=>o.status==="pruefung");
+    const pending = Store.activeOffers().filter(o=>o.status==="pruefung");
     const mine = Auth.isAdmin()?pending:pending.filter(o=>o.createdBy===Auth.user.id);
     const el=document.getElementById("nav-freigaben-count");
     if(mine.length){ el.textContent=mine.length; el.style.display=""; } else el.style.display="none";
@@ -360,7 +404,7 @@ const Views = {
 
   /* ===== Dashboard ===== */
   dashboard(){
-    const offers=Store.state.offers;
+    const offers=Store.activeOffers();
     const open=offers.filter(o=>["entwurf","pruefung","freigegeben","versendet"].includes(o.status));
     const year=new Date().getFullYear();
     const won=offers.filter(o=>o.status==="angenommen" && (o.doc.meta.datum||"").startsWith(String(year)));
@@ -427,7 +471,7 @@ const Views = {
     const q=(document.getElementById("offers-search").value||"").toLowerCase();
     const st=document.getElementById("offers-status").value;
     const bt=document.getElementById("offers-betreuer").value;
-    return [...Store.state.offers]
+    return [...Store.activeOffers()]
       .filter(o=>!st||o.status===st)
       .filter(o=>!bt||o.doc.meta.betreuer===bt)
       .filter(o=>{
@@ -440,7 +484,7 @@ const Views = {
 
   renderOffersTable(){
     const list=this.filteredOffers();
-    document.getElementById("offers-count").textContent=`${list.length} von ${Store.state.offers.length} Angeboten`;
+    document.getElementById("offers-count").textContent=`${list.length} von ${Store.activeOffers().length} Angeboten`;
     const host=document.getElementById("offers-table");
     if(!list.length){
       host.innerHTML=`<div class="empty"><b>Keine Angebote gefunden</b>Filter anpassen oder ein neues Angebot anlegen.<br><button class="btn blue" onclick="Views.newOffer()">＋ Neues Angebot</button></div>`;
@@ -496,7 +540,7 @@ const Views = {
     Modal.confirm("Angebot löschen?",
       `Das Angebot <b>${esc(o.doc.meta.nr||"(ohne Nummer)")}</b> für <b>${esc(o.doc.kunde.firma||"—")}</b> wird endgültig gelöscht. Das kann nicht rückgängig gemacht werden.`,
       "Endgültig löschen", ()=>{
-        Store.state.offers=Store.state.offers.filter(x=>x.id!==id); Store.save();
+        o.deleted=true; o.updatedAt=new Date().toISOString(); Store.save();
         toast("Angebot gelöscht"); Views.renderOffersTable(); Views.updateNavCounts();
       }, true);
   },
@@ -526,10 +570,10 @@ const Views = {
 
   renderCustomersTable(){
     const q=(document.getElementById("kunden-search").value||"").toLowerCase();
-    const list=[...Store.state.kunden]
+    const list=[...Store.activeKunden()]
       .filter(k=>!q||[k.firma,k.name,k.plzort,k.email].join(" ").toLowerCase().includes(q))
       .sort((a,b)=>(a.firma||"").localeCompare(b.firma||""));
-    document.getElementById("kunden-count").textContent=`${list.length} von ${Store.state.kunden.length} Kunden`;
+    document.getElementById("kunden-count").textContent=`${list.length} von ${Store.activeKunden().length} Kunden`;
     const host=document.getElementById("kunden-table");
     if(!list.length){
       host.innerHTML=`<div class="empty"><b>Noch keine Kunden</b>Kunden entstehen automatisch beim Speichern aus einem Angebot – oder hier manuell.<br><button class="btn blue" onclick="Views.editCustomer()">＋ Neuer Kunde</button></div>`;
@@ -538,7 +582,7 @@ const Views = {
     host.innerHTML=`<table class="data"><thead><tr>
       <th>Firma</th><th>Ansprechpartner/in</th><th>E-Mail</th><th>Ort</th><th class="num">Angebote</th><th></th>
     </tr></thead><tbody>${list.map(k=>{
-      const cnt=Store.state.offers.filter(o=>o.kundeId===k.id || (o.doc.kunde.firma&&o.doc.kunde.firma===k.firma)).length;
+      const cnt=Store.activeOffers().filter(o=>o.kundeId===k.id || (o.doc.kunde.firma&&o.doc.kunde.firma===k.firma)).length;
       return `<tr>
         <td><b>${esc(k.firma)}</b>${k.notiz?`<span class="sub">${esc(k.notiz)}</span>`:""}</td>
         <td>${esc([k.anrede,k.name].filter(Boolean).join(" "))}${k.funktion?`<span class="sub">${esc(k.funktion)}</span>`:""}</td>
@@ -592,6 +636,7 @@ const Views = {
         plzort:document.getElementById("ck-plzort").value.trim(),
         notiz:document.getElementById("ck-notiz").value.trim()
       };
+      data.updatedAt=new Date().toISOString();
       if(id){ Object.assign(Store.kunde(id),data); }
       else { Store.state.kunden.push(Object.assign({id:uid("k"),createdAt:new Date().toISOString()},data)); }
       Store.save(); Modal.close(); toast("Kunde gespeichert");
@@ -605,7 +650,7 @@ const Views = {
     Modal.confirm("Kunde löschen?",
       `<b>${esc(k.firma)}</b> wird aus dem Kundenstamm gelöscht. Bereits erstellte Angebote bleiben unverändert erhalten.`,
       "Löschen",()=>{
-        Store.state.kunden=Store.state.kunden.filter(x=>x.id!==id); Store.save();
+        k.deleted=true; k.updatedAt=new Date().toISOString(); Store.save();
         toast("Kunde gelöscht"); this.renderCustomersTable();
       },true);
   },
@@ -682,6 +727,7 @@ const Views = {
       it.e=document.getElementById("ci-e").value.trim()||"pauschal";
       it.d=document.getElementById("ci-d").value;
       if(ii<0) g.items.push(it);
+      Store.state.katalogUpdatedAt=new Date().toISOString();
       Store.save(); Modal.close(); toast("Katalog gespeichert"); this.catalog();
     };
   },
@@ -691,7 +737,8 @@ const Views = {
     Modal.confirm("Leistung löschen?",
       `<b>${esc(it.t)}</b> wird aus dem Katalog entfernt. Bestehende Angebotspositionen bleiben unverändert.`,
       "Löschen",()=>{
-        Store.state.katalog[gi].items.splice(ii,1); Store.save();
+        Store.state.katalog[gi].items.splice(ii,1);
+        Store.state.katalogUpdatedAt=new Date().toISOString(); Store.save();
         toast("Leistung gelöscht"); this.catalog();
       },true);
   },
@@ -711,6 +758,7 @@ const Views = {
       b.name=document.getElementById("bd-name").value.trim()||b.name;
       b.sub=document.getElementById("bd-sub").value.trim();
       b.price=document.getElementById("bd-price").value.trim();
+      Store.state.bundlesUpdatedAt=new Date().toISOString();
       Store.save(); Modal.close(); toast("Paket gespeichert"); this.catalog();
     };
   },
@@ -721,9 +769,9 @@ const Views = {
     document.getElementById("freigaben-sub").textContent = admin
       ? "Angebote über den Freigabegrenzen prüfen und freigeben"
       : "Eigene eingereichte Angebote und Entscheidungen";
-    const pending=Store.state.offers.filter(o=>o.status==="pruefung");
+    const pending=Store.activeOffers().filter(o=>o.status==="pruefung");
     const mine=admin?pending:pending.filter(o=>o.createdBy===Auth.user.id);
-    const decided=Store.state.offers
+    const decided=Store.activeOffers()
       .filter(o=>o.freigabe && o.freigabe.decidedAt)
       .sort((a,b)=>(b.freigabe.decidedAt||"").localeCompare(a.freigabe.decidedAt||"")).slice(0,10);
     const f=Store.state.settings.freigabe;
@@ -793,7 +841,7 @@ const Views = {
 
   /* ===== Vorlagen ===== */
   templates(){
-    const list=Store.state.templates;
+    const list=Store.activeTemplates();
     document.getElementById("vorlagen-content").innerHTML=`
       <div class="notice">Anschreiben-Vorlagen stehen im Angebots-Editor zur Auswahl. E-Mail-Vorlagen nutzt der Button „E-Mail-Text" – Platzhalter: <span class="mono" style="font-family:var(--font-mono);font-size:11px">{NR} {BETREFF} {SUMME} {GUELTIG} {BETREUER}</span></div>
       <div class="cardgrid cols-2">
@@ -809,7 +857,7 @@ const Views = {
   },
 
   editTemplate(id){
-    const t=id?Store.state.templates.find(x=>x.id===id):{id:null,type:"anschreiben",name:"",text:""};
+    const t=id?Store.activeTemplates().find(x=>x.id===id):{id:null,type:"anschreiben",name:"",text:""};
     if(id&&!t) return;
     Modal.open(`<h3>${id?"Vorlage bearbeiten":"Neue Vorlage"}</h3>
       <div class="row">
@@ -827,7 +875,7 @@ const Views = {
     document.getElementById("tp-save").onclick=()=>{
       const name=document.getElementById("tp-name").value.trim();
       if(!name){ toast("Bitte einen Namen angeben"); return; }
-      const data={name,type:document.getElementById("tp-type").value,text:document.getElementById("tp-text").value};
+      const data={name,type:document.getElementById("tp-type").value,text:document.getElementById("tp-text").value,updatedAt:new Date().toISOString()};
       if(id) Object.assign(t,data);
       else Store.state.templates.push(Object.assign({id:uid("tpl")},data));
       Store.save(); Modal.close(); toast("Vorlage gespeichert");
@@ -836,9 +884,9 @@ const Views = {
   },
 
   deleteTemplate(id){
-    const t=Store.state.templates.find(x=>x.id===id); if(!t) return;
+    const t=Store.activeTemplates().find(x=>x.id===id); if(!t) return;
     Modal.confirm("Vorlage löschen?",`<b>${esc(t.name)}</b> wird gelöscht.`,"Löschen",()=>{
-      Store.state.templates=Store.state.templates.filter(x=>x.id!==id);
+      t.deleted=true; t.updatedAt=new Date().toISOString();
       Store.save(); toast("Vorlage gelöscht"); this.templates(); Editor.fillTemplateSelect();
     },true);
   },
@@ -905,6 +953,33 @@ const Views = {
       <div class="hint">Neue Benutzer legen beim ersten Login ihr Passwort selbst fest. Ohne hinterlegte E-Mail ist kein Login möglich (Name erscheint trotzdem in der Betreuer-Auswahl).</div>
     </div>`:"";
 
+    const sc=(typeof Sync!=="undefined" && Sync.config())||{};
+    const syncCard=`<div class="card"><h2>Team-Synchronisation</h2>
+      <p id="st-sync-status" style="font-size:12.5px;margin-bottom:10px"></p>
+      ${admin?`
+      <div class="row">
+        <label><span>Supabase-Projekt-URL</span><input type="text" id="st-sync-url" placeholder="https://xxxx.supabase.co" value="${esc(sc.url||"")}"></label>
+        <label><span>Zugangsschlüssel (anon public key)</span><input type="text" id="st-sync-key" placeholder="eyJ…" value="${esc(sc.key||"")}"></label>
+      </div>
+      <div class="inline-actions">
+        <button class="btn blue" onclick="Views.connectSync()">Speichern &amp; verbinden</button>
+        <button class="btn" onclick="Sync.syncOnce().then(ok=>toast(ok?'Synchronisiert':'Synchronisation fehlgeschlagen'))">Jetzt synchronisieren</button>
+        ${sc.url?`<button class="btn danger" onclick="Views.disconnectSync()">Trennen</button>`:""}
+      </div>
+      <details style="margin-top:12px"><summary style="cursor:pointer;font-size:12.5px;color:var(--text-secondary);font-weight:600">Einmalige Einrichtung (Supabase, ca. 5 Minuten)</summary>
+        <ol style="font-size:12.5px;color:var(--text-secondary);margin:10px 0 8px 18px;line-height:1.8">
+          <li>Auf <a href="https://supabase.com" target="_blank" rel="noopener">supabase.com</a> ein neues Projekt anlegen (Free-Tarif genügt).</li>
+          <li>Im Projekt links <b>SQL Editor</b> öffnen, dieses Script einfügen und mit „Run" ausführen:</li>
+        </ol>
+        <textarea readonly rows="10" style="font-family:var(--font-mono);font-size:11px" onclick="this.select()">${esc(SYNC_SETUP_SQL)}</textarea>
+        <ol start="3" style="font-size:12.5px;color:var(--text-secondary);margin:8px 0 0 18px;line-height:1.8">
+          <li>Links <b>Settings → API</b>: die <b>Project URL</b> und den <b>anon public</b>-Key kopieren und oben eintragen → „Speichern &amp; verbinden".</li>
+          <li>Teammitglieder: am Login-Screen „Mit Team-Server verbinden" und dieselben zwei Werte eintragen – danach mit der eigenen E-Mail anmelden.</li>
+        </ol>
+      </details>`
+      :`<div class="hint">Die Verbindung zum Team-Server richtet die Administration ein. Änderungen werden automatisch mit dem Team synchronisiert.</div>`}
+    </div>`;
+
     const accountCard=`<div class="card"><h2>Eigenes Konto</h2>
       <p style="font-size:13px;margin-bottom:10px"><b>${esc(Auth.user.name)}</b> · <span class="mono" style="font-family:var(--font-mono);font-size:12px">${esc(Auth.user.email)}</span> · ${Auth.isAdmin()?"Administration":"Vertrieb"}</p>
       <div class="row">
@@ -925,9 +1000,33 @@ const Views = {
     </div>`;
 
     document.getElementById("settings-content").innerHTML=
-      `<div class="cardgrid cols-2">${accountCard}${backupCard}</div>
-       ${admin?`<div style="height:16px"></div><div class="cardgrid cols-2">${firmaCard}${rulesCard}</div>
-       <div style="height:16px"></div>${countersCard}<div style="height:16px"></div>${usersCard}`:""}`;
+      `<div class="cardgrid cols-2">${syncCard}${accountCard}</div>
+       <div style="height:16px"></div><div class="cardgrid cols-2">${backupCard}${admin?rulesCard:""}</div>
+       ${admin?`<div style="height:16px"></div><div class="cardgrid cols-2">${firmaCard}${countersCard}</div>
+       <div style="height:16px"></div>${usersCard}`:""}`;
+    if(typeof Sync!=="undefined") Sync.updateUI();
+  },
+
+  async connectSync(){
+    const url=document.getElementById("st-sync-url").value.trim();
+    const key=document.getElementById("st-sync-key").value.trim();
+    if(!url||!key){ toast("Bitte Server-URL und Zugangsschlüssel eintragen"); return; }
+    try{ await Sync.test(url,key); }
+    catch(e){ toast(e.message); Sync.lastError=e.message; Sync.updateUI(); return; }
+    Sync.saveConfig({url,key,enabled:true});
+    Sync.startLoop();
+    const ok=await Sync.syncOnce();
+    toast(ok?"Team-Synchronisation aktiv":"Verbunden, aber erste Synchronisation fehlgeschlagen");
+    this.settings();
+  },
+
+  disconnectSync(){
+    Modal.confirm("Team-Synchronisation trennen?",
+      "Dieses Gerät synchronisiert dann nicht mehr mit dem Team-Server. Die lokalen Daten bleiben erhalten.",
+      "Trennen",()=>{
+        Sync.clearConfig(); Sync.lastError=null; Sync.lastSync=null;
+        toast("Synchronisation getrennt"); this.settings();
+      },true);
   },
 
   saveFirma(){
@@ -935,6 +1034,7 @@ const Views = {
     ["name","kurz","strasse","plzort","hrb","gf","iban","stnr","mail","web"].forEach(k=>{
       F[k]=document.getElementById("st-"+k).value.trim();
     });
+    Store.state.settingsUpdatedAt=new Date().toISOString();
     Store.save(); toast("Firmendaten gespeichert");
   },
   saveRules(){
@@ -945,6 +1045,7 @@ const Views = {
     s.vat=(parseFloat(document.getElementById("st-vat").value)||19)/100;
     s.zahlungszielDefault=parseInt(document.getElementById("st-zz").value)||14;
     s.gueltigkeitTage=parseInt(document.getElementById("st-gt").value)||14;
+    Store.state.settingsUpdatedAt=new Date().toISOString();
     Store.save(); toast("Regeln gespeichert");
   },
   saveCounters(){
@@ -952,6 +1053,7 @@ const Views = {
     c.angebot=parseInt(document.getElementById("st-cn-angebot").value)||0;
     c.vertrag=parseInt(document.getElementById("st-cn-vertrag").value)||0;
     c.rechnung=parseInt(document.getElementById("st-cn-rechnung").value)||0;
+    Store.state.settingsUpdatedAt=new Date().toISOString();
     Store.save(); toast("Nummernkreise gespeichert");
   },
 
@@ -984,9 +1086,9 @@ const Views = {
            Store.state.users.filter(x=>x.role==="admin"&&x.active!==false).length<=1){
           toast("Der letzte Admin kann sich nicht selbst herabstufen"); return;
         }
-        u.name=name; u.email=email; u.role=role;
+        u.name=name; u.email=email; u.role=role; u.updatedAt=new Date().toISOString();
       } else {
-        Store.state.users.push({id:uid("u"),name,email,role,active:true,passHash:null,salt:null});
+        Store.state.users.push({id:uid("u"),name,email,role,active:true,passHash:null,salt:null,updatedAt:new Date().toISOString()});
       }
       Store.save(); Modal.close(); toast("Benutzer gespeichert"); this.settings(); Editor.fillBetreuerSelect();
     };
@@ -997,7 +1099,7 @@ const Views = {
     Modal.confirm("Passwort zurücksetzen?",
       `<b>${esc(u.name)}</b> legt beim nächsten Login ein neues Passwort fest. Die aktuelle Anmeldung wird ungültig.`,
       "Zurücksetzen",()=>{
-        u.passHash=null; u.salt=null; Store.save();
+        u.passHash=null; u.salt=null; u.updatedAt=new Date().toISOString(); Store.save();
         toast("Passwort zurückgesetzt"); this.settings();
       });
   },
@@ -1009,6 +1111,7 @@ const Views = {
       toast("Der letzte aktive Admin kann nicht deaktiviert werden"); return;
     }
     u.active = u.active===false ? true : false;
+    u.updatedAt=new Date().toISOString();
     Store.save(); this.settings();
     toast(u.active?"Benutzer aktiviert":"Benutzer deaktiviert");
   },
@@ -1037,6 +1140,7 @@ const Views = {
       Modal.confirm("Backup importieren?",
         `Der komplette Datenbestand dieses Browsers wird durch das Backup ersetzt (${data.offers.length} Angebote, ${(data.kunden||[]).length} Kunden). Vorher ggf. den aktuellen Stand exportieren.`,
         "Importieren & neu laden",()=>{
+          if(data._sync){ Sync.saveConfig(data._sync); delete data._sync; }
           localStorage.setItem(Store.KEY, JSON.stringify(data));
           location.reload();
         },true);
@@ -1198,12 +1302,12 @@ const Editor = {
   fillCustomerSelect(){
     const sel=document.getElementById("kunde-select"); if(!sel) return;
     sel.innerHTML=`<option value="">— Kunde wählen —</option>`+
-      [...Store.state.kunden].sort((a,b)=>(a.firma||"").localeCompare(b.firma||""))
+      [...Store.activeKunden()].sort((a,b)=>(a.firma||"").localeCompare(b.firma||""))
       .map(k=>`<option value="${k.id}">${esc(k.firma)}${k.name?" · "+esc(k.name):""}</option>`).join("");
   },
   fillTemplateSelect(){
     const sel=document.getElementById("anschreiben-tpl"); if(!sel) return;
-    sel.innerHTML=Store.state.templates.filter(t=>t.type==="anschreiben")
+    sel.innerHTML=Store.activeTemplates().filter(t=>t.type==="anschreiben")
       .map(t=>`<option value="${t.id}">${esc(t.name)}</option>`).join("")||`<option value="">Keine Vorlagen</option>`;
   },
 
@@ -1219,12 +1323,12 @@ const Editor = {
   saveAsCustomer(){
     const kd=this.s.kunde;
     if(!kd.firma){ toast("Bitte zuerst eine Firma eintragen"); return; }
-    let k=Store.state.kunden.find(x=>x.firma.toLowerCase()===kd.firma.toLowerCase());
+    let k=Store.activeKunden().find(x=>x.firma.toLowerCase()===kd.firma.toLowerCase());
     if(k){
-      Object.assign(k,{anrede:kd.anrede,name:kd.name,funktion:kd.funktion,email:kd.email,strasse:kd.strasse,plzort:kd.plzort});
+      Object.assign(k,{anrede:kd.anrede,name:kd.name,funktion:kd.funktion,email:kd.email,strasse:kd.strasse,plzort:kd.plzort,updatedAt:new Date().toISOString()});
       toast(`Kunde „${k.firma}" aktualisiert`);
     } else {
-      k=Object.assign({id:uid("k"),createdAt:new Date().toISOString(),telefon:"",notiz:""},JSON.parse(JSON.stringify(kd)));
+      k=Object.assign({id:uid("k"),createdAt:new Date().toISOString(),updatedAt:new Date().toISOString(),telefon:"",notiz:""},JSON.parse(JSON.stringify(kd)));
       Store.state.kunden.push(k);
       toast(`Kunde „${k.firma}" angelegt`);
     }
@@ -1342,7 +1446,7 @@ Das Angebot ist modular aufgebaut. Einzelne Positionen lassen sich jederzeit anp
   },
   applyTemplate(){
     const id=document.getElementById("anschreiben-tpl").value;
-    const t=Store.state.templates.find(x=>x.id===id);
+    const t=Store.activeTemplates().find(x=>x.id===id);
     if(!t){ toast("Keine Vorlage ausgewählt"); return; }
     this.s.anschreiben=this.anredeZeile()+"\n\n"+t.text;
     this.pushToInputs(); this.renderAll(); this.scheduleSave();
@@ -1359,6 +1463,7 @@ Das Angebot ist modular aufgebaut. Einzelne Positionen lassen sich jederzeit anp
     if(kind==="angebot"){ nr=`A-${year}-${String(c[kind]).padStart(3,"0")}`; this.s.meta.nr=nr; }
     else if(kind==="vertrag"){ nr=`V-${year}-${String(c[kind]).padStart(3,"0")}`; this.s.vertrag.nr=nr; }
     else { nr=`VTM-${year}-${String(c[kind]).padStart(4,"0")}`; this.s.rechnung.nr=nr; }
+    Store.state.settingsUpdatedAt=new Date().toISOString();
     Store.save();
     this.pushToInputs(); this.renderAll(); this.save(false);
     toast(`Nummer ${nr} reserviert`);
@@ -1367,7 +1472,7 @@ Das Angebot ist modular aufgebaut. Einzelne Positionen lassen sich jederzeit anp
   /* ---------- E-Mail-Text ---------- */
   mailText(){
     const s=this.s, c=this.calc();
-    const tpl=Store.state.templates.find(t=>t.type==="email");
+    const tpl=Store.activeTemplates().find(t=>t.type==="email");
     const body=(tpl?tpl.text:`anbei erhalten Sie unser Angebot {NR} über {SUMME} netto, gültig bis {GUELTIG}.\n\nMit freundlichen Grüßen\n{BETREUER}`)
       .replace(/\{NR\}/g,s.meta.nr||"—")
       .replace(/\{BETREFF\}/g,s.meta.betreff||"Medienkooperation")
@@ -1767,6 +1872,7 @@ const App = {
     Store.load();
     Editor.bindInputs();
     Auth.loginUI();
+    Sync.init();
     if(await Auth.tryRestore()) this.start();
   },
   start(){

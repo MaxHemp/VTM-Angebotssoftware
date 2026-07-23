@@ -87,6 +87,9 @@ a{color:var(--action)}
 .sidebar .sb-user{border-top:1px solid rgba(255,255,255,.12);padding:14px 18px;font-size:12.5px}
 .sidebar .sb-user b{display:block;font-size:13px}
 .sidebar .sb-user span{color:rgba(255,255,255,.6);font-family:var(--font-mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase}
+.sidebar .sb-user .sync-status{margin-top:6px;font-family:var(--font-mono);font-size:10px;letter-spacing:.04em;color:rgba(255,255,255,.5)}
+.sidebar .sb-user .sync-status[data-state="on"]{color:#7ee2a8}
+.sidebar .sb-user .sync-status[data-state="error"]{color:var(--c-brass-300)}
 .sidebar .sb-user button{margin-top:8px;background:transparent;border:1px solid rgba(255,255,255,.28);color:#fff;font-size:11.5px;padding:5px 10px;border-radius:var(--radius-m);cursor:pointer}
 .sidebar .sb-user button:hover{background:rgba(255,255,255,.12)}
 
