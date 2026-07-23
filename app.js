@@ -275,7 +275,7 @@ const Auth = {
     form.addEventListener("submit", async ev=>{
       ev.preventDefault(); clearMsg();
       const u=this.findUser(emailEl.value);
-      if(!u || u.active===false){ showErr("Diese E-Mail-Adresse ist auf diesem Gerät nicht als Teammitglied hinterlegt. Bitte unten die von der Administration erhaltene Team-Datei importieren – oder den Zugang von der Administration anlegen lassen."); return; }
+      if(!u || u.active===false){ showErr("Diese E-Mail-Adresse ist auf diesem Gerät nicht als Teammitglied hinterlegt. Eingeladen? Dann bitte die Seite über den Link aus der Einladungs-E-Mail öffnen. Sonst: unten mit dem Team-Server verbinden oder den Zugang von der Administration anlegen lassen."); return; }
 
       if(!u.passHash && !setupMode){
         setupMode=true;
@@ -1187,7 +1187,11 @@ const Views = {
   async sendInvite(u,otp){
     if(!Sync.enabled()) return {ok:false,msg:"Kein Team-Server verbunden (Einstellungen → Team-Synchronisation)."};
     try{
-      const appUrl=location.origin+location.pathname.replace(/index\.html$/,"");
+      /* Der Link aus der Mail richtet die Team-Verbindung automatisch ein */
+      const cfg=Sync.config();
+      const token=btoa(JSON.stringify({u:cfg.url,k:cfg.key}))
+        .replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+      const appUrl=location.origin+location.pathname.replace(/index\.html$/,"")+"#/join/"+token;
       const r=await fetch(Sync.rest("invites"),{method:"POST",
         headers:Sync.headers({"Prefer":"return=minimal"}),
         body:JSON.stringify({email:u.email,name:u.name,otp,invited_by:Auth.user.name,app_url:appUrl})});
@@ -1961,10 +1965,33 @@ Das Angebot ist modular aufgebaut. Einzelne Positionen lassen sich jederzeit anp
 
 /* ---------- App-Start ---------- */
 const App = {
+  /* Einladungslink #/join/<token>: Team-Verbindung automatisch
+     einrichten, Team-Daten laden, dann normaler Login */
+  async handleJoinLink(){
+    const m=/^#\/join\/([A-Za-z0-9\-_]+)$/.exec(location.hash||"");
+    if(!m) return;
+    history.replaceState(null,"",location.pathname);
+    try{
+      let b64=m[1].replace(/-/g,"+").replace(/_/g,"/");
+      b64+="=".repeat((4-b64.length%4)%4);
+      const cfg=JSON.parse(atob(b64));
+      if(!cfg.u||!cfg.k) return;
+      Sync.saveConfig({url:cfg.u,key:cfg.k,enabled:true});
+      try{
+        const row=await Sync.fetchRow();
+        if(row){ Store.state=Sync.mergeState(Store.state,row.data); Store.persist(); }
+        Sync.ok();
+      }catch(e){ Sync.lastError=e.message; }
+      const info=document.getElementById("login-info");
+      info.textContent="Team-Verbindung eingerichtet und Team-Daten geladen. Bitte mit den Zugangsdaten aus der Einladungs-E-Mail anmelden.";
+      info.classList.add("show");
+    }catch(e){ /* ungültiger Link → normaler Login */ }
+  },
   async init(){
     Store.load();
     Editor.bindInputs();
     Auth.loginUI();
+    await this.handleJoinLink();
     Sync.init();
     if(await Auth.tryRestore()) this.start();
   },

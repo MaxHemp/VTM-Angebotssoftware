@@ -98,10 +98,11 @@ unten in der Seitenleiste sichtbar.
    **Einladungs-E-Mail** (Link zu ADAM, Benutzername = E-Mail,
    Einmalpasswort). Das Einmalpasswort wird der Administration
    zusätzlich einmalig als Fallback angezeigt.
-2. Person: Link öffnen → ggf. am Login **„Mit Team-Server
-   verbinden"** (Server-URL + Zugangsschlüssel von der
-   Administration, nur beim allerersten Mal auf einem Gerät) →
-   mit E-Mail + Einmalpasswort anmelden.
+2. Person: **Link aus der Mail öffnen** – die Team-Verbindung
+   richtet sich dabei automatisch ein (der Link enthält die
+   Zugangsdaten des Team-Servers) – und mit E-Mail +
+   Einmalpasswort anmelden. Manuelles Verbinden („Mit Team-Server
+   verbinden") oder Team-Datei-Import bleiben als Fallback.
 3. Beim ersten Login **erzwingt** die App das Festlegen eines
    eigenen Passworts; das Einmalpasswort wird damit ungültig.
    „Neues Einmalpasswort senden" in der Benutzerverwaltung setzt
@@ -115,6 +116,9 @@ läuft über einen Datenbank-Trigger (pg_net → Resend) mit der
 verifizierten Absender-Domain `versicherungstech-magazin.de`;
 der Key liegt nur in Supabase (RLS-geschützt, per API nicht
 auslesbar), Empfänger sind auf konfigurierte Domains beschränkt.
+Hinweis: Der Einladungslink enthält die Team-Server-Zugangsdaten
+(anon key) – Einladungsmails daher wie interne Zugangsdaten
+behandeln.
 
 **Konfliktverhalten:** Pro Angebot/Kunde/Benutzer/Vorlage gewinnt
 die zuletzt gespeicherte Änderung; Katalog und Einstellungen als
