@@ -1172,6 +1172,8 @@ const Views = {
           Einmalpasswort: <b style="font-family:var(--font-mono)">${esc(otp)}</b><br>
           <span style="font-size:11.5px;color:var(--text-muted)">Fallback zum Notieren – wird aus Sicherheitsgründen nicht erneut angezeigt.</span>
         </div>
+        <label style="margin-top:10px"><span>Einladungslink (zum manuellen Weitergeben, richtet die Team-Verbindung automatisch ein)</span>
+          <input type="text" readonly value="${esc(res.link||"")}" onclick="this.select()"></label>
         <div class="modal-actions"><button class="btn blue" onclick="Modal.close()">Verstanden</button></div>`);
       this.settings();
     };
@@ -1184,21 +1186,26 @@ const Views = {
     }
   },
 
+  inviteLink(){
+    const cfg=Sync.config();
+    const base=location.origin+location.pathname.replace(/index\.html$/,"");
+    if(!cfg||!cfg.url||!cfg.key) return base;
+    const token=btoa(JSON.stringify({u:cfg.url,k:cfg.key}))
+      .replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+    return base+"#/join/"+token;
+  },
+
   async sendInvite(u,otp){
-    if(!Sync.enabled()) return {ok:false,msg:"Kein Team-Server verbunden (Einstellungen → Team-Synchronisation)."};
+    const link=this.inviteLink();
+    if(!Sync.enabled()) return {ok:false,link,msg:"Kein Team-Server verbunden (Einstellungen → Team-Synchronisation)."};
     try{
-      /* Der Link aus der Mail richtet die Team-Verbindung automatisch ein */
-      const cfg=Sync.config();
-      const token=btoa(JSON.stringify({u:cfg.url,k:cfg.key}))
-        .replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
-      const appUrl=location.origin+location.pathname.replace(/index\.html$/,"")+"#/join/"+token;
       const r=await fetch(Sync.rest("invites"),{method:"POST",
         headers:Sync.headers({"Prefer":"return=minimal"}),
-        body:JSON.stringify({email:u.email,name:u.name,otp,invited_by:Auth.user.name,app_url:appUrl})});
-      if(r.status===404) return {ok:false,msg:"Mail-Versand noch nicht eingerichtet – bitte einmalig das SQL aus der Karte „E-Mail-Einladungen“ in Supabase ausführen."};
-      if(!r.ok) return {ok:false,msg:"Versand fehlgeschlagen (HTTP "+r.status+")."};
-      return {ok:true};
-    }catch(e){ return {ok:false,msg:"Team-Server nicht erreichbar."}; }
+        body:JSON.stringify({email:u.email,name:u.name,otp,invited_by:Auth.user.name,app_url:link})});
+      if(r.status===404) return {ok:false,link,msg:"Mail-Versand noch nicht eingerichtet – bitte einmalig das SQL aus der Karte „E-Mail-Einladungen“ in Supabase ausführen."};
+      if(!r.ok) return {ok:false,link,msg:"Versand fehlgeschlagen (HTTP "+r.status+")."};
+      return {ok:true,link};
+    }catch(e){ return {ok:false,link,msg:"Team-Server nicht erreichbar."}; }
   },
 
   toggleUser(id){
