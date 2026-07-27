@@ -1603,13 +1603,27 @@ Das Angebot ist modular aufgebaut. Einzelne Positionen lassen sich jederzeit anp
     };
   },
 
-  /* ---------- Gemeinsame Dokument-Bausteine ---------- */
-  band(doctype,nr,datum){
-    return `<div class="doc-band">
-        <div class="wordmark"><b>VersicherungsTech<br>Magazin</b><i>Technologie verstehen. Versicherung gestalten.</i></div>
-        <div class="doctype"><b>${doctype}</b><span>${esc(nr)||"—"} · ${fmtDate(datum)}</span></div>
+  /* ---------- Gemeinsame Dokument-Bausteine ----------
+     Seitenrahmen: Logo-Kopf und Firmen-Fußzeile wiederholen sich
+     beim Druck auf jeder Seite (fixe Elemente + Platzhalter). */
+  sheetHTML(doctype,nr,datum,withStnr,inner){
+    const F=this.FIRMA;
+    return `<div class="doc-fixed-head">
+        <div class="doc-head">
+          <div class="dh-brand"><img src="assets/vtm-logo-color.png" alt=""><div class="dh-word"><b>VersicherungsTech<br>Magazin</b><i>Technologie verstehen. Versicherung gestalten.</i></div></div>
+          <div class="dh-type"><b>${doctype}</b><span>${esc(nr)||"—"} · ${fmtDate(datum)}</span></div>
+        </div>
+        <div class="signal-line" aria-hidden="true"></div>
       </div>
-      <div class="signal-line" aria-hidden="true"></div>`;
+      <table class="page-frame">
+        <thead><tr><td><div class="head-space"></div></td></tr></thead>
+        <tbody><tr><td class="page-body">${inner}</td></tr></tbody>
+        <tfoot><tr><td><div class="foot-space"></div></td></tr></tfoot>
+      </table>
+      <div class="doc-fixed-foot"><div class="doc-foot">
+        <div>${esc(F.kurz)} · ${esc(F.strasse)}, ${esc(F.plzort)}<br>${esc(F.hrb)}${withStnr?` · St.-Nr. ${esc(F.stnr)}`:""} · Geschäftsführer: ${esc(F.gf)}</div>
+        <div style="text-align:right">IBAN ${esc(F.iban)}<br>${esc(F.mail)} · ${esc(F.web)}</div>
+      </div></div>`;
   },
   posRowsHTML(){
     return this.s.positionen.map((p,i)=>`
@@ -1630,14 +1644,6 @@ Das Angebot ist modular aufgebaut. Einzelne Positionen lassen sich jederzeit anp
       <tr class="grand"><td>Gesamtbetrag</td><td class="num">${fmtEUR(c.brutto)}</td></tr>
     </table>`;
   },
-  footerHTML(withStnr){
-    const F=this.FIRMA;
-    return `<div class="doc-footer">
-      <div>${esc(F.kurz)} · ${esc(F.strasse)}, ${esc(F.plzort)}<br>${esc(F.hrb)}${withStnr?` · St.-Nr. ${esc(F.stnr)}`:""} · Geschäftsführer: ${esc(F.gf)}</div>
-      <div style="text-align:right">IBAN ${esc(F.iban)}<br>${esc(F.mail)} · ${esc(F.web)}</div>
-    </div>`;
-  },
-
   /* ---------- Rendering: Angebot ---------- */
   renderAngebot(){
     const s=this.s,k=s.kunde,m=s.meta,c=this.calc(),F=this.FIRMA;
@@ -1648,9 +1654,8 @@ Das Angebot ist modular aufgebaut. Einzelne Positionen lassen sich jederzeit anp
       <div class="eyebrow research" style="margin-top:4mm">VTM Reichweitendaten · eigene Erhebung</div>
       <div class="kpis">${kpiTiles.map(x=>`<div class="kpi"><b>${esc(x[0])}</b><span>${esc(x[1])}</span></div>`).join("")}</div>`:"";
 
-    document.getElementById("sheet-angebot").innerHTML=`
-      ${this.band("ANGEBOT",m.nr||"A-"+new Date().getFullYear()+"-XXX",m.datum)}
-
+    document.getElementById("sheet-angebot").innerHTML=this.sheetHTML(
+      "ANGEBOT", m.nr||"A-"+new Date().getFullYear()+"-XXX", m.datum, false, `
       <div class="eyebrow">Kooperationsangebot</div>
       <h1>${esc(m.betreff)||"Medienkooperation mit dem VersicherungsTech Magazin"}</h1>
       ${m.anlass?`<div class="sub">${esc(m.anlass)}</div>`:""}
@@ -1689,12 +1694,11 @@ Das Angebot ist modular aufgebaut. Einzelne Positionen lassen sich jederzeit anp
       <div class="taxnote">Alle Preise verstehen sich netto zzgl. gesetzlicher Umsatzsteuer.</div>
 
       ${H2("Konditionen &amp; nächste Schritte")}
-      <p>Dieses Angebot ist gültig bis zum <b>${fmtDate(m.gueltig)}</b>. Das Zahlungsziel beträgt <b>${s.zahlungsziel||14} Tage netto</b> nach Rechnungsstellung. Erste Inhalte gehen in der Regel innerhalb von 10 Werktagen nach Beauftragung live. Werbliche Formate werden als solche gekennzeichnet; die redaktionelle Unabhängigkeit des VersicherungsTech Magazins bleibt unberührt.</p>
+      <p>Dieses Angebot ist gültig bis zum ${fmtDate(m.gueltig)}. Das Zahlungsziel beträgt ${s.zahlungsziel||14} Tage netto nach Rechnungsstellung. Erste Inhalte gehen in der Regel innerhalb von 10 Werktagen nach Beauftragung live. Werbliche Formate werden als solche gekennzeichnet; die redaktionelle Unabhängigkeit des VersicherungsTech Magazins bleibt unberührt.</p>
       <p>Zur Beauftragung genügt eine kurze Bestätigung per E-Mail. Anschließend stimmen wir Zeitplan und benötigte Materialien mit Ihnen ab.</p>
 
       <p style="margin-top:8mm">Mit freundlichen Grüßen</p>
-      <p><b>${esc(m.betreuer)}</b><br><span style="color:var(--text-secondary)">VersicherungsTech Magazin</span></p>
-      ${this.footerHTML(false)}`;
+      <p><b>${esc(m.betreuer)}</b><br><span style="color:var(--text-secondary)">VersicherungsTech Magazin</span></p>`);
   },
 
   /* ---------- Rendering: Vertrag ---------- */
@@ -1704,9 +1708,8 @@ Das Angebot ist modular aufgebaut. Einzelne Positionen lassen sich jederzeit anp
       ?s.positionen.map(p=>`${p.menge>1?p.menge+"× ":""}${p.titel}`).join(", ")
       :"die im Angebot beschriebenen Leistungen";
 
-    document.getElementById("sheet-vertrag").innerHTML=`
-      ${this.band("VERTRAG",v.nr||"V-"+new Date().getFullYear()+"-XXX",v.datum)}
-
+    document.getElementById("sheet-vertrag").innerHTML=this.sheetHTML(
+      "VERTRAG", v.nr||"V-"+new Date().getFullYear()+"-XXX", v.datum, false, `
       <div class="eyebrow">Kooperationsvertrag</div>
       <h1>${esc(s.meta.betreff)||"Medienkooperation"}</h1>
       <div class="sub">Vertrags-Nr. ${esc(v.nr)||"—"} · ${fmtDate(v.datum)}</div>
@@ -1728,7 +1731,7 @@ Das Angebot ist modular aufgebaut. Einzelne Positionen lassen sich jederzeit anp
         <p>Die Vergütung beträgt <b>${fmtEUR(c.nettoR)}</b> zzgl. gesetzlicher Umsatzsteuer${c.rabatt>0?` (bereits berücksichtigt: Paketrabatt von ${(s.rabatt||0).toLocaleString("de-DE")} %)`:""}. Das Zahlungsziel beträgt ${s.zahlungsziel||14} Tage netto nach Rechnungsstellung.</p></div>
 
       <div class="para"><b class="pnum">§ 4 Laufzeit und Kündigung</b>
-        <p>Der Vertrag beginnt am <b>${fmtDate(v.beginn)}</b> und läuft bis zum <b>${fmtDate(v.ende)}</b>. Er kann mit einer Frist von ${esc(v.kuendigung)||"drei Monaten zum Laufzeitende"} gekündigt werden. Das Recht zur außerordentlichen Kündigung bleibt unberührt.</p></div>
+        <p>Der Vertrag beginnt am ${fmtDate(v.beginn)} und läuft bis zum ${fmtDate(v.ende)}. Er kann mit einer Frist von ${esc(v.kuendigung)||"drei Monaten zum Laufzeitende"} gekündigt werden. Das Recht zur außerordentlichen Kündigung bleibt unberührt.</p></div>
 
       <div class="para"><b class="pnum">§ 5 Vertraulichkeit</b>
         <p>Die Parteien behandeln vertrauliche Informationen der jeweils anderen Partei auch nach Vertragsende vertraulich.</p></div>
@@ -1741,8 +1744,7 @@ Das Angebot ist modular aufgebaut. Einzelne Positionen lassen sich jederzeit anp
       <div class="sig-grid">
         <div class="sig-box"><div class="sg-label">Ort, Datum · Unterschrift Auftraggeberin</div><div class="sg-name">${esc(k.firma)||"[Auftraggeberin]"}</div></div>
         <div class="sig-box"><div class="sg-label">Ort, Datum · Unterschrift Auftragnehmerin</div><div class="sg-name">${esc(F.kurz)} · ${esc(F.gf)}</div></div>
-      </div>
-      ${this.footerHTML(false)}`;
+      </div>`);
   },
 
   /* ---------- Rendering: Rechnung ---------- */
@@ -1752,9 +1754,8 @@ Das Angebot ist modular aufgebaut. Einzelne Positionen lassen sich jederzeit anp
     const bezug=r.bezug||(s.meta.nr?`Angebot ${s.meta.nr}${s.vertrag.nr?` / Vertrag ${s.vertrag.nr}`:""}`:"");
     const zeitraum=(r.von||r.bis)?`${fmtDate(r.von)} bis ${fmtDate(r.bis)}`:"";
 
-    document.getElementById("sheet-rechnung").innerHTML=`
-      ${this.band("RECHNUNG",r.nr||"VTM-"+new Date().getFullYear()+"-XXXX",r.datum)}
-
+    document.getElementById("sheet-rechnung").innerHTML=this.sheetHTML(
+      "RECHNUNG", r.nr||"VTM-"+new Date().getFullYear()+"-XXXX", r.datum, true, `
       <div style="font-family:var(--font-mono);font-size:7pt;color:var(--text-secondary);margin-bottom:2mm">${esc(F.kurz)} · ${esc(F.strasse)} · ${esc(F.plzort)}</div>
       <div class="meta-grid">
         <div class="meta-box">
@@ -1787,8 +1788,7 @@ Das Angebot ist modular aufgebaut. Einzelne Positionen lassen sich jederzeit anp
       </div>
 
       <p style="margin-top:6mm">Vielen Dank für die gute Zusammenarbeit.</p>
-      <p><b>${esc(F.gf)}</b><br><span style="color:var(--text-secondary)">Geschäftsführer, ${esc(F.kurz)}</span></p>
-      ${this.footerHTML(true)}`;
+      <p><b>${esc(F.gf)}</b><br><span style="color:var(--text-secondary)">Geschäftsführer, ${esc(F.kurz)}</span></p>`);
   },
 
   renderPreview(){ this.renderAngebot(); this.renderVertrag(); this.renderRechnung(); },
@@ -1798,7 +1798,16 @@ Das Angebot ist modular aufgebaut. Einzelne Positionen lassen sich jederzeit anp
   print(){
     document.body.classList.remove("print-angebot","print-vertrag","print-rechnung");
     document.body.classList.add("print-"+this.tab);
+    /* Dokumenttitel = PDF-Dateiname im Druckdialog */
+    const titles={angebot:"Angebot",vertrag:"Vertrag",rechnung:"Rechnung"};
+    const nr=this.tab==="angebot"?this.s.meta.nr:this.tab==="vertrag"?this.s.vertrag.nr:this.s.rechnung.nr;
+    const firma=(this.s.kunde.firma||"").replace(/[^\wäöüÄÖÜß -]/g,"").trim().replace(/\s+/g,"_");
+    const oldTitle=document.title;
+    document.title=[titles[this.tab],nr||"Entwurf",firma].filter(Boolean).join("_");
+    const restore=()=>{ document.title=oldTitle; window.removeEventListener("afterprint",restore); };
+    window.addEventListener("afterprint",restore);
     window.print();
+    setTimeout(restore,3000);
   },
 
   /* =========================================================

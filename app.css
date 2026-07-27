@@ -250,14 +250,26 @@ textarea{resize:vertical;line-height:1.55}
 
 /* ============ PREVIEW / DOKUMENT ============ */
 .previewpane{background:var(--c-neutral-100);border-left:1px solid var(--c-neutral-200);padding:28px 20px;overflow-y:auto;display:flex;flex-direction:column;align-items:center;gap:24px}
-.sheet{background:#fff;width:210mm;max-width:100%;min-height:296mm;box-shadow:var(--shadow-medium);padding:20mm 18mm 26mm;position:relative;font-size:10.5pt;color:var(--text-primary)}
+.sheet{background:#fff;width:210mm;max-width:100%;min-height:296mm;box-shadow:var(--shadow-medium);padding:0;position:relative;font-size:10.5pt;color:var(--text-primary)}
 
-.doc-band{background:var(--surface-dark);background-image:var(--gradient-brand);color:#fff;margin:-20mm -18mm 0;padding:9mm 18mm 8mm;display:flex;justify-content:space-between;align-items:flex-end;print-color-adjust:exact;-webkit-print-color-adjust:exact}
-.doc-band .wordmark b{font-family:var(--font-display);font-size:17pt;font-weight:800;letter-spacing:-.01em;display:block;line-height:1.15}
-.doc-band .wordmark i{font-style:italic;font-size:8.5pt;color:var(--c-blue-100);font-family:var(--font-editorial)}
-.doc-band .doctype{text-align:right}
-.doc-band .doctype b{font-family:var(--font-mono);font-size:12pt;letter-spacing:.28em;color:#fff;display:block}
-.doc-band .doctype span{font-family:var(--font-mono);font-size:8pt;color:var(--c-blue-100);letter-spacing:.1em}
+/* ---- Seitenrahmen: Kopf (Logo) und Fuß wiederholen sich beim
+   Druck auf jeder Seite (position:fixed + thead/tfoot-Platzhalter) ---- */
+.doc-fixed-head{position:absolute;top:0;left:0;right:0;padding:10mm 18mm 0;background:#fff}
+.doc-head{display:flex;justify-content:space-between;align-items:flex-end;padding-bottom:4mm}
+.dh-brand{display:flex;gap:4mm;align-items:center}
+.dh-brand img{height:11mm;width:auto}
+.dh-word b{font-family:var(--font-display);font-size:11pt;font-weight:800;letter-spacing:-.01em;line-height:1.12;display:block}
+.dh-word i{font-style:italic;font-size:6.8pt;color:var(--text-secondary);font-family:var(--font-editorial)}
+.dh-type{text-align:right}
+.dh-type b{font-family:var(--font-mono);font-size:11pt;letter-spacing:.26em;color:var(--action);display:block;font-weight:600}
+.dh-type span{font-family:var(--font-mono);font-size:7.5pt;color:var(--text-secondary);letter-spacing:.08em}
+.doc-fixed-head .signal-line{margin:0}
+table.page-frame{width:100%;border-collapse:collapse}
+table.page-frame>thead .head-space{height:34mm}
+table.page-frame>tfoot .foot-space{height:22mm}
+td.page-body{padding:0 18mm;vertical-align:top}
+.doc-fixed-foot{position:absolute;bottom:0;left:0;right:0;padding:0 18mm 9mm;background:#fff}
+.doc-foot{border-top:1px solid var(--border-soft);padding-top:2.5mm;font-family:var(--font-mono);font-size:6.6pt;color:var(--text-secondary);display:flex;justify-content:space-between;gap:5mm;line-height:1.6}
 
 /* Signature: Signal Line – eine Linie, ein seltener Lichtimpuls */
 .signal-line{height:2px;margin:0 -18mm 9mm;background:var(--gradient-brand);position:relative;overflow:hidden;print-color-adjust:exact;-webkit-print-color-adjust:exact}
@@ -279,8 +291,9 @@ textarea{resize:vertical;line-height:1.55}
 .meta-box{background:var(--action-soft);padding:4mm 5mm;border-left:2.5px solid var(--action);print-color-adjust:exact;-webkit-print-color-adjust:exact}
 .meta-box .mb-label{font-family:var(--font-mono);font-size:7pt;letter-spacing:.16em;text-transform:uppercase;color:var(--action);margin-bottom:1.5mm}
 .meta-box div{font-size:9.5pt;line-height:1.55}
+.meta-box b{font-weight:600}
 .meta-line{display:flex;gap:4mm;flex-wrap:wrap;font-family:var(--font-mono);font-size:8pt;color:var(--text-secondary);margin-bottom:7mm}
-.meta-line b{color:var(--text-primary)}
+.meta-line b{color:var(--text-primary);font-weight:500}
 
 .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:3mm;margin:2mm 0 6mm}
 .kpi{background:var(--surface-dark);color:#fff;text-align:center;padding:4mm 2mm;print-color-adjust:exact;-webkit-print-color-adjust:exact}
@@ -333,7 +346,11 @@ table.postable .pt-rab{font-size:7.8pt;color:var(--text-muted);margin-top:.5mm}
 .history li:last-child{border-bottom:none}
 .history .h-ts{font-family:var(--font-mono);font-size:10.5px;color:var(--text-muted);white-space:nowrap;padding-top:1px}
 
-/* ============ PRINT ============ */
+/* ============ PRINT ============
+   @page margin:0 unterdrückt die Browser-Kopf-/Fußzeilen (Datum,
+   Titel, URL). Die eigenen Ränder entstehen über den Seitenrahmen:
+   position:fixed wiederholt Kopf und Fuß auf jeder Seite, die
+   thead/tfoot-Platzhalter reservieren den Platz dafür. */
 @media print{
   body{background:#fff}
   .sidebar,.pagehead,.editor-bar,.tabs,.formpane,.modal-bg,.toast,.content,.login-screen{display:none !important}
@@ -341,12 +358,15 @@ table.postable .pt-rab{font-size:7.8pt;color:var(--text-muted);margin-top:.5mm}
   .editor-layout{display:block;min-height:auto}
   .previewpane{background:#fff;border:none;padding:0;display:block}
   .sheet{box-shadow:none;width:auto;min-height:auto;padding:0;margin:0}
-  .doc-band{margin:0;padding:9mm 12mm 8mm}
-  .signal-line{margin:0 0 9mm}
-  .signal-line::after{display:none}
-  .doc-footer{position:fixed;bottom:0;left:0;right:0}
+  .doc-fixed-head{position:fixed;top:0;left:0;right:0;padding:9mm 14mm 0;background:#fff;z-index:10}
+  .doc-fixed-foot{position:fixed;bottom:0;left:0;right:0;padding:0 14mm 8mm;background:#fff;z-index:10}
+  td.page-body{padding:0 14mm}
+  table.page-frame>thead .head-space{height:34mm}
+  table.page-frame>tfoot .foot-space{height:24mm}
+  .signal-line::after{animation:none;display:none}
+  table.postable tr,.meta-box,.kpi,.paybox,.sig-grid,.pos{break-inside:avoid;page-break-inside:avoid}
   body.print-angebot #sheet-vertrag,body.print-angebot #sheet-rechnung{display:none !important}
   body.print-vertrag #sheet-angebot,body.print-vertrag #sheet-rechnung{display:none !important}
   body.print-rechnung #sheet-angebot,body.print-rechnung #sheet-vertrag{display:none !important}
-  @page{size:A4;margin:16mm 16mm 22mm}
+  @page{size:A4;margin:0}
 }
