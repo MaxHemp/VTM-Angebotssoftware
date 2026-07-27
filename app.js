@@ -1608,22 +1608,24 @@ Das Angebot ist modular aufgebaut. Einzelne Positionen lassen sich jederzeit anp
      beim Druck auf jeder Seite (fixe Elemente + Platzhalter). */
   sheetHTML(doctype,nr,datum,withStnr,inner){
     const F=this.FIRMA;
-    return `<div class="doc-fixed-head">
-        <div class="doc-head">
-          <div class="dh-brand"><img src="assets/vtm-logo-color.png" alt=""><div class="dh-word"><b>VersicherungsTech<br>Magazin</b><i>Technologie verstehen. Versicherung gestalten.</i></div></div>
-          <div class="dh-type"><b>${doctype}</b><span>${esc(nr)||"—"} · ${fmtDate(datum)}</span></div>
-        </div>
-        <div class="signal-line" aria-hidden="true"></div>
-      </div>
-      <table class="page-frame">
-        <thead><tr><td><div class="head-space"></div></td></tr></thead>
+    return `<table class="page-frame">
+        <thead><tr><td class="pf-head">
+          <div class="doc-head">
+            <div class="dh-brand"><img src="assets/vtm-logo-color.png" alt=""><div class="dh-word"><b>VersicherungsTech<br>Magazin</b><i>Technologie verstehen. Versicherung gestalten.</i></div></div>
+            <div class="dh-type"><b>${doctype}</b><span>${esc(nr)||"—"} · ${fmtDate(datum)}</span></div>
+          </div>
+          <div class="signal-line" aria-hidden="true"></div>
+          <div class="head-gap"></div>
+        </td></tr></thead>
         <tbody><tr><td class="page-body">${inner}</td></tr></tbody>
-        <tfoot><tr><td><div class="foot-space"></div></td></tr></tfoot>
-      </table>
-      <div class="doc-fixed-foot"><div class="doc-foot">
-        <div>${esc(F.kurz)} · ${esc(F.strasse)}, ${esc(F.plzort)}<br>${esc(F.hrb)}${withStnr?` · St.-Nr. ${esc(F.stnr)}`:""} · Geschäftsführer: ${esc(F.gf)}</div>
-        <div style="text-align:right">IBAN ${esc(F.iban)}<br>${esc(F.mail)} · ${esc(F.web)}</div>
-      </div></div>`;
+        <tfoot><tr><td class="pf-foot">
+          <div class="foot-gap"></div>
+          <div class="doc-foot">
+            <div>${esc(F.kurz)} · ${esc(F.strasse)}, ${esc(F.plzort)}<br>${esc(F.hrb)}${withStnr?` · St.-Nr. ${esc(F.stnr)}`:""} · Geschäftsführer: ${esc(F.gf)}</div>
+            <div style="text-align:right">IBAN ${esc(F.iban)}<br>${esc(F.mail)} · ${esc(F.web)}</div>
+          </div>
+        </td></tr></tfoot>
+      </table>`;
   },
   posRowsHTML(){
     return this.s.positionen.map((p,i)=>`
@@ -1697,8 +1699,8 @@ Das Angebot ist modular aufgebaut. Einzelne Positionen lassen sich jederzeit anp
       <p>Dieses Angebot ist gültig bis zum ${fmtDate(m.gueltig)}. Das Zahlungsziel beträgt ${s.zahlungsziel||14} Tage netto nach Rechnungsstellung. Erste Inhalte gehen in der Regel innerhalb von 10 Werktagen nach Beauftragung live. Werbliche Formate werden als solche gekennzeichnet; die redaktionelle Unabhängigkeit des VersicherungsTech Magazins bleibt unberührt.</p>
       <p>Zur Beauftragung genügt eine kurze Bestätigung per E-Mail. Anschließend stimmen wir Zeitplan und benötigte Materialien mit Ihnen ab.</p>
 
-      <p style="margin-top:8mm">Mit freundlichen Grüßen</p>
-      <p><b>${esc(m.betreuer)}</b><br><span style="color:var(--text-secondary)">VersicherungsTech Magazin</span></p>`);
+      <div class="closing" style="margin-top:8mm"><p>Mit freundlichen Grüßen</p>
+      <p><b>${esc(m.betreuer)}</b><br><span style="color:var(--text-secondary)">VersicherungsTech Magazin</span></p></div>`);
   },
 
   /* ---------- Rendering: Vertrag ---------- */
@@ -1787,8 +1789,8 @@ Das Angebot ist modular aufgebaut. Einzelne Positionen lassen sich jederzeit anp
         <b>${esc(F.kurz)}</b> · IBAN <b>${esc(F.iban)}</b>
       </div>
 
-      <p style="margin-top:6mm">Vielen Dank für die gute Zusammenarbeit.</p>
-      <p><b>${esc(F.gf)}</b><br><span style="color:var(--text-secondary)">Geschäftsführer, ${esc(F.kurz)}</span></p>`);
+      <div class="closing" style="margin-top:6mm"><p>Vielen Dank für die gute Zusammenarbeit.</p>
+      <p><b>${esc(F.gf)}</b><br><span style="color:var(--text-secondary)">Geschäftsführer, ${esc(F.kurz)}</span></p></div>`);
   },
 
   renderPreview(){ this.renderAngebot(); this.renderVertrag(); this.renderRechnung(); },

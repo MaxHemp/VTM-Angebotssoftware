@@ -252,9 +252,13 @@ textarea{resize:vertical;line-height:1.55}
 .previewpane{background:var(--c-neutral-100);border-left:1px solid var(--c-neutral-200);padding:28px 20px;overflow-y:auto;display:flex;flex-direction:column;align-items:center;gap:24px}
 .sheet{background:#fff;width:210mm;max-width:100%;min-height:296mm;box-shadow:var(--shadow-medium);padding:0;position:relative;font-size:10.5pt;color:var(--text-primary)}
 
-/* ---- Seitenrahmen: Kopf (Logo) und Fuß wiederholen sich beim
-   Druck auf jeder Seite (position:fixed + thead/tfoot-Platzhalter) ---- */
-.doc-fixed-head{position:absolute;top:0;left:0;right:0;padding:10mm 18mm 0;background:#fff}
+/* ---- Seitenrahmen: Kopf (Logo) und Fuß liegen in thead/tfoot der
+   Rahmentabelle. Beim Druck wiederholt die Layout-Engine beide
+   Gruppen auf jeder Seite – das funktioniert zuverlässig in allen
+   Druckpfaden (auch Druckertreiber wie 'Microsoft Print to PDF'),
+   anders als position:fixed. ---- */
+table.page-frame{width:100%;min-height:296mm;border-collapse:collapse}
+td.pf-head{padding:10mm 18mm 0}
 .doc-head{display:flex;justify-content:space-between;align-items:flex-end;padding-bottom:4mm}
 .dh-brand{display:flex;gap:4mm;align-items:center}
 .dh-brand img{height:11mm;width:auto}
@@ -263,12 +267,11 @@ textarea{resize:vertical;line-height:1.55}
 .dh-type{text-align:right}
 .dh-type b{font-family:var(--font-mono);font-size:11pt;letter-spacing:.26em;color:var(--action);display:block;font-weight:600}
 .dh-type span{font-family:var(--font-mono);font-size:7.5pt;color:var(--text-secondary);letter-spacing:.08em}
-.doc-fixed-head .signal-line{margin:0}
-table.page-frame{width:100%;border-collapse:collapse}
-table.page-frame>thead .head-space{height:34mm}
-table.page-frame>tfoot .foot-space{height:22mm}
+td.pf-head .signal-line{margin:0}
+td.pf-head .head-gap{height:8mm}
 td.page-body{padding:0 18mm;vertical-align:top}
-.doc-fixed-foot{position:absolute;bottom:0;left:0;right:0;padding:0 18mm 9mm;background:#fff}
+td.pf-foot{padding:0 18mm 9mm;vertical-align:bottom}
+td.pf-foot .foot-gap{height:7mm}
 .doc-foot{border-top:1px solid var(--border-soft);padding-top:2.5mm;font-family:var(--font-mono);font-size:6.6pt;color:var(--text-secondary);display:flex;justify-content:space-between;gap:5mm;line-height:1.6}
 
 /* Signature: Signal Line – eine Linie, ein seltener Lichtimpuls */
@@ -283,7 +286,7 @@ td.page-body{padding:0 18mm;vertical-align:top}
 .eyebrow.research::before{color:var(--c-brass-500)}
 .doc h1{font-family:var(--font-display);font-size:16pt;font-weight:800;letter-spacing:-.01em;margin-bottom:1.5mm;line-height:1.2}
 .doc .sub{color:var(--text-secondary);font-size:10pt;margin-bottom:6mm}
-.doc h2{font-family:var(--font-mono);font-size:9pt;letter-spacing:.16em;text-transform:uppercase;color:var(--text-primary);font-weight:600;border-bottom:1px solid var(--border-medium);padding-bottom:1.5mm;margin:8mm 0 3.5mm}
+.doc h2{font-family:var(--font-mono);font-size:9pt;letter-spacing:.16em;text-transform:uppercase;color:var(--text-primary);font-weight:600;border-bottom:1px solid var(--border-medium);padding-bottom:1.5mm;margin:8mm 0 3.5mm;break-after:avoid;page-break-after:avoid}
 .doc h2 .h2i{color:var(--text-muted);font-weight:500;margin-right:2.5mm}
 .doc p{margin-bottom:2.5mm;line-height:1.6;color:var(--c-cobalt-900)}
 .doc p.anschreiben{font-family:var(--font-editorial);font-size:10.5pt;line-height:1.7}
@@ -358,11 +361,14 @@ table.postable .pt-rab{font-size:7.8pt;color:var(--text-muted);margin-top:.5mm}
   .editor-layout{display:block;min-height:auto}
   .previewpane{background:#fff;border:none;padding:0;display:block}
   .sheet{box-shadow:none;width:auto;min-height:auto;padding:0;margin:0}
-  .doc-fixed-head{position:fixed;top:0;left:0;right:0;padding:9mm 14mm 0;background:#fff;z-index:10}
-  .doc-fixed-foot{position:fixed;bottom:0;left:0;right:0;padding:0 14mm 8mm;background:#fff;z-index:10}
-  td.page-body{padding:0 14mm}
-  table.page-frame>thead .head-space{height:34mm}
-  table.page-frame>tfoot .foot-space{height:24mm}
+  table.page-frame{min-height:0}
+  td.pf-head{padding:7mm 14mm 0}
+  td.pf-head .head-gap{height:5mm}
+  td.pf-foot{padding:0 14mm 7mm}
+  td.pf-foot .foot-gap{height:4mm}
+  /* Mindesthöhe: Fußzeile sitzt auch bei kurzen Dokumenten unten */
+  td.page-body{padding:0 14mm;height:230mm}
+  .closing{break-inside:avoid;page-break-inside:avoid}
   .signal-line::after{animation:none;display:none}
   table.postable tr,.meta-box,.kpi,.paybox,.sig-grid,.pos{break-inside:avoid;page-break-inside:avoid}
   body.print-angebot #sheet-vertrag,body.print-angebot #sheet-rechnung{display:none !important}
