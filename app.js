@@ -615,7 +615,9 @@ const Views = {
     document.getElementById("kunden-count").textContent=`${list.length} von ${Store.activeKunden().length} Kunden`;
     const host=document.getElementById("kunden-table");
     if(!list.length){
-      host.innerHTML=`<div class="empty"><b>Noch keine Kunden</b>Kunden entstehen automatisch beim Speichern aus einem Angebot – oder hier manuell.<br><button class="btn blue" onclick="Views.editCustomer()">＋ Neuer Kunde</button></div>`;
+      host.innerHTML=`<div class="empty"><b>Noch keine Kunden</b>Kunden entstehen automatisch beim Speichern aus einem Angebot, per Excel-/CSV-Import – oder hier manuell.<br>
+        <button class="btn" onclick="document.getElementById('kunden-import-file').click()">Excel/CSV importieren</button>
+        <button class="btn blue" onclick="Views.editCustomer()">＋ Neuer Kunde</button></div>`;
       return;
     }
     host.innerHTML=`<table class="data"><thead><tr>

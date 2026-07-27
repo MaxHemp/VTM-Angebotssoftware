@@ -30,7 +30,14 @@ Research) und der Struktur des **VTM Sales Desk**.
     Notizen (erscheinen nie im Dokument)
 - **Kunden** – gemeinsamer Kundenstamm; Übernahme in Angebote per
   Auswahl, „Als Kunde speichern" direkt aus dem Editor,
-  „＋ Angebot" direkt aus der Kundenliste.
+  „＋ Angebot" direkt aus der Kundenliste. **Excel-/CSV-Import**
+  (.xlsx, .csv/.tsv) mit automatischer Spaltenerkennung: Kopfzeile
+  und Inhalte werden analysiert und den Feldern zugeordnet
+  (deutsche und englische Bezeichnungen), die Zuordnung ist im
+  Dialog änderbar; Vor- und Nachname werden zusammengeführt, PLZ
+  und Ort kombiniert, Dubletten über E-Mail bzw. Firma erkannt und
+  wahlweise ergänzt oder übersprungen. Gelesen wird ohne externe
+  Bibliothek (XLSX = ZIP + XML, entpackt per DecompressionStream).
 - **Produkte & Leistungen** – Katalog- und Paketpflege
   (nur Administration), inkl. rechnerischer Kontrolle der
   Bundle-Listenpreise.
@@ -166,6 +173,7 @@ Build-Schritt; Schriften kommen von Google Fonts.
 | `app.css` | Design-Tokens „Master Next" + UI- und Dokument-Styles + Print |
 | `app.js` | Store, Auth/Rollen, Router, Views, Editor, Word-Export |
 | `sync.js` | Team-Synchronisation: Supabase-Anbindung, Merge-Logik, Statusanzeige |
+| `import.js` | Excel-/CSV-Kontaktimport: ZIP-/XLSX-Leser, CSV-Parser, Spaltenerkennung |
 | `supabase-setup.sql` | Einmaliges SQL-Setup für das Backend |
 | `supabase-mail-setup.sql` | Vorlage für den Einladungs-Mailversand (pg_net → Resend) |
 | `data.js` | Seed-Daten: Katalog, Bundles, Vorlagen, Firma, Benutzer, Nummernkreise |
