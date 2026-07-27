@@ -289,6 +289,7 @@ td.pf-foot .foot-gap{height:7mm}
 .doc h2{font-family:var(--font-mono);font-size:9pt;letter-spacing:.16em;text-transform:uppercase;color:var(--text-primary);font-weight:600;border-bottom:1px solid var(--border-medium);padding-bottom:1.5mm;margin:8mm 0 3.5mm;break-after:avoid;page-break-after:avoid}
 .doc h2 .h2i{color:var(--text-muted);font-weight:500;margin-right:2.5mm}
 .doc p{margin-bottom:2.5mm;line-height:1.6;color:var(--c-cobalt-900)}
+.doc a{color:var(--action);text-decoration:underline;text-underline-offset:1.5px;overflow-wrap:anywhere;print-color-adjust:exact;-webkit-print-color-adjust:exact}
 .doc p.anschreiben{font-family:var(--font-editorial);font-size:10.5pt;line-height:1.7}
 .meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:6mm;margin-bottom:7mm}
 .meta-box{background:var(--action-soft);padding:4mm 5mm;border-left:2.5px solid var(--action);print-color-adjust:exact;-webkit-print-color-adjust:exact}

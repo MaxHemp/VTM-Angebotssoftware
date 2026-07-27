@@ -14,6 +14,21 @@ const addDays = (iso,n) => { if(!iso) return ""; const d=new Date(iso); d.setDat
 const todayISO = () => new Date().toISOString().slice(0,10);
 const esc = s => (s===undefined||s===null?"":String(s)).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
 const nl = s => esc(s).replace(/\n/g,"<br>");
+/* Freitext sicher ausgeben und dabei URLs, www-Adressen und
+   E-Mail-Adressen in klickbare Links verwandeln. Es wird immer
+   zuerst escaped – aus dem Text kann also kein Markup entstehen. */
+function linkify(s){
+  return esc(s).replace(/(https?:\/\/[^\s<]+|www\.[^\s<]+|[\w.+-]+@[\w-]+\.[\w.-]*[\w])/gi, m=>{
+    const trail=(m.match(/[.,;:!?)\]}'"]+$/)||[""])[0];
+    const core=trail?m.slice(0,-trail.length):m;
+    if(!core) return m;
+    const href=/^https?:\/\//i.test(core) ? core
+             : /^www\./i.test(core)        ? "https://"+core
+             :                               "mailto:"+core;
+    return `<a href="${href}">${core}</a>`+trail;
+  });
+}
+const nlLink = s => linkify(s).replace(/\n/g,"<br>");
 const uid = p => (p||"x")+"-"+Date.now().toString(36)+Math.random().toString(36).slice(2,7);
 function lastName(full){ if(!full) return ""; const parts=full.trim().split(/\s+/); return parts[parts.length-1]; }
 function toast(msg){
@@ -1668,7 +1683,7 @@ Das Angebot ist modular aufgebaut. Einzelne Positionen lassen sich jederzeit anp
           <div><b>${esc(k.firma)||"—"}</b><br>
           ${k.name?esc((k.anrede?k.anrede+" ":"")+k.name)+(k.funktion?", "+esc(k.funktion):"")+"<br>":""}
           ${k.strasse?esc(k.strasse)+"<br>":""}${esc(k.plzort)||""}
-          ${k.email?`<br><span style="font-family:var(--font-mono);font-size:8pt">${esc(k.email)}</span>`:""}</div>
+          ${k.email?`<br><span style="font-family:var(--font-mono);font-size:8pt">${linkify(k.email)}</span>`:""}</div>
         </div>
         <div class="meta-box">
           <div class="mb-label">Anbieter</div>
@@ -1683,7 +1698,7 @@ Das Angebot ist modular aufgebaut. Einzelne Positionen lassen sich jederzeit anp
         <span>Gültig bis: <b>${fmtDate(m.gueltig)}</b></span>
       </div>
 
-      ${s.anschreiben?H2("Persönliches Anschreiben")+`<p class="anschreiben" style="white-space:pre-line">${esc(s.anschreiben)}</p>`:""}
+      ${s.anschreiben?H2("Persönliches Anschreiben")+`<p class="anschreiben" style="white-space:pre-line">${linkify(s.anschreiben)}</p>`:""}
 
       ${m.kpi?H2("Warum VersicherungsTech Magazin")+kpi:""}
 
@@ -1738,7 +1753,7 @@ Das Angebot ist modular aufgebaut. Einzelne Positionen lassen sich jederzeit anp
       <div class="para"><b class="pnum">§ 5 Vertraulichkeit</b>
         <p>Die Parteien behandeln vertrauliche Informationen der jeweils anderen Partei auch nach Vertragsende vertraulich.</p></div>
 
-      ${v.zusatz?`<div class="para"><b class="pnum">§ 6 Ergänzende Regelungen</b><p style="white-space:pre-line">${esc(v.zusatz)}</p></div>`:""}
+      ${v.zusatz?`<div class="para"><b class="pnum">§ 6 Ergänzende Regelungen</b><p style="white-space:pre-line">${linkify(v.zusatz)}</p></div>`:""}
 
       <div class="para"><b class="pnum">§ ${v.zusatz?"7":"6"} Schlussbestimmungen</b>
         <p>Änderungen und Ergänzungen bedürfen der Textform. Gerichtsstand ist ${esc(v.gerichtsstand)||"Köln"}. Sollten einzelne Bestimmungen unwirksam sein, bleibt der Vertrag im Übrigen wirksam.</p></div>
@@ -1912,7 +1927,7 @@ Das Angebot ist modular aufgebaut. Einzelne Positionen lassen sich jederzeit anp
           <b>${esc(F.kurz)}</b><br>${esc(F.strasse)}<br>${esc(F.plzort)}<br>Ihr Kontakt: ${esc(m.betreuer)}<br>${esc(F.mail)}</td>
       </tr></table>
       <p style="font-size:9pt;color:#3F4958">Angebotsnr.: <b>${esc(m.nr)||"—"}</b> &nbsp;·&nbsp; Datum: <b>${fmtDate(m.datum)}</b> &nbsp;·&nbsp; Gültig bis: <b>${fmtDate(m.gueltig)}</b></p>
-      ${s.anschreiben?H2("Persönliches Anschreiben")+`<p style="font-family:'Source Serif 4','Palatino Linotype',Georgia,serif;font-size:10.5pt">${nl(s.anschreiben)}</p>`:""}
+      ${s.anschreiben?H2("Persönliches Anschreiben")+`<p style="font-family:'Source Serif 4','Palatino Linotype',Georgia,serif;font-size:10.5pt">${nlLink(s.anschreiben)}</p>`:""}
       ${m.kpi?H2("Warum VersicherungsTech Magazin")+kpi:""}
       ${H2("Leistungen & Konditionen")}
       ${this.wPosTable()}
@@ -1942,7 +1957,7 @@ Das Angebot ist modular aufgebaut. Einzelne Positionen lassen sich jederzeit anp
       ${par(3,"Vergütung",`Die Vergütung beträgt <b>${fmtEUR(c.nettoR)}</b> zzgl. gesetzlicher Umsatzsteuer${c.rabatt>0?` (bereits berücksichtigt: Paketrabatt von ${(s.rabatt||0).toLocaleString("de-DE")} %)`:""}. Das Zahlungsziel beträgt ${s.zahlungsziel||14} Tage netto nach Rechnungsstellung.`)}
       ${par(4,"Laufzeit und Kündigung",`Der Vertrag beginnt am <b>${fmtDate(v.beginn)}</b> und läuft bis zum <b>${fmtDate(v.ende)}</b>. Er kann mit einer Frist von ${esc(v.kuendigung)||"drei Monaten zum Laufzeitende"} gekündigt werden. Das Recht zur außerordentlichen Kündigung bleibt unberührt.`)}
       ${par(5,"Vertraulichkeit",`Die Parteien behandeln vertrauliche Informationen der jeweils anderen Partei auch nach Vertragsende vertraulich.`)}
-      ${v.zusatz?par(6,"Ergänzende Regelungen",nl(v.zusatz)):""}
+      ${v.zusatz?par(6,"Ergänzende Regelungen",nlLink(v.zusatz)):""}
       ${par(v.zusatz?7:6,"Schlussbestimmungen",`Änderungen und Ergänzungen bedürfen der Textform. Gerichtsstand ist ${esc(v.gerichtsstand)||"Köln"}. Sollten einzelne Bestimmungen unwirksam sein, bleibt der Vertrag im Übrigen wirksam.`)}
       <p>&nbsp;</p><p>&nbsp;</p>
       <table width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
