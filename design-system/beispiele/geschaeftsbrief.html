@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Angebot A-2026-041 · VersicherungsTech Magazin – Geschäftsbrief (Beispielseite)</title>
+<meta name="description" content="Druckfähiges A4-Angebotsdokument des VTM Design Systems 5.0 „Signal": Geschäftsbrief mit Leistungsübersicht, Positionstabelle und vollständigen Firmenangaben.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Schibsted+Grotesk:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../tokens.css">
+<style>
+  /* =========================================================
+     VTM Dokumentsystem · Geschäftsbrief / Angebot (A4)
+     Bildschirm: Blätter auf Eisblau. Druck: exakt A4, 22mm Rand.
+     ========================================================= */
+
+  * { box-sizing: border-box; }
+
+  html { background: var(--sem-flaeche-eis); }
+
+  body {
+    margin: 0;
+    font: var(--dokument-font);
+    color: var(--sem-text);
+    background: var(--sem-flaeche-eis);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: var(--sem-text-link); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  a:focus-visible,
+  button:focus-visible {
+    outline: none;
+    box-shadow: var(--sem-fokus-ring);
+    border-radius: var(--vtm-radius-s);
+  }
+
+  .skip-link {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    z-index: var(--vtm-ebene-toast);
+    background: var(--vtm-weiss);
+    color: var(--sem-text);
+    padding: var(--vtm-space-12) var(--vtm-space-16);
+    font: 600 var(--vtm-size-s)/1 var(--vtm-font-text);
+    border-radius: var(--vtm-radius-m);
+    box-shadow: var(--vtm-schatten-m);
+  }
+  .skip-link:focus-visible { left: var(--vtm-space-16); top: var(--vtm-space-16); }
+
+  /* ---- Bildschirm-Werkzeugleiste (nicht im Druck) ---- */
+  .werkzeug {
+    max-width: 210mm;
+    margin: 0 auto;
+    padding: var(--vtm-space-24) var(--vtm-space-16) 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--vtm-space-12) var(--vtm-space-24);
+  }
+  .systemlabel {
+    font: 500 var(--vtm-size-xs)/1.4 var(--vtm-font-mono);
+    letter-spacing: var(--vtm-tracking-mono);
+    color: var(--sem-text-gedaempft);
+  }
+  .demo-hinweis {
+    font: 500 var(--vtm-size-xs)/1.4 var(--vtm-font-mono);
+    color: var(--sem-text-gedaempft);
+  }
+  .drucken {
+    margin-left: auto;
+    height: var(--btn-hoehe-kompakt);
+    padding: 0 var(--btn-pad-x);
+    border: var(--btn-sekundaer-linie);
+    border-radius: var(--btn-radius);
+    background: var(--vtm-weiss);
+    color: var(--btn-sekundaer-text);
+    font: 600 var(--vtm-size-s)/1 var(--vtm-font-text);
+    cursor: pointer;
+    transition: background var(--vtm-dauer-micro) var(--vtm-ease-standard);
+  }
+  .drucken:hover { background: var(--btn-sekundaer-bg-hover); }
+
+  /* ---- Blatt (A4) ---- */
+  .dokument {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--vtm-space-32);
+    padding: var(--vtm-space-24) var(--vtm-space-16) var(--vtm-space-96);
+  }
+
+  .blatt {
+    width: 210mm;
+    max-width: 100%;
+    min-height: 297mm;
+    padding: var(--dokument-rand);
+    background: var(--vtm-weiss);
+    box-shadow: var(--vtm-schatten-l);
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ---- Briefkopf ---- */
+  .briefkopf {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--vtm-space-24);
+    margin-bottom: 14mm;
+  }
+  .briefkopf img {
+    height: 48px;
+    width: auto;
+    flex: none;
+  }
+
+  .meta {
+    margin: 0;
+    font: var(--dokument-meta-font);
+    letter-spacing: var(--vtm-tracking-mono);
+    color: var(--sem-text-sekundaer);
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: 2pt 10pt;
+    text-align: left;
+  }
+  .meta dt {
+    color: var(--sem-text-gedaempft);
+    text-transform: uppercase;
+    letter-spacing: var(--vtm-tracking-label);
+    font-size: 7pt;
+    align-self: baseline;
+  }
+  .meta dd {
+    margin: 0;
+    color: var(--sem-text);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---- Absender / Empfänger ---- */
+  .absenderzeile {
+    font: 400 7pt/1.4 var(--vtm-font-text);
+    color: var(--sem-text-gedaempft);
+    border-bottom: var(--vtm-linie-haar);
+    padding-bottom: 1.2mm;
+    margin-bottom: 5mm;
+    max-width: 85mm;
+  }
+  .empfaenger {
+    font-style: normal;
+    font-size: 10.5pt;
+    line-height: 1.5;
+    margin-bottom: 16mm;
+  }
+
+  /* ---- Betreff + Text ---- */
+  .betreff {
+    font: 700 12.5pt/1.25 var(--vtm-font-display);
+    letter-spacing: var(--vtm-tracking-heading);
+    color: var(--sem-text);
+    margin: 0 0 7mm;
+  }
+  .brieftext p { margin: 0 0 4mm; max-width: 160mm; }
+  .brieftext p:last-child { margin-bottom: 0; }
+
+  .gruss { margin-top: 9mm; }
+  .gruss .name {
+    margin-top: 9mm;
+    font-weight: 600;
+  }
+  .gruss .rolle {
+    color: var(--sem-text-sekundaer);
+    font-size: 9pt;
+  }
+
+  /* ---- Seitenfuß ---- */
+  .blattfuss {
+    margin-top: auto;
+    padding-top: 3mm;
+    border-top: var(--vtm-linie-haar);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: var(--vtm-space-24);
+    font: 400 7pt/1.5 var(--vtm-font-text);
+    color: var(--sem-text-gedaempft);
+  }
+  .blattfuss .seitenzahl {
+    font: 500 7.5pt/1.4 var(--vtm-font-mono);
+    letter-spacing: var(--vtm-tracking-mono);
+    color: var(--sem-text-sekundaer);
+    white-space: nowrap;
+  }
+
+  /* ---- Seite 2 · Leistungsübersicht ---- */
+  .folgekopf {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--vtm-space-24);
+    border-bottom: var(--vtm-linie-haar);
+    padding-bottom: 2.5mm;
+    margin-bottom: 12mm;
+    font: 500 7.5pt/1.4 var(--vtm-font-mono);
+    letter-spacing: var(--vtm-tracking-mono);
+    color: var(--sem-text-sekundaer);
+  }
+
+  .uebersicht-titel {
+    font: 700 16pt/1.2 var(--vtm-font-display);
+    letter-spacing: var(--vtm-tracking-heading);
+    margin: 0 0 3mm;
+  }
+  .aussage {
+    font: 600 11.5pt/1.4 var(--vtm-font-display);
+    letter-spacing: var(--vtm-tracking-heading);
+    max-width: 150mm;
+    margin: 0 0 3mm;
+  }
+  .einordnung {
+    color: var(--sem-text-sekundaer);
+    max-width: 155mm;
+    margin: 0 0 8mm;
+  }
+
+  /* ---- Positionstabelle ---- */
+  table.positionen {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 4mm;
+  }
+  .positionen caption {
+    text-align: left;
+    font: 600 7pt/1.3 var(--vtm-font-mono);
+    letter-spacing: var(--vtm-tracking-label);
+    text-transform: uppercase;
+    color: var(--sem-text-gedaempft);
+    padding-bottom: 2mm;
+  }
+  .positionen th {
+    font: 600 7.5pt/1.3 var(--vtm-font-text);
+    letter-spacing: var(--vtm-tracking-label);
+    text-transform: uppercase;
+    color: var(--sem-text-sekundaer);
+    text-align: left;
+    padding: 0 2.5mm 2mm 0;
+    border-bottom: 1px solid rgb(13 28 60 / 0.20);
+  }
+  .positionen td {
+    vertical-align: top;
+    padding: 3mm 2.5mm 3mm 0;
+    border-bottom: var(--vtm-linie-haar);
+  }
+  .positionen .zahl,
+  .positionen th.zahl {
+    text-align: right;
+    padding-right: 0;
+    padding-left: 4mm;
+    white-space: nowrap;
+  }
+  .positionen td.zahl {
+    font: 500 9.5pt/1.4 var(--vtm-font-mono);
+    letter-spacing: var(--vtm-tracking-mono);
+    font-variant-numeric: tabular-nums;
+  }
+  .positionen .pos {
+    font: 500 9pt/1.55 var(--vtm-font-mono);
+    color: var(--sem-text-gedaempft);
+    width: 8mm;
+  }
+  .positionen .leistung { width: 78mm; }
+  .positionen .leistung strong {
+    display: block;
+    font-weight: 600;
+  }
+  .positionen .leistung span {
+    display: block;
+    font-size: 8.5pt;
+    line-height: 1.45;
+    color: var(--sem-text-sekundaer);
+    margin-top: 0.8mm;
+  }
+
+  .positionen tfoot td {
+    border-bottom: 0;
+    padding: 2mm 2.5mm 0 0;
+  }
+  .positionen tfoot .summenlabel {
+    text-align: right;
+    color: var(--sem-text-sekundaer);
+    font-size: 9.5pt;
+  }
+  .positionen tfoot tr:first-child td { padding-top: 3.5mm; }
+  .positionen tfoot .gesamt td {
+    font-weight: 700;
+    color: var(--sem-text);
+    border-top: 1px solid rgb(13 28 60 / 0.20);
+    padding-top: 2.5mm;
+  }
+  .positionen tfoot .gesamt td.zahl { font-weight: 600; font-size: 10.5pt; }
+
+  /* ---- Belegzeile (Gold – nur Beleg/Quelle) ---- */
+  .beleg {
+    margin: 5mm 0 10mm;
+  }
+  .beleg::before {
+    content: "";
+    display: block;
+    width: 24px;
+    height: 3px;
+    background: var(--sem-beleg-marke);
+    margin-bottom: 1.6mm;
+  }
+  .beleg p {
+    margin: 0;
+    font: 500 8.5pt/1.5 var(--vtm-font-mono);
+    letter-spacing: var(--vtm-tracking-mono);
+    color: var(--sem-beleg-text);
+    max-width: 160mm;
+  }
+
+  /* ---- Handlung / nächster Schritt ---- */
+  .naechster-schritt {
+    border: var(--vtm-linie-haar);
+    border-left: 2px solid var(--sem-auswahl-linie);
+    border-radius: var(--vtm-radius-s);
+    background: var(--sem-flaeche-soft);
+    padding: 4.5mm 6mm;
+    max-width: 160mm;
+  }
+  .naechster-schritt h3 {
+    font: 700 10pt/1.3 var(--vtm-font-display);
+    letter-spacing: var(--vtm-tracking-heading);
+    margin: 0 0 1.5mm;
+  }
+  .naechster-schritt p { margin: 0; max-width: 145mm; }
+
+  .firmenangaben { max-width: 150mm; }
+
+  /* ---- Kleine Bildschirme: Blatt fließt mit ---- */
+  @media (max-width: 760px) {
+    .blatt { min-height: 0; padding: 8mm 6mm; }
+    /* Positionstabelle rollt am Bildschirm im eigenen Container (Reflow 320px) */
+    table.positionen { display: block; overflow-x: auto; }
+    .briefkopf { flex-direction: column; gap: var(--vtm-space-16); margin-bottom: 8mm; }
+    .empfaenger { margin-bottom: 8mm; }
+    .blattfuss { flex-direction: column; align-items: flex-start; gap: var(--vtm-space-8); }
+    .positionen .leistung { width: auto; }
+  }
+
+  /* ---- Druck: exakt A4 ---- */
+  @page { size: A4; margin: 0; }
+
+  @media print {
+    html, body { background: #FFFFFF; }
+    .werkzeug { display: none; }
+    .dokument { display: block; padding: 0; }
+    .blatt {
+      width: 210mm;
+      min-height: 0;
+      height: 296mm; /* 1mm Rundungsreserve, damit der Blattfuß nie überläuft */
+      margin: 0;
+      box-shadow: none;
+      break-after: page;
+    }
+    .blatt:last-child { break-after: auto; }
+    .naechster-schritt { background: #FFFFFF; }
+    .positionen tr, .beleg, .naechster-schritt { break-inside: avoid; }
+    a { color: inherit; }
+  }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#dokument">Zum Dokument springen</a>
+
+<header class="werkzeug">
+  <p class="systemlabel">VTM Design System 5.0 · Signal · Beispielseite — Dokumentsystem / Geschäftsbrief</p>
+  <p class="demo-hinweis">Demonstrationsinhalt des Design Systems · Empfängerdaten beispielhaft</p>
+  <button type="button" class="drucken" onclick="window.print()">Drucken (A4)</button>
+</header>
+
+<main id="dokument" class="dokument">
+
+  <!-- ================= Seite 1 · Anschreiben ================= -->
+  <article class="blatt" aria-label="Seite 1 von 2: Anschreiben">
+
+    <header class="briefkopf">
+      <img src="../assets/logo/vtm-logo-farbe.png" alt="VersicherungsTech Magazin" width="273" height="48">
+      <dl class="meta">
+        <dt>Angebot</dt>       <dd>A-2026-041</dd>
+        <dt>Datum</dt>         <dd>5. August 2026</dd>
+        <dt>Gültig bis</dt>    <dd>19. August 2026</dd>
+        <dt>Betreuer</dt>      <dd>Maximilian Hempel</dd>
+      </dl>
+    </header>
+
+    <p class="absenderzeile">VersicherungsTech Media UG (haftungsbeschränkt) · Moitzfeld 17 · 51429 Bergisch Gladbach</p>
+
+    <address class="empfaenger">
+      Musterversicherung AG<br>
+      Unternehmenskommunikation<br>
+      Frau Julia Mustermann<br>
+      Musterstraße 12<br>
+      50667 Köln
+    </address>
+
+    <h1 class="betreff">Angebot A-2026-041 — Fachliche Sichtbarkeit im VersicherungsTech Magazin, Q4/2026</h1>
+
+    <div class="brieftext">
+      <p>Sehr geehrte Frau Mustermann,</p>
+      <p>vielen Dank für Ihr Interesse an einer Zusammenarbeit mit dem VersicherungsTech Magazin. Auf Grundlage unseres Gesprächs erhalten Sie mit diesem Angebot eine Übersicht der besprochenen Leistungen für das vierte Quartal 2026 – zusammengestellt nach unserem Leistungskatalog, Stand 08/2026.</p>
+      <p>Das VersicherungsTech Magazin ist ein unabhängiges digitales Fachmedium für KI, Automatisierung und digitale Technologien in der DACH-Versicherungsbranche. Ihre Fachinhalte erreichen unser Publikum über das Magazin, den Newsletter mit über 6.000 Empfängern bei rund 50&#8239;% Öffnungsrate, den Insurance Monday Podcast mit 35.000 Downloads pro Monat sowie ein LinkedIn-Netzwerk mit über 20.000 Followern im Team (Stand: 08/2026).</p>
+      <p>Wichtig für Ihre Einordnung: Wir versprechen fachliche Sichtbarkeit in einem klar umrissenen Fachpublikum – keine Leads und keine Vertriebsabschlüsse. Gesponserte Inhalte kennzeichnen wir sichtbar, die redaktionelle Unabhängigkeit des Magazins bleibt unberührt.</p>
+      <p>Die Leistungsübersicht mit allen Positionen finden Sie auf Seite&nbsp;2. Alle Preise verstehen sich netto zuzüglich 19&#8239;% Umsatzsteuer; das Angebot ist bis zum 19. August 2026 gültig. Für die Bestätigung genügt eine kurze E-Mail – die Themenplanung stimmen wir anschließend gemeinsam ab.</p>
+      <p>Bei Fragen erreichen Sie mich direkt unter <a href="mailto:info@versicherungstech-magazin.de">info@versicherungstech-magazin.de</a>.</p>
+    </div>
+
+    <div class="gruss">
+      <p>Mit freundlichen Grüßen</p>
+      <p class="name">Maximilian Hempel</p>
+      <p class="rolle">Gründer und Herausgeber · VersicherungsTech Media UG (haftungsbeschränkt)</p>
+    </div>
+
+    <footer class="blattfuss">
+      <p>VersicherungsTech Magazin · versicherungstech-magazin.de · Angebot A-2026-041</p>
+      <p class="seitenzahl">Seite 1/2</p>
+    </footer>
+  </article>
+
+  <!-- ================= Seite 2 · Leistungsübersicht ================= -->
+  <article class="blatt" aria-label="Seite 2 von 2: Leistungsübersicht">
+
+    <header class="folgekopf">
+      <p>VersicherungsTech Magazin · Angebot A-2026-041</p>
+      <p>5. August 2026</p>
+    </header>
+
+    <h2 class="uebersicht-titel">Leistungsübersicht</h2>
+
+    <!-- 1 · Aussage -->
+    <p class="aussage">Drei Bausteine verbinden redaktionelle Tiefe mit wiederkehrender Präsenz in Newsletter und LinkedIn.</p>
+
+    <!-- 2 · Einordnung -->
+    <p class="einordnung">Der Fachartikel setzt den inhaltlichen Anker, das Newsletter-Sponsoring hält Ihr Thema über drei Monate im Posteingang des Fachpublikums, die LinkedIn-Posts verlängern beides in das Netzwerk. Zeitraum: Oktober bis Dezember 2026; die Themen stimmen wir redaktionell mit Ihnen ab.</p>
+
+    <!-- 3 · Beleg: Positionen und Preise -->
+    <table class="positionen">
+      <caption>Positionen · Preise netto in Euro</caption>
+      <thead>
+        <tr>
+          <th scope="col" class="pos">Pos.</th>
+          <th scope="col" class="leistung">Leistung</th>
+          <th scope="col" class="zahl">Menge</th>
+          <th scope="col" class="zahl">Einzelpreis</th>
+          <th scope="col" class="zahl">Gesamt netto</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="pos">1</td>
+          <td class="leistung">
+            <strong>Fachartikel</strong>
+            <span>Redaktionell aufbereiteter Fachbeitrag im Magazin, Thema nach gemeinsamer Planung; inklusive Ausspielung im Newsletter.</span>
+          </td>
+          <td class="zahl">1</td>
+          <td class="zahl">900,00&nbsp;€</td>
+          <td class="zahl">900,00&nbsp;€</td>
+        </tr>
+        <tr>
+          <td class="pos">2</td>
+          <td class="leistung">
+            <strong>Newsletter-Sponsoring</strong>
+            <span>Monatliche Präsenz im VTM-Newsletter (6.000+ Empfänger, rund 50&#8239;% Öffnungsrate); Laufzeit Oktober bis Dezember 2026.</span>
+          </td>
+          <td class="zahl">3 Monate</td>
+          <td class="zahl">1.900,00&nbsp;€</td>
+          <td class="zahl">5.700,00&nbsp;€</td>
+        </tr>
+        <tr>
+          <td class="pos">3</td>
+          <td class="leistung">
+            <strong>Sponsored LinkedIn Post</strong>
+            <span>Gekennzeichneter Beitrag über das Team-Netzwerk (20.000+ Follower); Mengenrabatt −10&#8239;% ab 5 Posts bereits eingerechnet.</span>
+          </td>
+          <td class="zahl">5</td>
+          <td class="zahl">750,00&nbsp;€</td>
+          <td class="zahl">3.375,00&nbsp;€</td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="4" class="summenlabel">Zwischensumme netto</td>
+          <td class="zahl">9.975,00&nbsp;€</td>
+        </tr>
+        <tr>
+          <td colspan="4" class="summenlabel">Umsatzsteuer 19&#8239;%</td>
+          <td class="zahl">1.895,25&nbsp;€</td>
+        </tr>
+        <tr class="gesamt">
+          <td colspan="4" class="summenlabel">Gesamtbetrag</td>
+          <td class="zahl">11.870,25&nbsp;€</td>
+        </tr>
+      </tfoot>
+    </table>
+
+    <div class="beleg">
+      <p>Preise gemäß Leistungskatalog angebote.versicherungstech-magazin.de · Stand 08/2026</p>
+    </div>
+
+    <!-- 4 · Handlung -->
+    <section class="naechster-schritt" aria-label="Nächster Schritt">
+      <h3>Nächster Schritt</h3>
+      <p>Eine Bestätigung per E-Mail an <a href="mailto:info@versicherungstech-magazin.de">info@versicherungstech-magazin.de</a> genügt. Wir melden uns anschließend innerhalb von zwei Werktagen mit Terminvorschlägen für die Themenplanung.</p>
+    </section>
+
+    <footer class="blattfuss">
+      <p class="firmenangaben">
+        VersicherungsTech Media UG (haftungsbeschränkt) · Moitzfeld 17 · 51429 Bergisch Gladbach ·
+        HRB 126738 Amtsgericht Köln · Geschäftsführer: Maximilian Hempel · USt-Nr. 204/5723/2832 ·
+        IBAN DE42 3707 0209 0079 5427 00 · info@versicherungstech-magazin.de · versicherungstech-magazin.de
+      </p>
+      <p class="seitenzahl">Seite 2/2</p>
+    </footer>
+  </article>
+
+</main>
+</body>
+</html>

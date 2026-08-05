@@ -1,5 +1,10 @@
 # VTM Angebotsdesk
 
+> **Neu:** Das verbindliche, kanalübergreifende **VTM Design System 5.0
+> „Signal"** liegt unter [`design-system/`](design-system/README.md)
+> (Handbuch: `design-system/index.html`). Es ersetzt die Arbeitsfassung
+> „Master-Next 4.2" (`VTM-Brand-Design-System-Master-Next.html`).
+
 Interne **Angebotssoftware für das Vertriebsteam** des
 VersicherungsTech Magazins (VTM). Statische Webanwendung ohne
 Build-Tools und ohne Server-Abhängigkeiten – einfach deployen,
