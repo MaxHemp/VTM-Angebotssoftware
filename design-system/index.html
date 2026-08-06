@@ -1,0 +1,1844 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="VTM Design System 5.0 · Signal – das verbindliche, kanalübergreifende Marken-, Redaktions- und Produktsystem des VersicherungsTech Magazins.">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#0D1C3C">
+<meta name="color-scheme" content="light">
+<title>VTM Design System 5.0 · Signal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Schibsted+Grotesk:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tokens.css">
+<style>
+/* =========================================================
+   Dokumentgestaltung des Design-System-Handbuchs.
+   Alle Werte kommen aus tokens.css.
+   ========================================================= */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 5rem; }
+body {
+  margin: 0;
+  font: 400 var(--vtm-size-m)/var(--vtm-leading-text) var(--vtm-font-text);
+  color: var(--sem-text);
+  background: var(--sem-flaeche-seite);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+img { max-width: 100%; height: auto; }
+a { color: var(--sem-text-link); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+a:hover { color: var(--vtm-electric-600); }
+:focus-visible { outline: none; box-shadow: var(--sem-fokus-ring); border-radius: var(--vtm-radius-s); }
+
+.skip-link {
+  position: absolute; left: -999px; top: 0; z-index: var(--vtm-ebene-toast);
+  background: var(--vtm-nacht-900); color: #fff; padding: .75rem 1.25rem;
+  border-radius: 0 0 var(--vtm-radius-m) 0; text-decoration: none;
+}
+.skip-link:focus-visible { left: 0; }
+
+/* ------- Grundraster ------- */
+.shell { max-width: 82rem; margin-inline: auto; padding-inline: clamp(1rem, 4vw, 3rem); }
+.kapitel { padding-block: var(--vtm-space-96); border-top: var(--vtm-linie-haar); }
+.kapitel--soft { background: var(--sem-flaeche-soft); }
+.kap-kopf { display: grid; grid-template-columns: minmax(0,7fr) minmax(0,5fr); gap: var(--vtm-space-32); align-items: end; margin-bottom: var(--vtm-space-48); }
+.kap-nr {
+  font: 500 var(--vtm-size-xs)/1 var(--vtm-font-mono);
+  letter-spacing: var(--vtm-tracking-label); text-transform: uppercase;
+  color: var(--sem-text-gedaempft); display: inline-flex; align-items: center; gap: .625rem;
+  margin-bottom: var(--vtm-space-16);
+}
+.kap-nr::before { content: ""; width: 1.5rem; height: 2px; background: var(--vtm-electric-600); }
+.kap-titel { font: 800 var(--vtm-size-4xl)/var(--vtm-leading-heading) var(--vtm-font-display); letter-spacing: var(--vtm-tracking-heading); margin: 0; max-width: 24ch; }
+.kap-intro { font-size: var(--vtm-size-l); color: var(--sem-text-sekundaer); max-width: var(--vtm-measure-lead); margin: 0; }
+@media (max-width: 900px) { .kap-kopf { grid-template-columns: minmax(0, 1fr); align-items: start; } }
+
+h3 { font: 700 var(--vtm-size-2xl)/var(--vtm-leading-heading) var(--vtm-font-display); letter-spacing: var(--vtm-tracking-heading); margin: var(--vtm-space-64) 0 var(--vtm-space-16); }
+h4 { font: 600 var(--vtm-size-xl)/var(--vtm-leading-heading) var(--vtm-font-display); margin: var(--vtm-space-48) 0 var(--vtm-space-12); }
+p, ul, ol { max-width: var(--vtm-measure-text); }
+li { margin-block: .375rem; }
+.breit { max-width: none; }
+
+/* ------- Kopf & Navigation ------- */
+.top {
+  position: sticky; top: 0; z-index: var(--vtm-ebene-sticky);
+  background: var(--nav-bg); backdrop-filter: blur(12px);
+  border-bottom: var(--nav-linie);
+}
+.top-innen { display: flex; align-items: center; gap: var(--vtm-space-24); min-height: var(--nav-hoehe); }
+.top-logo { display: inline-flex; align-items: center; }
+.top-logo img { height: 26px; width: auto; }
+.top-label { font: 500 var(--vtm-size-xs)/1 var(--vtm-font-mono); letter-spacing: var(--vtm-tracking-mono); color: var(--sem-text-gedaempft); border-left: var(--vtm-linie-haar); padding-left: var(--vtm-space-24); }
+.top nav { margin-left: auto; }
+.top nav ul { display: flex; gap: var(--vtm-space-4); list-style: none; margin: 0; padding: 0; flex-wrap: wrap; }
+.top nav a {
+  display: inline-block; padding: .5rem .75rem; border-radius: var(--vtm-radius-m);
+  font: 500 var(--vtm-size-s)/1 var(--vtm-font-text); color: var(--sem-text-sekundaer); text-decoration: none;
+}
+.top nav a:hover { background: var(--sem-flaeche-soft); color: var(--sem-text); }
+@media (max-width: 1100px) { .top-label { display: none; } }
+@media (max-width: 820px) { .top nav { display: none; } }
+
+/* ------- Hero ------- */
+.hero { position: relative; overflow: clip; padding-block: var(--vtm-space-96) var(--vtm-space-96); }
+.hero-raster { display: grid; grid-template-columns: minmax(0,7fr) minmax(0,5fr); gap: var(--vtm-space-48); align-items: center; }
+.hero-eyebrow { font: 500 var(--vtm-size-xs)/1.4 var(--vtm-font-mono); letter-spacing: var(--vtm-tracking-label); text-transform: uppercase; color: var(--sem-beleg-text); display: inline-flex; align-items: center; gap: .625rem; }
+.hero-eyebrow::before { content: ""; width: 1.5rem; height: 3px; background: var(--sem-beleg-marke); }
+.hero h1 { font: 800 var(--vtm-size-7xl)/var(--vtm-leading-display) var(--vtm-font-display); letter-spacing: var(--vtm-tracking-display); margin: var(--vtm-space-16) 0 var(--vtm-space-24); max-width: 14ch; }
+.hero h1 em { font-style: normal; color: var(--vtm-electric-600); }
+.hero-lead { font-size: var(--vtm-size-l); color: var(--sem-text-sekundaer); max-width: var(--vtm-measure-lead); }
+.hero-meta { margin-top: var(--vtm-space-32); font: 500 var(--vtm-size-xs)/1.6 var(--vtm-font-mono); color: var(--sem-text-gedaempft); }
+.hero-signal { position: relative; min-height: 280px; }
+.hero-signal svg { width: 100%; height: auto; display: block; }
+@media (max-width: 900px) { .hero-raster { grid-template-columns: minmax(0, 1fr); } .hero-signal { max-width: 24rem; } }
+/* Sehr schmale Geräte: „Marktgeräusch“ muss ungetrennt in 288px passen */
+@media (max-width: 360px) { .hero h1 { font-size: 2.35rem; } }
+
+/* ------- Inhaltsverzeichnis ------- */
+.toc { columns: 3; gap: var(--vtm-space-32); }
+.toc ol { list-style: none; margin: 0; padding: 0; }
+.toc li { break-inside: avoid; margin: 0; }
+.toc a {
+  display: flex; gap: .875rem; align-items: baseline; padding: .625rem .5rem;
+  text-decoration: none; color: var(--sem-text); border-radius: var(--vtm-radius-m);
+  border-bottom: var(--vtm-linie-haar);
+}
+.toc a:hover { background: var(--vtm-weiss); color: var(--vtm-electric-700); }
+.toc .nr { font: 500 var(--vtm-size-xs)/1.4 var(--vtm-font-mono); color: var(--sem-text-gedaempft); min-width: 1.75rem; }
+@media (max-width: 1000px) { .toc { columns: 2; } }
+@media (max-width: 640px) { .toc { columns: 1; } }
+
+/* ------- Wiederkehrende Bausteine ------- */
+.regel-status {
+  display: inline-block; font: var(--status-font); letter-spacing: var(--vtm-tracking-mono);
+  padding: var(--status-pad); border-radius: var(--status-radius); vertical-align: middle;
+}
+.regel-status--muss { background: var(--vtm-nacht-900); color: #fff; }
+.regel-status--soll { background: var(--vtm-electric-100); color: var(--vtm-electric-700); }
+.regel-status--kann { background: var(--vtm-neutral-100); color: var(--vtm-neutral-700); }
+.regel-status--nein { background: var(--vtm-coral-100); color: var(--vtm-coral-700); }
+
+.duo { display: grid; grid-template-columns: minmax(0,7fr) minmax(0,5fr); gap: var(--vtm-space-48); align-items: start; }
+.duo--umgekehrt { grid-template-columns: minmax(0,5fr) minmax(0,7fr); }
+@media (max-width: 900px) { .duo, .duo--umgekehrt { grid-template-columns: minmax(0, 1fr); } }
+
+.beispiel-flaeche {
+  background: var(--sem-flaeche-soft); border: var(--vtm-linie-haar);
+  border-radius: var(--vtm-radius-xl); padding: clamp(1.25rem, 3vw, 2.5rem);
+}
+.beispiel-flaeche--weiss { background: var(--vtm-weiss); }
+.beispiel-label { font: 500 var(--vtm-size-2xs)/1 var(--vtm-font-mono); letter-spacing: var(--vtm-tracking-label); text-transform: uppercase; color: var(--sem-text-gedaempft); margin-bottom: var(--vtm-space-16); }
+
+.quellzeile { font: 500 var(--vtm-size-xs)/1.5 var(--vtm-font-mono); color: var(--sem-beleg-text); }
+.quellzeile::before { content: ""; display: block; width: 1.5rem; height: 3px; background: var(--sem-beleg-marke); margin-bottom: .375rem; }
+
+.do-dont { display: grid; grid-template-columns: 1fr 1fr; gap: var(--vtm-space-24); }
+@media (max-width: 760px) { .do-dont { grid-template-columns: 1fr; } }
+.dd { border-radius: var(--vtm-radius-l); border: var(--vtm-linie-haar); overflow: clip; background: #fff; }
+.dd-kopf { display: flex; align-items: center; gap: .5rem; padding: .75rem 1rem; font: 600 var(--vtm-size-s)/1 var(--vtm-font-text); }
+.dd--do .dd-kopf { background: var(--sem-erfolg-flaeche); color: var(--sem-erfolg-text); }
+.dd--dont .dd-kopf { background: var(--sem-fehler-flaeche); color: var(--sem-fehler-text); }
+.dd-body { padding: 1rem; }
+.dd-body ul { margin: 0; padding-left: 1.1rem; max-width: none; }
+.dd-body li { font-size: var(--vtm-size-s); color: var(--sem-text-sekundaer); }
+
+table.regeln { width: 100%; border-collapse: collapse; font-size: var(--vtm-size-s); }
+table.regeln caption { text-align: left; font: 600 var(--vtm-size-s)/1.4 var(--vtm-font-text); padding-bottom: .625rem; color: var(--sem-text-sekundaer); }
+table.regeln th { text-align: left; font: var(--tabelle-kopf-font); background: var(--tabelle-kopf-bg); padding: .625rem .75rem; border-bottom: var(--vtm-linie-mittel); }
+table.regeln td { padding: .625rem .75rem; border-bottom: var(--tabelle-zeile-linie); vertical-align: top; color: var(--sem-text-sekundaer); }
+table.regeln td:first-child { color: var(--sem-text); font-weight: 500; }
+table.regeln .zahl { font: var(--tabelle-zahl-font); font-variant-numeric: tabular-nums; text-align: right; }
+.tabellen-scroll { overflow-x: auto; }
+
+.check { list-style: none; padding: 0; max-width: none; columns: 2; gap: var(--vtm-space-32); }
+.check li { break-inside: avoid; position: relative; padding: .5rem 0 .5rem 1.375rem; border-bottom: var(--vtm-linie-haar); font-size: var(--vtm-size-s); color: var(--sem-text-sekundaer); }
+.check li::before { content: "✓"; position: absolute; left: 0; top: .5rem; font-weight: 700; color: var(--sem-erfolg-text); }
+@media (max-width: 760px) { .check { columns: 1; } }
+
+.hinweis { border-left: 3px solid var(--vtm-electric-600); background: var(--vtm-electric-050); border-radius: 0 var(--vtm-radius-l) var(--vtm-radius-l) 0; padding: 1rem 1.25rem; max-width: var(--vtm-measure-text); }
+.hinweis--beleg { border-color: var(--sem-beleg-marke); background: var(--sem-beleg-flaeche); }
+.hinweis--warn { border-color: var(--vtm-coral-600); background: var(--sem-fehler-flaeche); }
+.hinweis p { margin: .25rem 0; font-size: var(--vtm-size-s); }
+.hinweis strong { font-weight: 600; }
+
+/* Farbmuster */
+.farbreihe { display: grid; grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr)); gap: var(--vtm-space-12); max-width: none; }
+.muster { border: var(--vtm-linie-haar); border-radius: var(--vtm-radius-l); overflow: clip; background: #fff; }
+.muster-flaeche { height: 4.5rem; }
+.muster-info { padding: .625rem .75rem; }
+.muster-name { font: 600 var(--vtm-size-xs)/1.3 var(--vtm-font-text); }
+.muster-wert { font: 500 var(--vtm-size-2xs)/1.4 var(--vtm-font-mono); color: var(--sem-text-gedaempft); }
+.muster-kontrast { font: 500 var(--vtm-size-2xs)/1.4 var(--vtm-font-mono); color: var(--sem-beleg-text); }
+
+/* Typo-Spezimen */
+.spezimen { border-bottom: var(--vtm-linie-haar); padding-block: var(--vtm-space-24); display: grid; grid-template-columns: minmax(0, 16rem) 1fr; gap: var(--vtm-space-24); align-items: baseline; }
+.spezimen-meta { font: 500 var(--vtm-size-xs)/1.6 var(--vtm-font-mono); color: var(--sem-text-gedaempft); }
+@media (max-width: 820px) { .spezimen { grid-template-columns: 1fr; gap: .5rem; } }
+
+/* Komponenten-Demos */
+.demo-zeile { display: flex; flex-wrap: wrap; gap: var(--vtm-space-16); align-items: center; }
+.btn {
+  appearance: none; border: none; cursor: pointer; text-decoration: none;
+  display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+  min-height: var(--btn-hoehe); padding-inline: var(--btn-pad-x);
+  border-radius: var(--btn-radius); font: var(--btn-font);
+  transition: background var(--vtm-dauer-micro) var(--vtm-ease-standard), color var(--vtm-dauer-micro) var(--vtm-ease-standard), box-shadow var(--vtm-dauer-micro) var(--vtm-ease-standard);
+}
+.btn--primaer { background: var(--btn-primaer-bg); color: var(--btn-primaer-text); }
+.btn--primaer:hover { background: var(--btn-primaer-bg-hover); }
+.btn--primaer:active { background: var(--sem-aktion-aktiv); }
+.btn--sekundaer { background: transparent; border: var(--btn-sekundaer-linie); color: var(--btn-sekundaer-text); }
+.btn--sekundaer:hover { background: var(--btn-sekundaer-bg-hover); }
+.btn--leise { background: transparent; color: var(--sem-text-link); }
+.btn--leise:hover { background: var(--sem-aktion-flaeche); }
+.btn[disabled] { background: var(--sem-deaktiviert-flaeche); color: var(--sem-deaktiviert-text); cursor: not-allowed; border: 1px solid var(--sem-deaktiviert-linie); }
+.btn:focus-visible { box-shadow: var(--sem-fokus-ring); outline: none; }
+
+.feld { display: grid; gap: .375rem; max-width: 22rem; }
+.feld label { font: var(--input-label-font); }
+.feld .pflicht { color: var(--sem-fehler-text); }
+.feld input, .feld select, .feld textarea {
+  font: 400 var(--vtm-size-m)/1.4 var(--vtm-font-text); color: var(--input-text);
+  min-height: var(--input-hoehe); padding: .5rem .75rem; background: var(--input-bg);
+  border: var(--input-linie); border-radius: var(--input-radius);
+  width: 100%; min-width: 0;
+}
+.feld input:focus-visible, .feld select:focus-visible, .feld textarea:focus-visible {
+  outline: none; border-color: var(--input-linie-fokus); box-shadow: 0 0 0 3px var(--vtm-electric-100);
+}
+.feld .hilfe { font-size: var(--vtm-size-xs); color: var(--sem-text-gedaempft); }
+.feld--fehler input { border-color: var(--input-linie-fehler); }
+.feld--fehler .fehler { font-size: var(--vtm-size-xs); color: var(--sem-fehler-text); font-weight: 500; }
+
+.status-punkt { display: inline-flex; align-items: center; gap: .5rem; font: 500 var(--vtm-size-s)/1 var(--vtm-font-text); }
+.status-punkt::before { content: ""; width: .5rem; height: .5rem; border-radius: 50%; background: currentColor; }
+.status-punkt--neutral { color: var(--vtm-neutral-500); }
+.status-punkt--aktiv { color: var(--vtm-electric-700); }
+.status-punkt--erfolg { color: var(--sem-erfolg-text); }
+.status-punkt--warnung { color: var(--sem-beleg-text); }
+.status-punkt--fehler { color: var(--sem-fehler-text); }
+
+/* Bildwelt */
+.bild-galerie { display: grid; grid-template-columns: repeat(12, 1fr); gap: var(--vtm-space-16); max-width: none; }
+.bild-galerie figure { margin: 0; }
+.bild-galerie img { border-radius: var(--vtm-radius-l); display: block; width: 100%; height: 100%; object-fit: cover; }
+.bild-galerie figcaption { font: 500 var(--vtm-size-2xs)/1.5 var(--vtm-font-mono); color: var(--sem-text-gedaempft); padding-top: .5rem; }
+.b-7 { grid-column: span 7; } .b-5 { grid-column: span 5; } .b-4 { grid-column: span 4; } .b-8 { grid-column: span 8; } .b-6 { grid-column: span 6; } .b-12 { grid-column: span 12; }
+@media (max-width: 760px) { .bild-galerie > * { grid-column: span 12 !important; } }
+
+/* Fußbereich: kompakter dunkler Anker */
+.anker {
+  background: var(--sem-flaeche-anker); color: var(--sem-text-invers);
+  border-radius: var(--vtm-radius-xl); padding: clamp(1.5rem, 4vw, 3rem);
+  display: grid; grid-template-columns: minmax(0,7fr) minmax(0,5fr); gap: var(--vtm-space-32); align-items: center;
+}
+.anker h2 { font: 700 var(--vtm-size-3xl)/var(--vtm-leading-heading) var(--vtm-font-display); margin: 0 0 .5rem; }
+.anker p { color: var(--sem-text-invers-sekundaer); margin: 0; }
+.anker a.btn--primaer:focus-visible { box-shadow: var(--sem-fokus-ring-invers); }
+@media (max-width: 820px) { .anker { grid-template-columns: 1fr; } }
+
+footer.site {
+  margin-top: var(--vtm-space-96); border-top: var(--vtm-linie-haar);
+  padding-block: var(--vtm-space-48);
+  font-size: var(--vtm-size-s); color: var(--sem-text-gedaempft);
+}
+footer.site .zeile { display: flex; flex-wrap: wrap; gap: var(--vtm-space-24); justify-content: space-between; align-items: center; }
+footer.site img { height: 22px; width: auto; }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#inhalt">Direkt zum Inhalt</a>
+
+<header class="top">
+  <div class="shell top-innen">
+    <a class="top-logo" href="#start" aria-label="Zum Seitenanfang">
+      <img src="assets/logo/vtm-logo-farbe.png" alt="VersicherungsTech Magazin" width="1007" height="177" style="width:auto">
+    </a>
+    <span class="top-label">Design System 5.0 · Signal</span>
+    <nav aria-label="Kapitelnavigation">
+      <ul>
+        <li><a href="#strategie">Strategie</a></li>
+        <li><a href="#farbe">Farbe</a></li>
+        <li><a href="#typografie">Typografie</a></li>
+        <li><a href="#bildwelt">Bild</a></li>
+        <li><a href="#komponenten">Komponenten</a></li>
+        <li><a href="#kanaele">Kanäle</a></li>
+        <li><a href="#checklisten">Abnahme</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="inhalt">
+
+<!-- ============================================================
+     HERO
+     ============================================================ -->
+<section class="hero shell" id="start" aria-labelledby="hero-titel">
+  <div class="hero-raster">
+    <div>
+      <p class="hero-eyebrow">Verbindliche Arbeitsgrundlage · Version 5.0 · Stand 08/2026</p>
+      <h1 id="hero-titel">Aus Marktgeräusch ein <em>belastbares Signal.</em></h1>
+      <p class="hero-lead">
+        Das Design System des VersicherungsTech Magazins regelt Marke, Redaktion,
+        Produkte und Kommunikation in einem gemeinsamen System — von der Website über
+        SaaS-Werkzeuge und Newsletter bis zu Dokumenten, Präsentationen und Social Media.
+        Jedes Element hat eine Aufgabe. Was nur schmückt, fliegt raus.
+      </p>
+      <p class="hero-meta">
+        VersicherungsTech Media UG (haftungsbeschränkt) · versicherungstech-magazin.de<br>
+        Ersetzt „Master-Next 4.2“ · Freigabe: Herausgeber
+      </p>
+    </div>
+    <div class="hero-signal" aria-hidden="true">
+      <!-- Signalbild: aus der Logogeometrie abgeleitete Bögen.
+           Rauschen (neutral) wird zu Signal (Electric), belegt (Gold). -->
+      <svg viewBox="0 0 520 400" role="presentation">
+        <g fill="none" stroke-linecap="round">
+          <path d="M60 330 Q 130 310 180 330 T 300 330" stroke="#D5DBE6" stroke-width="2"/>
+          <path d="M40 300 Q 120 270 190 300 T 330 295" stroke="#B6BFCF" stroke-width="2"/>
+          <path d="M55 265 Q 140 230 220 262 T 360 250" stroke="#D5DBE6" stroke-width="2"/>
+          <circle cx="380" cy="180" r="150" stroke="#E3EBF8" stroke-width="2"/>
+          <circle cx="380" cy="180" r="110" stroke="#CDD9FF" stroke-width="2.5"/>
+          <path d="M270 180 A 110 110 0 0 1 380 70" stroke="#1F4EFF" stroke-width="7"/>
+          <path d="M310 180 A 70 70 0 0 1 380 110" stroke="#1F4EFF" stroke-width="5"/>
+          <circle cx="380" cy="180" r="10" fill="#0D1C3C"/>
+          <circle cx="380" cy="70" r="7" fill="#1F4EFF"/>
+          <circle cx="270" cy="180" r="7" fill="#1F4EFF"/>
+          <path d="M380 180 L 466 116" stroke="#C9A035" stroke-width="3"/>
+          <circle cx="466" cy="116" r="6" fill="#C9A035"/>
+          <text x="452" y="98" font-family="IBM Plex Mono, monospace" font-size="12" fill="#8A6512">belegt</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     INHALT
+     ============================================================ -->
+<section class="kapitel kapitel--soft" aria-labelledby="toc-titel">
+  <div class="shell">
+    <div class="kap-kopf">
+      <div>
+        <p class="kap-nr">Inhalt</p>
+        <h2 class="kap-titel" id="toc-titel">Ein System, zwanzig Kapitel</h2>
+      </div>
+      <p class="kap-intro">Foundations definieren die Sprache, Kanalsysteme wenden sie an,
+      Checklisten sichern die Qualität. Beispieldateien liegen unter <code>beispiele/</code>.</p>
+    </div>
+    <nav class="toc" aria-label="Inhaltsverzeichnis">
+      <ol>
+        <li><a href="#nutzung"><span class="nr">00</span> Nutzung &amp; Verbindlichkeit</a></li>
+        <li><a href="#strategie"><span class="nr">01</span> Markenstrategie</a></li>
+        <li><a href="#prinzipien"><span class="nr">02</span> Gestaltungsprinzipien</a></li>
+        <li><a href="#logo"><span class="nr">03</span> Logo</a></li>
+        <li><a href="#farbe"><span class="nr">04</span> Farbsystem</a></li>
+        <li><a href="#typografie"><span class="nr">05</span> Typografie</a></li>
+        <li><a href="#bildwelt"><span class="nr">06</span> Bildwelt &amp; Art Direction</a></li>
+        <li><a href="#ikonografie"><span class="nr">07</span> Piktogramme &amp; Illustration</a></li>
+        <li><a href="#layout"><span class="nr">08</span> Layout &amp; Raster</a></li>
+        <li><a href="#tokens"><span class="nr">09</span> Design Tokens</a></li>
+        <li><a href="#komponenten"><span class="nr">10</span> Komponenten</a></li>
+        <li><a href="#bewegung"><span class="nr">11</span> Bewegung &amp; Interaktion</a></li>
+        <li><a href="#website"><span class="nr">12</span> Website &amp; Landingpages</a></li>
+        <li><a href="#saas"><span class="nr">13</span> SaaS &amp; Produkte</a></li>
+        <li><a href="#artikel"><span class="nr">14</span> Artikel &amp; Redaktion</a></li>
+        <li><a href="#newsletter"><span class="nr">15</span> Newsletter</a></li>
+        <li><a href="#social"><span class="nr">16</span> LinkedIn &amp; Social</a></li>
+        <li><a href="#dokumente"><span class="nr">17</span> Dokumente</a></li>
+        <li><a href="#praesentationen"><span class="nr">18</span> Präsentationen</a></li>
+        <li><a href="#diagramme"><span class="nr">19</span> Diagramme &amp; Daten</a></li>
+        <li><a href="#sprache"><span class="nr">20</span> Sprache</a></li>
+        <li><a href="#barrierefreiheit"><span class="nr">21</span> Barrierefreiheit</a></li>
+        <li><a href="#technik"><span class="nr">22</span> Technische Qualität</a></li>
+        <li><a href="#checklisten"><span class="nr">23</span> Abnahme &amp; Checklisten</a></li>
+      </ol>
+    </nav>
+  </div>
+</section>
+
+<!-- ============================================================
+     00 · NUTZUNG & VERBINDLICHKEIT
+     ============================================================ -->
+<section class="kapitel" id="nutzung" aria-labelledby="nutzung-titel">
+  <div class="shell">
+    <div class="kap-kopf">
+      <div>
+        <p class="kap-nr">Kapitel 00</p>
+        <h2 class="kap-titel" id="nutzung-titel">Nutzung und Verbindlichkeit</h2>
+      </div>
+      <p class="kap-intro">Wie dieses System zu lesen ist, welche Regeln bindend sind
+      und in welcher Reihenfolge Konflikte entschieden werden.</p>
+    </div>
+
+    <div class="duo">
+      <div>
+        <h3 style="margin-top:0">Statusstufen</h3>
+        <p>Jede Regel trägt eine von vier Stufen. Ohne Kennzeichnung gilt <strong>Verbindlich</strong>.</p>
+        <div class="tabellen-scroll"><table class="regeln">
+          <thead><tr><th scope="col">Stufe</th><th scope="col">Bedeutung</th><th scope="col">Abweichung</th></tr></thead>
+          <tbody>
+            <tr><td><span class="regel-status regel-status--muss">Verbindlich</span></td><td>Gilt in jeder Anwendung und jedem Kanal.</td><td>Nur mit Freigabe des Herausgebers.</td></tr>
+            <tr><td><span class="regel-status regel-status--soll">Empfohlen</span></td><td>Bewährtes Muster mit klarem Qualitätsvorteil.</td><td>Zulässig, wird begründet.</td></tr>
+            <tr><td><span class="regel-status regel-status--kann">Optional</span></td><td>Zulässige Gestaltung ohne Verpflichtung.</td><td>Freie Entscheidung im Kontext.</td></tr>
+            <tr><td><span class="regel-status regel-status--nein">Nicht zulässig</span></td><td>Verstößt gegen Marken- oder Qualitätsregeln.</td><td>Keine. Bestehende Fälle werden abgelöst.</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+      <div>
+        <h3 style="margin-top:0">Prioritätsregel bei Konflikten</h3>
+        <ol>
+          <li>Recht, Sicherheit und Datenschutz</li>
+          <li>Barrierefreiheit (WCAG 2.2 AA)</li>
+          <li>Verbindliche Markenregeln</li>
+          <li>Funktionale Anforderungen des Kanals</li>
+          <li>Empfohlene Anwendungsmuster</li>
+          <li>Optionale Gestaltung</li>
+        </ol>
+        <div class="hinweis">
+          <p><strong>Beispiele sind keine Produktionsaufträge.</strong> Die Beispieldateien
+          unter <code>beispiele/</code> zeigen, wie Regeln angewendet werden — sie sind
+          Referenzen, keine fertigen Kampagnen. Demonstrationswerte sind dort sichtbar
+          als solche gekennzeichnet.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     01 · MARKENSTRATEGIE
+     ============================================================ -->
+<section class="kapitel kapitel--soft" id="strategie" aria-labelledby="strategie-titel">
+  <div class="shell">
+    <div class="kap-kopf">
+      <div>
+        <p class="kap-nr">Kapitel 01</p>
+        <h2 class="kap-titel" id="strategie-titel">Markenstrategie und Positionierung</h2>
+      </div>
+      <p class="kap-intro">VTM ist ein unabhängiges digitales B2B-Fachmedium für KI,
+      Automatisierung und digitale Technologien in der DACH-Versicherungsbranche.</p>
+    </div>
+
+    <div class="duo">
+      <div>
+        <h3 style="margin-top:0">Was VTM ist</h3>
+        <ul>
+          <li><strong>Unabhängige Fachredaktion</strong> — belastbare Einordnung statt Pressemitteilungs-Recycling.</li>
+          <li><strong>Spezialisierter Marktbeobachter</strong> — sieht Entwicklungen früher, weil es nur einen Markt beobachtet.</li>
+          <li><strong>Übersetzer technologischer Entwicklungen</strong> — macht aus Technologie-Nachrichten Konsequenzen für Versicherer.</li>
+          <li><strong>Plattform für relevante Branchenstimmen</strong> — Fachleute kommen zu Wort, nicht Anzeigenbudgets.</li>
+          <li><strong>Partner für glaubwürdige fachliche Sichtbarkeit</strong> — Unternehmen zeigen Expertise im redaktionellen Umfeld.</li>
+        </ul>
+        <h3>Was VTM nicht ist</h3>
+        <ul>
+          <li>Kein anonymer Content-Kanal — hinter jedem Beitrag stehen Menschen mit Namen.</li>
+          <li>Kein klassischer Werbeverlag — redaktionelle Entscheidungen sind nicht käuflich.</li>
+          <li>Keine Leadagentur — VTM ermöglicht Sichtbarkeit, verspricht aber niemals Abschlüsse, Leads oder Vertriebserfolge.</li>
+        </ul>
+      </div>
+      <div>
+        <h3 style="margin-top:0">Drei Markeneigenschaften</h3>
+        <p>Jede Fläche der Marke zahlt auf mindestens eine dieser Eigenschaften ein —
+        und darf keiner widersprechen:</p>
+        <div class="tabellen-scroll"><table class="regeln">
+          <tbody>
+            <tr><td>Journalistische Glaubwürdigkeit</td><td>Belege, Quellenzeilen, Kennzeichnung, benannte Unsicherheit, sichtbare Verantwortliche.</td></tr>
+            <tr><td>Technologische Modernität</td><td>Präzise Typografie, Datenvisualisierung, ruhige Interaktion, technische Qualität.</td></tr>
+            <tr><td>Persönliche Nähe</td><td>Echte Gesichter, direkte Ansprache, erreichbare Menschen mit Verantwortung.</td></tr>
+          </tbody>
+        </table></div>
+        <div class="hinweis hinweis--beleg" style="margin-top:var(--vtm-space-24)">
+          <p><strong>Verbindlich:</strong> Sponsored Content, bezahlte Studien, Podcast-Sponsorings
+          und Partnerschaften werden in jedem Kanal sichtbar gekennzeichnet — im Layout
+          (Kennzeichnungs-Label), nicht nur im Kleingedruckten.</p>
+        </div>
+      </div>
+    </div>
+
+    <h3>Zielgruppen</h3>
+    <div class="tabellen-scroll"><table class="regeln breit">
+      <thead><tr><th scope="col">Gruppe</th><th scope="col">Erwartung an VTM</th><th scope="col">Konsequenz für Gestaltung</th></tr></thead>
+      <tbody>
+        <tr><td>Vorstände und Führungskräfte von Versicherern</td><td>Schnelle, belastbare Einordnung; Entscheidungsrelevanz</td><td>Aussage zuerst, Beleg daneben, kurze Wege, keine Effekte</td></tr>
+        <tr><td>Verantwortliche aus IT, Betrieb, Innovation, Produkt, Vertrieb, Marketing</td><td>Tiefe, Praxisbeispiele, regulatorische Folgen</td><td>Lange Leseformate mit ruhigem Rhythmus, Datenboxen, Quellen</td></tr>
+        <tr><td>Versicherungs- und Technologieexperten</td><td>Fachliche Debatte, eigene Sichtbarkeit</td><td>Autorenschaft prominent, Zitate als gestaltetes Element</td></tr>
+        <tr><td>Technologieanbieter, Beratungen, InsurTechs</td><td>Glaubwürdiges Umfeld für Expertise</td><td>Klare Kennzeichnung, seriöse Dokumente, keine Lead-Rhetorik</td></tr>
+        <tr><td>Partner, Autoren, Interviewgäste, Branchenorganisationen</td><td>Professionelle, faire Darstellung</td><td>Freigegebene Fotos, korrekte Nennung, verlässliche Vorlagen</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</section>
+
+<!-- ============================================================
+     02 · GESTALTUNGSPRINZIPIEN
+     ============================================================ -->
+<section class="kapitel" id="prinzipien" aria-labelledby="prinzipien-titel">
+  <div class="shell">
+    <div class="kap-kopf">
+      <div>
+        <p class="kap-nr">Kapitel 02</p>
+        <h2 class="kap-titel" id="prinzipien-titel">Gestaltungsprinzipien</h2>
+      </div>
+      <p class="kap-intro">Die Leitidee des Systems: VTM macht aus Marktgeräusch ein
+      belastbares Signal. Gestaltung ist Signalverarbeitung — sie trennt Wichtiges von Rauschen.</p>
+    </div>
+
+    <div class="duo">
+      <div>
+        <h3 style="margin-top:0">Sieben Prinzipien, in dieser Reihenfolge</h3>
+        <ol>
+          <li><strong>Bedeutung vor Effekt</strong> — ein Element existiert, weil es etwas bedeutet, nicht weil es gut aussieht.</li>
+          <li><strong>Signal vor Rauschen</strong> — pro Fläche eine zentrale Botschaft, möglichst eine Hauptaktion.</li>
+          <li><strong>Beleg vor Behauptung</strong> — Zahlen tragen Quelle, Stand und Grenzen direkt bei sich.</li>
+          <li><strong>Zugang vor Exklusivität</strong> — Barrierefreiheit und Verständlichkeit schlagen Gestaltungsehrgeiz.</li>
+          <li><strong>System vor Einzelstück</strong> — jede Lösung zahlt in wiederverwendbare Muster ein.</li>
+          <li><strong>Menschen vor abstrakter Marke</strong> — echte Gesichter und Verantwortliche vor Logos und Claims.</li>
+          <li><strong>Klarheit vor Vollständigkeit</strong> — lieber das Wichtige verständlich als alles gleichzeitig.</li>
+        </ol>
+      </div>
+      <div>
+        <h3 style="margin-top:0">Der Funktionstest</h3>
+        <p>Jedes Gestaltungselement muss mindestens eine dieser Aufgaben erfüllen.
+        Erfüllt es keine, wird es entfernt:</p>
+        <ul>
+          <li>Aufmerksamkeit lenken</li>
+          <li>Komplexität reduzieren</li>
+          <li>Bedeutung sichtbar machen</li>
+          <li>Eine Aussage belegen</li>
+          <li>Orientierung geben</li>
+          <li>Eine Handlung erleichtern</li>
+        </ul>
+        <div class="hinweis">
+          <p><strong>Kanal-Grammatik.</strong> Alle Kanäle folgen derselben Abfolge:
+          <strong>1. Aussage → 2. Einordnung → 3. Beleg → 4. Handlung.</strong>
+          Die Umsetzung unterscheidet sich pro Kanal, die Logik nie.</p>
+        </div>
+      </div>
+    </div>
+
+    <h3>Ausgeschlossen — unabhängig vom Kanal</h3>
+    <div class="do-dont breit">
+      <div class="dd dd--do">
+        <p class="dd-kopf">Signal</p>
+        <div class="dd-body"><ul>
+          <li>Weiß und Eisblau als tragende Flächen, Nachtblau als Text und kompakter Anker</li>
+          <li>Asymmetrische, redaktionelle Layouts mit bewusstem Rhythmus</li>
+          <li>Gold ausschließlich am Beleg — dadurch bleibt es ein Vertrauenssignal</li>
+          <li>Eine dominante Aussage pro Fläche, Weißraum als Gestaltungsmittel</li>
+          <li>Bewegung nur, wenn sie einen Übergang oder eine Bedeutung erklärt</li>
+        </ul></div>
+      </div>
+      <div class="dd dd--dont">
+        <p class="dd-kopf">Rauschen — nicht zulässig</p>
+        <div class="dd-body"><ul>
+          <li>Generische KI-Ästhetik, austauschbare SaaS-Karten, Neon-Glows</li>
+          <li>Zufällige Verläufe, Glassmorphism als Selbstzweck, dekorative Effekte ohne Aussage</li>
+          <li>Drei oder fünf identische Karten nebeneinander; zentrierte Standard-Heros</li>
+          <li>Badge → Headline → Text → CTA als austauschbares Landingpage-Muster</li>
+          <li>Lange dunkelblaue Uniflächen; Rahmen-Inflation; Nummern ohne echte Reihenfolge</li>
+        </ul></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     03 · LOGO
+     ============================================================ -->
+<section class="kapitel kapitel--soft" id="logo" aria-labelledby="logo-titel">
+  <div class="shell">
+    <div class="kap-kopf">
+      <div>
+        <p class="kap-nr">Kapitel 03</p>
+        <h2 class="kap-titel" id="logo-titel">Logo</h2>
+      </div>
+      <p class="kap-intro">Die Signalmarke mit Wortzug bleibt unverändert. Sie wird nie
+      neu gesetzt, beschnitten, verzerrt oder umgefärbt.</p>
+    </div>
+
+    <div class="duo">
+      <div>
+        <div class="beispiel-flaeche beispiel-flaeche--weiss" style="display:grid;place-items:center;min-height:9rem">
+          <img src="assets/logo/vtm-logo-farbe.png" alt="VTM Logo, farbige Variante für helle Hintergründe" width="1007" height="177" style="max-width:min(24rem,80%)">
+        </div>
+        <p class="beispiel-label" style="margin-top:.75rem">Primärvariante · helle Gründe (Weiß, Eisblau)</p>
+        <div class="beispiel-flaeche" style="background:var(--vtm-nacht-900);display:grid;place-items:center;min-height:9rem">
+          <img src="assets/logo/vtm-logo-weiss.png" alt="VTM Logo, weiße Variante für Nachtblau" width="705" height="145" style="max-width:min(20rem,70%)">
+        </div>
+        <p class="beispiel-label" style="margin-top:.75rem">Inversvariante · Nachtblau und dunkle Bildpartien</p>
+      </div>
+      <div>
+        <h3 style="margin-top:0">Verbindliche Regeln</h3>
+        <div class="tabellen-scroll"><table class="regeln">
+          <tbody>
+            <tr><td>Schutzraum</td><td>Umlaufend mindestens die Höhe der Bildmarke (Signal-C). Kein fremdes Element im Schutzraum.</td></tr>
+            <tr><td>Mindestgröße</td><td>Digital: 120 px Breite (Wort-Bild-Marke) bzw. 24 px (nur Bildmarke). Druck: 35 mm bzw. 8 mm.</td></tr>
+            <tr><td>Varianten</td><td>Nur die freigegebenen Dateien: farbig auf hellen Gründen, weiß auf Nachtblau oder dunklen Bildpartien. Keine weiteren Farbfassungen.</td></tr>
+            <tr><td>Auf Bildern</td><td>Lesbarkeit durch dezente Fläche oder weichen Nachtblau-Schleier (Deckkraft 55–70 %) sichern — nie direkt auf unruhige Partien.</td></tr>
+            <tr><td>Bildmarke solo</td><td><span class="regel-status regel-status--kann">Optional</span> als App-Icon, Favicon und Avatar; im Fließsatz immer Wort-Bild-Marke.</td></tr>
+            <tr><td>Nicht zulässig</td><td>Neusetzen des Wortzugs, Beschneiden, Drehen, Schatten, Kontur, Umfärben, Verläufe hinter dem Logo, Animation der Marke.</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     04 · FARBE
+     ============================================================ -->
+<section class="kapitel" id="farbe" aria-labelledby="farbe-titel">
+  <div class="shell">
+    <div class="kap-kopf">
+      <div>
+        <p class="kap-nr">Kapitel 04</p>
+        <h2 class="kap-titel" id="farbe-titel">Farbsystem</h2>
+      </div>
+      <p class="kap-intro">Weiß und Eisblau tragen die Fläche. Nachtblau spricht.
+      Electric handelt. Gold belegt. Coral warnt, Mint bestätigt — sonst nichts.</p>
+    </div>
+
+    <h3 style="margin-top:0">Die Farb-Grammatik <span class="regel-status regel-status--muss">Verbindlich</span></h3>
+    <div class="tabellen-scroll"><table class="regeln breit">
+      <thead><tr><th scope="col">Farbe</th><th scope="col">Aufgabe</th><th scope="col">Ausdrücklich nicht</th></tr></thead>
+      <tbody>
+        <tr><td>Weiß / Eisblau</td><td>Tragen den größten Teil jeder digitalen Erfahrung; Flächen, Karten, ruhige Abschnitte.</td><td>—</td></tr>
+        <tr><td>Nachtblau <span class="muster-wert">#0D1C3C</span></td><td>Textfarbe, kompakte visuelle Anker (Kontaktband, Cover, Seitenleiste), Tooltip.</td><td>Lange, vollflächig dunkle Seitenbereiche.</td></tr>
+        <tr><td>Electric <span class="muster-wert">#1F4EFF</span></td><td>Aktivität, Auswahl, Links, Daten, Interaktion, Fokus.</td><td>Dekorflächen, Hintergründe, Überschriften ohne Interaktionsbezug.</td></tr>
+        <tr><td>Gold <span class="muster-wert">#C9A035</span></td><td>Ausschließlich Belege, Quellen, verifizierte Werte, der eine entscheidende Chart-Wert.</td><td>Schmuckfarbe, Buttons, Icons, Deko-Linien.</td></tr>
+        <tr><td>Coral <span class="muster-wert">#C24B33</span></td><td>Nur Fehler, Ausschlüsse, Risiken.</td><td>Aufmerksamkeits-Akzente, Sale-Rhetorik.</td></tr>
+        <tr><td>Mint <span class="muster-wert">#128760</span></td><td>Nur Bestätigung, Erfolg, Zusagen.</td><td>Frische-/Öko-Anmutung, Deko.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>Primitive Paletten</h3>
+    <p>Kontrastangaben (Mono, Gold) sind nachgerechnete WCAG-Werte des jeweils angegebenen Paars.</p>
+
+    <h4>Nachtblau &amp; Neutral</h4>
+    <div class="farbreihe">
+      <div class="muster"><div class="muster-flaeche" style="background:#081226"></div><div class="muster-info"><p class="muster-name">nacht-950</p><p class="muster-wert">#081226</p></div></div>
+      <div class="muster"><div class="muster-flaeche" style="background:#0D1C3C"></div><div class="muster-info"><p class="muster-name">nacht-900 · Kern</p><p class="muster-wert">#0D1C3C</p><p class="muster-kontrast">16,8:1 auf Weiß</p></div></div>
+      <div class="muster"><div class="muster-flaeche" style="background:#142857"></div><div class="muster-info"><p class="muster-name">nacht-800</p><p class="muster-wert">#142857</p></div></div>
+      <div class="muster"><div class="muster-flaeche" style="background:#1D3572"></div><div class="muster-info"><p class="muster-name">nacht-700</p><p class="muster-wert">#1D3572</p></div></div>
+      <div class="muster"><div class="muster-flaeche" style="background:#3A4763"></div><div class="muster-info"><p class="muster-name">neutral-700</p><p class="muster-wert">#3A4763</p><p class="muster-kontrast">9,3:1 auf Weiß</p></div></div>
+      <div class="muster"><div class="muster-flaeche" style="background:#5C6980"></div><div class="muster-info"><p class="muster-name">neutral-500</p><p class="muster-wert">#5C6980</p><p class="muster-kontrast">5,5:1 auf Weiß</p></div></div>
+      <div class="muster"><div class="muster-flaeche" style="background:#B6BFCF"></div><div class="muster-info"><p class="muster-name">neutral-300</p><p class="muster-wert">#B6BFCF</p></div></div>
+      <div class="muster"><div class="muster-flaeche" style="background:#E8ECF2"></div><div class="muster-info"><p class="muster-name">neutral-100</p><p class="muster-wert">#E8ECF2</p></div></div>
+    </div>
+
+    <h4>Electric &amp; Eisblau</h4>
+    <div class="farbreihe">
+      <div class="muster"><div class="muster-flaeche" style="background:#173BC4"></div><div class="muster-info"><p class="muster-name">electric-700 · Link</p><p class="muster-wert">#173BC4</p><p class="muster-kontrast">8,5:1 auf Weiß</p></div></div>
+      <div class="muster"><div class="muster-flaeche" style="background:#1F4EFF"></div><div class="muster-info"><p class="muster-name">electric-600 · Kern</p><p class="muster-wert">#1F4EFF</p><p class="muster-kontrast">5,85:1 auf Weiß</p></div></div>
+      <div class="muster"><div class="muster-flaeche" style="background:#4A6FFF"></div><div class="muster-info"><p class="muster-name">electric-500</p><p class="muster-wert">#4A6FFF</p></div></div>
+      <div class="muster"><div class="muster-flaeche" style="background:#7C96FF"></div><div class="muster-info"><p class="muster-name">electric-400 · invers</p><p class="muster-wert">#7C96FF</p><p class="muster-kontrast">6,1:1 auf Nachtblau</p></div></div>
+      <div class="muster"><div class="muster-flaeche" style="background:#CDD9FF"></div><div class="muster-info"><p class="muster-name">electric-200</p><p class="muster-wert">#CDD9FF</p></div></div>
+      <div class="muster"><div class="muster-flaeche" style="background:#F0F4FF"></div><div class="muster-info"><p class="muster-name">electric-050</p><p class="muster-wert">#F0F4FF</p></div></div>
+      <div class="muster"><div class="muster-flaeche" style="background:#EFF4FC"></div><div class="muster-info"><p class="muster-name">eis-100</p><p class="muster-wert">#EFF4FC</p></div></div>
+      <div class="muster"><div class="muster-flaeche" style="background:#F7FAFE"></div><div class="muster-info"><p class="muster-name">eis-050</p><p class="muster-wert">#F7FAFE</p></div></div>
+    </div>
+
+    <h4>Signalfarben: Gold · Coral · Mint</h4>
+    <div class="farbreihe">
+      <div class="muster"><div class="muster-flaeche" style="background:#8A6512"></div><div class="muster-info"><p class="muster-name">gold-700 · Belegtext</p><p class="muster-wert">#8A6512</p><p class="muster-kontrast">5,3:1 auf Weiß</p></div></div>
+      <div class="muster"><div class="muster-flaeche" style="background:#C9A035"></div><div class="muster-info"><p class="muster-name">gold-500 · Marke</p><p class="muster-wert">#C9A035</p><p class="muster-kontrast">6,9:1 auf Nachtblau</p></div></div>
+      <div class="muster"><div class="muster-flaeche" style="background:#E7C878"></div><div class="muster-info"><p class="muster-name">gold-400 · invers</p><p class="muster-wert">#E7C878</p><p class="muster-kontrast">10,4:1 auf Nachtblau</p></div></div>
+      <div class="muster"><div class="muster-flaeche" style="background:#FBF7EA"></div><div class="muster-info"><p class="muster-name">gold-050 · Fläche</p><p class="muster-wert">#FBF7EA</p></div></div>
+      <div class="muster"><div class="muster-flaeche" style="background:#A63A24"></div><div class="muster-info"><p class="muster-name">coral-700 · Text</p><p class="muster-wert">#A63A24</p><p class="muster-kontrast">6,5:1 auf Weiß</p></div></div>
+      <div class="muster"><div class="muster-flaeche" style="background:#FEF4F1"></div><div class="muster-info"><p class="muster-name">coral-050 · Fläche</p><p class="muster-wert">#FEF4F1</p></div></div>
+      <div class="muster"><div class="muster-flaeche" style="background:#0C6B4B"></div><div class="muster-info"><p class="muster-name">mint-700 · Text</p><p class="muster-wert">#0C6B4B</p><p class="muster-kontrast">6,5:1 auf Weiß</p></div></div>
+      <div class="muster"><div class="muster-flaeche" style="background:#F0FAF5"></div><div class="muster-info"><p class="muster-name">mint-050 · Fläche</p><p class="muster-wert">#F0FAF5</p></div></div>
+    </div>
+
+    <div class="duo" style="margin-top:var(--vtm-space-48)">
+      <div>
+        <h3 style="margin-top:0">Präzisierung gegenüber Bestand</h3>
+        <p>Die Kernwerte Nachtblau <code>#0D1C3C</code> und Electric <code>#1F4EFF</code>
+        bleiben unverändert erhalten. Präzisiert wurden die Abstufungen: Die bisherige
+        Cobalt-Reihe (<code>#121E39</code>ff.) und Blue-Reihe (<code>#2468E8</code>ff.)
+        werden durch die kontrastgeprüften Nacht- und Electric-Rampen ersetzt; „Brass“
+        heißt jetzt systematisch Gold und ist auf die Belegfunktion verengt.</p>
+        <div class="hinweis hinweis--beleg">
+          <p><strong>Warum Gold so streng geregelt ist:</strong> Gold funktioniert nur als
+          Vertrauenssignal, wenn es selten ist. Sobald Gold dekoriert, ist der Beleg-Code
+          entwertet. Deshalb: Gold nie auf Buttons, nie in Icons, nie als Fläche größer
+          als eine Datenbox.</p>
+        </div>
+      </div>
+      <div>
+        <h3 style="margin-top:0">Verlaufsregel</h3>
+        <p><span class="regel-status regel-status--nein">Nicht zulässig</span> sind freie
+        oder mehrfarbige Verläufe. Zulässig ist genau eine Ausnahme:</p>
+        <ul>
+          <li>Nachtblau-Schleier über Fotos zur Logolesbarkeit und Textsicherung
+          (linear, Nachtblau 0–70 % Deckkraft, nie farbverändernd).</li>
+        </ul>
+        <p>Tiefe entsteht über Eisblau-Abstufungen, Hairlines und die kühlen Schatten
+        (<code>--vtm-schatten-*</code>) — nicht über Verläufe.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     05 · TYPOGRAFIE
+     ============================================================ -->
+<section class="kapitel kapitel--soft" id="typografie" aria-labelledby="typo-titel">
+  <div class="shell">
+    <div class="kap-kopf">
+      <div>
+        <p class="kap-nr">Kapitel 05</p>
+        <h2 class="kap-titel" id="typo-titel">Typografie</h2>
+      </div>
+      <p class="kap-intro">Vier Stimmen, ein Klang: eine journalistische Grotesk führt,
+      eine Werkschrift erklärt, eine Leseserifen-Schrift erzählt, eine Monospace belegt.</p>
+    </div>
+
+    <div class="duo">
+      <div>
+        <h3 style="margin-top:0">Neubewertung</h3>
+        <p>Die bisherige Kombination wurde kritisch geprüft und teilweise ersetzt:
+        <strong>Plus Jakarta Sans</strong> (Display) wirkte für ein Fachmedium zu rundlich
+        und zu nah an generischen SaaS-Marken — sie entfällt ersatzlos.
+        <strong>Source Serif 4</strong> wird durch eine dezidierte Bildschirm-Leseserife
+        ersetzt. <strong>Inter</strong> und <strong>IBM Plex Mono</strong> bestehen die
+        Prüfung und bleiben — mit geschärften Einsatzregeln.</p>
+        <div class="tabellen-scroll"><table class="regeln">
+          <thead><tr><th scope="col">Rolle</th><th scope="col">Schrift</th><th scope="col">Begründung</th></tr></thead>
+          <tbody>
+            <tr><td>Display &amp; Headline</td><td>Schibsted Grotesk 600–900</td><td>Für ein Nachrichtenhaus entworfene Grotesk: hohe x-Höhe, markante Kurven, eigenständig ohne Modeerscheinung. Trägt den redaktionellen Charakter.</td></tr>
+            <tr><td>UI &amp; Fließtext</td><td>Inter 400–700</td><td>Höchste Lesbarkeit in Oberflächen und Formularen, tabellarische Ziffern, exzellente Kleingrade. Bewusst zurückhaltend — der Charakter kommt aus Display und Serif.</td></tr>
+            <tr><td>Redaktionelle Stimme</td><td>Newsreader 400–600 + Italic</td><td>Für Nachrichten-Lesetext am Bildschirm entwickelt (optische Größen 6–72). Macht lange Analysen angenehm und unterscheidet Redaktion von Interface.</td></tr>
+            <tr><td>Meta &amp; Daten</td><td>IBM Plex Mono 400–600</td><td>Quellen, Stände, Nummernkreise, Status, Zeitangaben. Der sichtbare „Beleg-Ton“ der Marke.</td></tr>
+          </tbody>
+        </table></div>
+        <p style="margin-top:var(--vtm-space-16)">Fallback-Ketten (verbindlich in <code>tokens.css</code>):
+        Display → Arial; Text → Segoe UI/Helvetica/Arial; Serif → Georgia; Mono → Consolas/Courier New.
+        In E-Mails gelten die Fallbacks als Grundzustand.</p>
+      </div>
+      <div>
+        <div class="beispiel-flaeche beispiel-flaeche--weiss">
+          <p class="beispiel-label">Klangprobe</p>
+          <p style="font:800 clamp(1.8rem,3.4vw,2.6rem)/1.06 var(--vtm-font-display);letter-spacing:-0.022em;margin:.25rem 0 1rem;">Schadenprozesse werden zur KI-Frage.</p>
+          <p style="font:400 1rem/1.6 var(--vtm-font-text);color:var(--sem-text-sekundaer);margin:0 0 1rem;">Inter erklärt: Oberflächen, Formulare, Zusammenfassungen — unaufgeregt und präzise.</p>
+          <p style="font:400 1.125rem/1.7 var(--vtm-font-serif);margin:0 0 1rem;">Newsreader erzählt: Für die Aufsicht zählt am Ende, ob ein Versicherer erklären kann, warum eine Maschine entschieden hat — und wer eingreift, wenn sie irrt.</p>
+          <p class="quellzeile" style="margin:0">Quelle: EIOPA-Konsultation 2025 · Stand: 08/2026</p>
+        </div>
+      </div>
+    </div>
+
+    <h3>Hierarchie und Maße</h3>
+    <div class="tabellen-scroll"><table class="regeln breit">
+      <thead><tr><th scope="col">Stufe</th><th scope="col">Schrift</th><th scope="col" class="zahl">Größe</th><th scope="col" class="zahl">Zeilenhöhe</th><th scope="col" class="zahl">Laufweite</th><th scope="col">Einsatz</th></tr></thead>
+      <tbody>
+        <tr><td>Display XL</td><td>Schibsted 800</td><td class="zahl">clamp(48–76 px)</td><td class="zahl">1,06</td><td class="zahl">−0,022 em</td><td>Startseiten-Statement, Kampagne — max. 2 Zeilen</td></tr>
+        <tr><td>Display / H1</td><td>Schibsted 800</td><td class="zahl">clamp(35–48 px)</td><td class="zahl">1,06</td><td class="zahl">−0,022 em</td><td>Seitentitel, Artikel-Headline</td></tr>
+        <tr><td>H2</td><td>Schibsted 800</td><td class="zahl">clamp(30–38 px)</td><td class="zahl">1,18</td><td class="zahl">−0,012 em</td><td>Kapiteltitel</td></tr>
+        <tr><td>H3</td><td>Schibsted 700</td><td class="zahl">24 px</td><td class="zahl">1,18</td><td class="zahl">−0,012 em</td><td>Abschnittstitel, Zwischenüberschrift</td></tr>
+        <tr><td>H4</td><td>Schibsted 600</td><td class="zahl">20 px</td><td class="zahl">1,18</td><td class="zahl">−0,012 em</td><td>Unterabschnitt, Kartentitel</td></tr>
+        <tr><td>Lesetext Artikel</td><td>Newsreader 400</td><td class="zahl">18 px</td><td class="zahl">1,7</td><td class="zahl">0</td><td>Redaktioneller Fließtext, max. 42 rem Breite</td></tr>
+        <tr><td>Text / UI</td><td>Inter 400–500</td><td class="zahl">16 px</td><td class="zahl">1,6 / 1,45</td><td class="zahl">0</td><td>Beschreibungen, Formulare, Dialoge</td></tr>
+        <tr><td>UI kompakt</td><td>Inter 400–600</td><td class="zahl">14 px</td><td class="zahl">1,45</td><td class="zahl">0</td><td>Tabellen, dichte Werkzeuge</td></tr>
+        <tr><td>Caption / Quelle</td><td>Plex Mono 500</td><td class="zahl">12 px</td><td class="zahl">1,5</td><td class="zahl">+0,01 em</td><td>Quellenzeilen, Bildlegenden, Status, Zeit</td></tr>
+        <tr><td>Versal-Label</td><td>Inter/Mono 600</td><td class="zahl">12 px</td><td class="zahl">1,3</td><td class="zahl">+0,08 em</td><td>Kategorien, Eyebrows — immer mit Signallinie oder Belegmarke</td></tr>
+      </tbody>
+    </table></div>
+
+    <div class="duo" style="margin-top:var(--vtm-space-48)">
+      <div>
+        <h3 style="margin-top:0">Zahlen, Quellen, Zitate</h3>
+        <ul>
+          <li>Kennzahlen in Schibsted Grotesk 700–800; Einheit kleiner und in Inter.</li>
+          <li>Tabellen- und Datenzahlen in Plex Mono mit <code>font-variant-numeric: tabular-nums</code>, rechtsbündig.</li>
+          <li>Deutsche Formate: Tausenderpunkt, Komma als Dezimaltrenner, schmales Leerzeichen vor % und €.</li>
+          <li>Jede veröffentlichte Zahl trägt eine Mono-Quellenzeile: <code>Quelle · Stand · Zeitraum · n</code>.</li>
+          <li>Zitate in Newsreader Italic 500, mit Electric-Zitatlinie und klar zugeordneter Sprecherzeile.</li>
+        </ul>
+        <h3>Deutsche Sprache im Satz</h3>
+        <ul>
+          <li><code>hyphens: auto</code> + <code>lang="de"</code> für lange Komposita; kritische Begriffe mit weichen Trennzeichen (<code>&amp;shy;</code>) vorbereiten: Ver&shy;sicherungs&shy;technologie, Schaden&shy;automatisierung.</li>
+          <li>Versal-Labels vermeiden Umlaut-Probleme nicht — Umlaute bleiben (KÜNDIGUNG, nicht KUENDIGUNG).</li>
+          <li>Anführungszeichen: „deutsche“ Chevrons nur in Zitatgrafiken; Apostroph ’.</li>
+          <li>Keine Silbentrennung in Headlines; dort notfalls Umbruch von Hand (<code>&lt;wbr&gt;</code>).</li>
+        </ul>
+      </div>
+      <div>
+        <div class="spezimen"><p class="spezimen-meta">Display XL · Schibsted 800<br>76 px · 1,06 · −0,022 em</p><p style="font:800 clamp(2.4rem,5vw,4.75rem)/1.06 var(--vtm-font-display);letter-spacing:-0.022em;margin:0">Signal.</p></div>
+        <div class="spezimen"><p class="spezimen-meta">H2 · Schibsted 800</p><p style="font:800 var(--vtm-size-4xl)/1.18 var(--vtm-font-display);letter-spacing:-0.012em;margin:0">Belastbare Einordnung</p></div>
+        <div class="spezimen"><p class="spezimen-meta">Lesetext · Newsreader 400 · 18/1,7</p><p style="font:400 1.125rem/1.7 var(--vtm-font-serif);margin:0">Die Branche testet, die Aufsicht schaut zu, und zwischen beiden entsteht die eigentliche Frage: Wer trägt die Verantwortung?</p></div>
+        <div class="spezimen"><p class="spezimen-meta">UI · Inter 500 · 16/1,45</p><p style="font:500 1rem/1.45 var(--vtm-font-text);margin:0">Angebot A-2026-041 zur Freigabe einreichen</p></div>
+        <div class="spezimen"><p class="spezimen-meta">Meta · Plex Mono 500 · 12/1,5</p><p style="font:500 .75rem/1.5 var(--vtm-font-mono);letter-spacing:.01em;color:var(--sem-beleg-text);margin:0">QUELLE: VTM-MARKTCHECK · STAND: 08/2026 · N=142</p></div>
+        <div class="spezimen"><p class="spezimen-meta">Kennzahl · Schibsted 700 + Mono</p><p style="margin:0"><span style="font:700 2.4rem/1 var(--vtm-font-display);letter-spacing:-0.012em">35.000</span> <span style="font:500 .8125rem/1 var(--vtm-font-mono);color:var(--sem-text-gedaempft)">Downloads/Monat</span></p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     06 · BILDWELT
+     ============================================================ -->
+<section class="kapitel" id="bildwelt" aria-labelledby="bild-titel">
+  <div class="shell">
+    <div class="kap-kopf">
+      <div>
+        <p class="kap-nr">Kapitel 06</p>
+        <h2 class="kap-titel" id="bild-titel">Bildwelt und Art Direction</h2>
+      </div>
+      <p class="kap-intro">Zwei Bildklassen, strikt getrennt: echte Menschen in echter
+      Fotografie — und generierte Motive, offen als Illustration deklariert.</p>
+    </div>
+
+    <h3 style="margin-top:0">Klasse 1 · Echte Personen <span class="regel-status regel-status--muss">Verbindlich</span></h3>
+    <div class="duo">
+      <div>
+        <ul>
+          <li>Team, Hosts, Partner und Kunden erscheinen ausschließlich mit freigegebenen, echten Fotos.</li>
+          <li>Echte Personen werden niemals durch generierte Darstellungen ersetzt oder „aufgehübscht“.</li>
+          <li>Porträts wirken natürlich, kompetent, zugänglich: Blick ruhig, Licht weich, Umfeld echt (Büro, Konferenz, Studio).</li>
+          <li>Nicht zulässig: gestellte Business-Handshakes, künstliches Kameralächeln, sterile Studiokulissen ohne Bezug.</li>
+          <li>Bildlegende im Magazinstil: Name und Verantwortung in Mono-Caption unter dem Bild.</li>
+        </ul>
+      </div>
+      <div class="bild-galerie" style="grid-template-columns:repeat(12,1fr)">
+        <figure class="b-4"><img src="assets/team/maximilian-hempel.jpg" alt="Porträt von Maximilian Hempel im Büro" width="320" height="400" loading="lazy"><figcaption>Maximilian Hempel · Gründer und Herausgeber</figcaption></figure>
+        <figure class="b-4"><img src="assets/team/lukas-haerle.jpg" alt="Porträt von Lukas Härle" width="320" height="400" loading="lazy"><figcaption>Lukas Härle · Partnerbetreuung</figcaption></figure>
+        <figure class="b-4"><img src="assets/team/johannes-oberhofer.jpg" alt="Porträt von Johannes Oberhofer" width="320" height="400" loading="lazy"><figcaption>Johannes Oberhofer · Partnerbetreuung</figcaption></figure>
+      </div>
+    </div>
+
+    <h3>Klasse 2 · Generierte Motive — nur als deklarierte Illustration</h3>
+    <p>Generierte Bilder dürfen nie wie Reportage erscheinen. Sie tragen immer die
+    Mono-Caption <code>Illustration</code> (bzw. <code>Illustration: VTM</code>) und zeigen
+    Objekte, Räume und Datenwelten — keine erkennbaren „Menschen“, die echt wirken sollen.
+    Jedes Motiv erklärt eine Aussage; reine Dekoration ist nicht ausreichend.</p>
+
+    <div class="bild-galerie breit" style="margin-top:var(--vtm-space-24)">
+      <figure class="b-7"><img src="assets/bilder/motiv-skyline-blaue-stunde.jpg" alt="Skyline in der blauen Stunde, gesehen durch eine Glasfassade" width="1600" height="893" loading="lazy"><figcaption>Skyline · blaue Stunde — Motivklasse „Markt im Wandel“ · Illustration</figcaption></figure>
+      <figure class="b-5"><img src="assets/bilder/motiv-rechenzentrum.jpg" alt="Rechenzentrum in Nachtblau mit einem goldenen Lichtakzent" width="1600" height="893" loading="lazy"><figcaption>Rechenzentrum — Motivklasse „Infrastruktur“ · genau ein goldener Lichtakzent · Illustration</figcaption></figure>
+      <figure class="b-5"><img src="assets/bilder/motiv-datenstrom.jpg" alt="Abstrakte blaue Lichtfasern als Datenstrom" width="1600" height="893" loading="lazy"><figcaption>Daten- und Lichtströme — Motivklasse „Signal“ · Illustration</figcaption></figure>
+      <figure class="b-7"><img src="assets/bilder/motiv-buero-abend.jpg" alt="Arbeitsplatz am Abend mit Laptop und Stadtblick" width="1600" height="893" loading="lazy"><figcaption>Büro am Abend — Motivklasse „Arbeit an der Sache“ · Illustration</figcaption></figure>
+    </div>
+
+    <div class="duo" style="margin-top:var(--vtm-space-48)">
+      <div>
+        <h3 style="margin-top:0">Stilvorgaben für alle Motive</h3>
+        <ul>
+          <li>Blaue Stunde als Leitstimmung: Nachtblau, Electric-Reflexe, kühles Glas- und Stahlweiß.</li>
+          <li>Höchstens <strong>ein</strong> goldener Lichtakzent pro Motiv — er markiert den Punkt, auf den es ankommt.</li>
+          <li>Scharf, clean, zeitgenössisch. High-End-Corporate-Fotografie-Anmutung.</li>
+          <li>Erlaubte Motivklassen: moderne Architektur, Skyline zur blauen Stunde, Büro am Abend, Daten- und Lichtströme, Rechenzentrum, Produkt-Glow, Hände mit Tablet, Objekte aus Glas und Licht, abstrakte redaktionelle Datenbilder.</li>
+        </ul>
+        <h3>Nicht zulässig</h3>
+        <ul>
+          <li>Filmkorn, Vintage-Looks, Cyberpunk, überladene Science-Fiction</li>
+          <li>Austauschbare KI-Menschen und generierte „Reportage“-Szenen</li>
+          <li>Stock-Klischees: Handshakes, Jubelteams, deutungslose Deko-Motive</li>
+        </ul>
+      </div>
+      <div>
+        <div class="beispiel-flaeche">
+          <p class="beispiel-label">Negativbeispiel — so nicht</p>
+          <img src="assets/bilder/negativ-stock-menschen.jpg" alt="Negativbeispiel: generisches Stockfoto mit künstlich lächelnden generierten Personen vor einem Bildschirm" width="800" height="447" loading="lazy" style="border-radius:var(--vtm-radius-l)">
+          <p style="font-size:var(--vtm-size-s);color:var(--sem-text-sekundaer);margin:.75rem 0 0">
+            Generierte Personen, gestelltes Lächeln, beliebige Büro-Kulisse, keine Aussage:
+            Dieses Bild könnte jede Marke zeigen. Es verstößt gegen die Regeln
+            „keine austauschbaren KI-Menschen“ und „jedes Bild erklärt eine Aussage“ —
+            <span class="regel-status regel-status--nein">Nicht zulässig</span>
+          </p>
+        </div>
+        <div class="hinweis" style="margin-top:var(--vtm-space-24)">
+          <p><strong>Logo auf Bildern:</strong> Nur auf beruhigten Partien, sonst
+          Nachtblau-Schleier (55–70 % Deckkraft) unterlegen. Weiße Logovariante verwenden.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     07 · PIKTOGRAMME & ILLUSTRATION
+     ============================================================ -->
+<section class="kapitel kapitel--soft" id="ikonografie" aria-labelledby="ikon-titel">
+  <div class="shell">
+    <div class="kap-kopf">
+      <div>
+        <p class="kap-nr">Kapitel 07</p>
+        <h2 class="kap-titel" id="ikon-titel">Piktogramme und Illustration</h2>
+      </div>
+      <p class="kap-intro">Ein Strichsystem mit konkreter Bedeutung — keine dekorativen
+      Icons in Kreisen, keine Sammlung gleichartiger Karten.</p>
+    </div>
+
+    <div class="duo">
+      <div>
+        <h3 style="margin-top:0">Piktogramm-System</h3>
+        <ul>
+          <li>Raster 24 × 24 px, Strichstärke 1,5 px, Ecken leicht gerundet (Kappen rund).</li>
+          <li>Einfarbig: Electric-600 auf hellen Gründen, Electric-400 oder Weiß auf Nachtblau, Nachtblau in Dokumenten.</li>
+          <li>Jedes Piktogramm steht für genau eine Bedeutung und wird systemweit nur dafür verwendet.</li>
+          <li>Piktogramme begleiten Text — sie ersetzen ihn nie. Kein Icon ohne Beschriftung in der Navigation.</li>
+          <li><span class="regel-status regel-status--nein">Nicht zulässig</span>: Icons als Kreisdeko über austauschbaren Karten, gefüllte Emoji-artige Symbole, 3D-Icons.</li>
+        </ul>
+        <div class="beispiel-flaeche beispiel-flaeche--weiss" style="margin-top:var(--vtm-space-24)">
+          <p class="beispiel-label">Kernzeichen (Auszug) · 24px-Raster · 1,5px-Linie</p>
+          <div class="demo-zeile" role="img" aria-label="Beispielpiktogramme: Signal, Beleg, Analyse, Podcast, Newsletter, Warnung">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#1F4EFF" stroke-width="1.5" stroke-linecap="round"><path d="M4 12a8 8 0 0 1 8-8"/><path d="M7.5 12A4.5 4.5 0 0 1 12 7.5"/><circle cx="12" cy="12" r="1.6" fill="#1F4EFF" stroke="none"/></svg>
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#1F4EFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.4-3 7.6-7 9-4-1.4-7-4.6-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#1F4EFF" stroke-width="1.5" stroke-linecap="round"><path d="M4 20V9"/><path d="M10 20V4"/><path d="M16 20v-7"/><path d="M22 20H2"/></svg>
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#1F4EFF" stroke-width="1.5" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/></svg>
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#1F4EFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#C24B33" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3L2.5 20h19z"/><path d="M12 9v5"/><circle cx="12" cy="17" r="0.5" fill="#C24B33"/></svg>
+          </div>
+          <p style="font:500 var(--vtm-size-2xs)/1.5 var(--vtm-font-mono);color:var(--sem-text-gedaempft);margin:.75rem 0 0">signal · beleg-geprüft · analyse · podcast · newsletter · risiko (coral nur bei echter Warnbedeutung)</p>
+        </div>
+      </div>
+      <div>
+        <h3 style="margin-top:0">Erklärende Illustration</h3>
+        <p>Zentrale Abschnitte erklären ihren Inhalt visuell — mit dem Mittel, das die
+        Aussage am besten trägt:</p>
+        <div class="tabellen-scroll"><table class="regeln">
+          <thead><tr><th scope="col">Mittel</th><th scope="col">Wofür</th></tr></thead>
+          <tbody>
+            <tr><td>Datenbild (SVG)</td><td>Größenordnungen, Verläufe, Marktbewegungen</td></tr>
+            <tr><td>Prozessvisualisierung</td><td>Redaktioneller Ablauf, Freigabe-Workflows — nummeriert nur bei echter Reihenfolge</td></tr>
+            <tr><td>Diagramm</td><td>Belegbare Zahlen (Regeln in Kapitel 19)</td></tr>
+            <tr><td>Echtes Foto</td><td>Menschen, Orte, Ereignisse</td></tr>
+            <tr><td>Deklariertes generiertes Motiv</td><td>Stimmung und Themenraum (Regeln in Kapitel 06)</td></tr>
+            <tr><td>Räumliches/interaktives Modell</td><td>Nur wenn Interaktion Verständnis schafft; statischer Ersatz Pflicht</td></tr>
+          </tbody>
+        </table></div>
+        <div class="hinweis" style="margin-top:var(--vtm-space-24)">
+          <p><strong>Signaturgrafik „Signalbogen“:</strong> Aus der Logogeometrie abgeleitete
+          konzentrische Bögen (siehe Startbild dieses Dokuments). Einsatz sparsam als
+          erklärendes Motiv für „aus Rauschen wird Signal“ — nie als Hintergrundmuster.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     08 · LAYOUT & RASTER
+     ============================================================ -->
+<section class="kapitel" id="layout" aria-labelledby="layout-titel">
+  <div class="shell">
+    <div class="kap-kopf">
+      <div>
+        <p class="kap-nr">Kapitel 08</p>
+        <h2 class="kap-titel" id="layout-titel">Layout und Raster</h2>
+      </div>
+      <p class="kap-intro">Redaktionell und asymmetrisch: Ein 12-Spalten-Raster mit
+      bewussten Teilungen, klarer Blickführung und dramaturgischem Rhythmus.</p>
+    </div>
+
+    <div class="duo">
+      <div>
+        <h3 style="margin-top:0">Rasterregeln</h3>
+        <ul>
+          <li>12 Spalten, max. Inhaltsbreite 82 rem, Randabstand fluid (16–48 px).</li>
+          <li>Bevorzugte Teilungen: <strong>7/5</strong>, <strong>8/4</strong>, <strong>5/7</strong> — die Hauptsache bekommt sichtbar mehr Raum.</li>
+          <li>Gleichgewichtete 6/6-Teilungen nur, wenn zwei Inhalte wirklich gleichrangig sind.</li>
+          <li>Sektionsabstände 96–128 px; innerhalb von Abschnitten 24–48 px. Weißraum ist Hierarchie, nicht Leere.</li>
+          <li>Pro Abschnitt ein dominantes visuelles Motiv (Bild, Zahl, Zitat oder Diagramm) — nie mehrere gleichlaute.</li>
+          <li>Wechselnder Rhythmus über die Seite: Text → Bild → Daten → Menschen, nicht Karte → Karte → Karte.</li>
+          <li>Responsive heißt neu komponieren: Jeder Abschnitt definiert eine eigene Mobil-Komposition (Stapelreihenfolge, Bildausschnitt, Zahlengröße) — kein bloßes Verkleinern.</li>
+        </ul>
+      </div>
+      <div>
+        <div class="beispiel-flaeche">
+          <p class="beispiel-label">Rhythmus-Schema einer VTM-Seite (7/5 · 12 · 5/7)</p>
+          <svg viewBox="0 0 440 300" style="width:100%;height:auto" role="img" aria-label="Schema: asymmetrische Abschnitte mit wechselnder Teilung statt gleicher Karten">
+            <rect x="8" y="10" width="248" height="64" rx="6" fill="#E3EBF8"/>
+            <rect x="264" y="10" width="168" height="64" rx="6" fill="#F7FAFE" stroke="#D5DBE6"/>
+            <text x="16" y="46" font-family="IBM Plex Mono, monospace" font-size="11" fill="#3A4763">Aussage 7</text>
+            <text x="272" y="46" font-family="IBM Plex Mono, monospace" font-size="11" fill="#5C6980">Beleg 5</text>
+            <rect x="8" y="86" width="424" height="56" rx="6" fill="#EFF4FC"/>
+            <text x="16" y="118" font-family="IBM Plex Mono, monospace" font-size="11" fill="#3A4763">Dominantes Motiv 12</text>
+            <rect x="8" y="154" width="168" height="64" rx="6" fill="#F7FAFE" stroke="#D5DBE6"/>
+            <rect x="184" y="154" width="248" height="64" rx="6" fill="#E3EBF8"/>
+            <text x="16" y="190" font-family="IBM Plex Mono, monospace" font-size="11" fill="#5C6980">Kontext 5</text>
+            <text x="192" y="190" font-family="IBM Plex Mono, monospace" font-size="11" fill="#3A4763">Menschen 7</text>
+            <rect x="8" y="230" width="290" height="52" rx="6" fill="#0D1C3C"/>
+            <text x="16" y="260" font-family="IBM Plex Mono, monospace" font-size="11" fill="#E7C878">Kompakter Anker · Handlung</text>
+            <rect x="306" y="230" width="126" height="52" rx="6" fill="#FFFFFF" stroke="#D5DBE6"/>
+            <text x="314" y="260" font-family="IBM Plex Mono, monospace" font-size="11" fill="#5C6980">Ruhe</text>
+          </svg>
+        </div>
+        <div class="hinweis hinweis--warn" style="margin-top:var(--vtm-space-24)">
+          <p><strong>Nicht zulässig:</strong> drei/fünf identische Karten nebeneinander ·
+          zentrierte Standard-Heros · gleich große Abschnitte ohne Rhythmus · Nummern ohne
+          Reihenfolge · Rahmen-Inflation · Glassmorphism als Selbstzweck · große
+          unstrukturierte Textflächen · lange dunkelblaue Uniflächen.</p>
+        </div>
+      </div>
+    </div>
+
+    <h3>Blickführung</h3>
+    <p class="breit" style="max-width:var(--vtm-measure-text)">Jede Fläche beantwortet die Fragen der Besucherin in dieser
+    Reihenfolge: <strong>Was sehe ich? → Warum ist es relevant für mich? → Warum kann ich
+    dem vertrauen? → Was kann ich hier tun? → Was ist mein nächster Schritt?</strong>
+    Die Antwort auf „Warum vertrauen?“ ist bei VTM immer sichtbar: Menschen, Belege oder
+    Kennzeichnung — nie bloße Behauptung.</p>
+  </div>
+</section>
+
+<!-- ============================================================
+     09 · DESIGN TOKENS
+     ============================================================ -->
+<section class="kapitel kapitel--soft" id="tokens" aria-labelledby="tokens-titel">
+  <div class="shell">
+    <div class="kap-kopf">
+      <div>
+        <p class="kap-nr">Kapitel 09</p>
+        <h2 class="kap-titel" id="tokens-titel">Design Tokens</h2>
+      </div>
+      <p class="kap-intro">Drei Ebenen, eine Quelle: <code>tokens.css</code> (CSS Custom
+      Properties) und <code>tokens.json</code> (maschinenlesbar) sind die einzige
+      verbindliche Wertequelle aller Kanäle.</p>
+    </div>
+
+    <div class="duo">
+      <div>
+        <h3 style="margin-top:0">Die drei Ebenen</h3>
+        <div class="tabellen-scroll"><table class="regeln">
+          <thead><tr><th scope="col">Ebene</th><th scope="col">Präfix</th><th scope="col">Regel</th></tr></thead>
+          <tbody>
+            <tr><td>Primitiv</td><td><code>--vtm-*</code></td><td>Rohwerte: Farben, Abstände, Schriftgrößen, Radien, Linien, Schatten, Bewegung, Ebenen. Nie direkt in Komponenten verwenden.</td></tr>
+            <tr><td>Semantisch</td><td><code>--sem-*</code></td><td>Bedeutung statt Aussehen: Text, Fläche, Aktion, Auswahl, Beleg, Erfolg, Warnung, Fehler, Fokus, deaktiviert.</td></tr>
+            <tr><td>Komponente</td><td><code>--btn-*</code>, <code>--input-*</code>, …</td><td>Pro Bauteil; leiten sich ausschließlich aus semantischen Token ab. Definiert für Button, Eingabefeld, Navigation, Karte, Artikel, Datenbox, Diagramm, Dialog, Tooltip, Tabelle, Tabs, Status, Newsletter, Präsentation, Dokument.</td></tr>
+          </tbody>
+        </table></div>
+        <p style="margin-top:var(--vtm-space-16)">Nicht-CSS-Kanäle (PowerPoint, Word, E-Mail,
+        Social-Grafiken) übernehmen die Werte aus <code>tokens.json</code> als harte Codierung —
+        die Token-Datei bleibt trotzdem die Quelle, Änderungen fließen von dort in die Vorlagen.</p>
+      </div>
+      <div>
+        <div class="beispiel-flaeche beispiel-flaeche--weiss">
+          <p class="beispiel-label">Ableitungskette am Beispiel Button</p>
+<pre style="margin:0;font:400 var(--vtm-size-s)/1.7 var(--vtm-font-mono);overflow-x:auto"><code>--vtm-electric-600: #1F4EFF;   /* primitiv  */
+--sem-aktion: var(--vtm-electric-600);
+--btn-primaer-bg: var(--sem-aktion);
+
+.btn--primaer {
+  background: var(--btn-primaer-bg);
+  min-height: var(--btn-hoehe); /* 44 px */
+}</code></pre>
+        </div>
+        <div class="hinweis" style="margin-top:var(--vtm-space-24)">
+          <p><strong>Änderungsregel:</strong> Wer eine Farbe oder Größe ändern will, ändert
+          ein Token — nie einen Einzelwert in einer Komponente. Ein Wert, der kein Token ist,
+          ist ein Fehler.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     10 · KOMPONENTEN
+     ============================================================ -->
+<section class="kapitel" id="komponenten" aria-labelledby="komp-titel">
+  <div class="shell">
+    <div class="kap-kopf">
+      <div>
+        <p class="kap-nr">Kapitel 10</p>
+        <h2 class="kap-titel" id="komp-titel">Komponentenbibliothek</h2>
+      </div>
+      <p class="kap-intro">Live gerendert aus den Token. Jede Komponente definiert die
+      Zustände Standard, Hover, Fokus, Aktiv, Auswahl, Deaktiviert, Laden, Fehler, Erfolg,
+      leere Daten und reduzierte Bewegung.</p>
+    </div>
+
+    <h3 style="margin-top:0">Buttons</h3>
+    <div class="beispiel-flaeche beispiel-flaeche--weiss breit">
+      <div class="demo-zeile">
+        <button type="button" class="btn btn--primaer">Analyse lesen</button>
+        <button type="button" class="btn btn--sekundaer">Newsletter ansehen</button>
+        <button type="button" class="btn btn--leise">Mehr erfahren</button>
+        <button type="button" class="btn" disabled aria-disabled="true">Nicht verfügbar</button>
+      </div>
+      <p style="font-size:var(--vtm-size-s);color:var(--sem-text-sekundaer);margin:1rem 0 0;max-width:none">
+        Primär = genau eine pro Fläche. Sekundär für gleichwertige Alternativen, leise
+        Variante für Neben­wege. Höhe 44 px (Touch), Fokus über <code>--sem-fokus-ring</code>,
+        Beschriftung als Verb der Handlung — nie „Klicken Sie hier“.</p>
+    </div>
+
+    <div class="duo" style="margin-top:var(--vtm-space-48)">
+      <div>
+        <h3 style="margin-top:0">Formularfelder</h3>
+        <div class="beispiel-flaeche beispiel-flaeche--weiss">
+          <form>
+            <div class="feld">
+              <label for="demo-mail">E-Mail-Adresse <span class="pflicht" aria-hidden="true">*</span></label>
+              <input id="demo-mail" name="demo-mail" type="email" autocomplete="email" required aria-describedby="demo-mail-hilfe" placeholder="name@unternehmen.de">
+              <p class="hilfe" id="demo-mail-hilfe">Für die Zustellung des VTM Briefings. Keine Weitergabe an Dritte.</p>
+            </div>
+            <div class="feld feld--fehler" style="margin-top:1rem">
+              <label for="demo-firma">Unternehmen <span class="pflicht" aria-hidden="true">*</span></label>
+              <input id="demo-firma" name="demo-firma" type="text" aria-invalid="true" aria-describedby="demo-firma-fehler" value="">
+              <p class="fehler" id="demo-firma-fehler">Bitte geben Sie Ihr Unternehmen an — das Feld ist leer.</p>
+            </div>
+          </form>
+          <p style="font-size:var(--vtm-size-s);color:var(--sem-text-sekundaer);margin:1rem 0 0">
+            Sichtbare Labels (keine Platzhalter als Ersatz), Hilfetext über
+            <code>aria-describedby</code>, Fehler konkret und lösungsorientiert in Coral,
+            Pflichtfelder markiert und in der Legende erklärt.</p>
+        </div>
+      </div>
+      <div>
+        <h3 style="margin-top:0">Status und Zustände</h3>
+        <div class="beispiel-flaeche beispiel-flaeche--weiss">
+          <p class="beispiel-label">Statusanzeigen — Punkt + Text, nie nur Farbe</p>
+          <div class="demo-zeile" style="gap:var(--vtm-space-24)">
+            <span class="status-punkt status-punkt--neutral">Entwurf</span>
+            <span class="status-punkt status-punkt--warnung">In Prüfung</span>
+            <span class="status-punkt status-punkt--erfolg">Freigegeben</span>
+            <span class="status-punkt status-punkt--aktiv">Versendet</span>
+            <span class="status-punkt status-punkt--fehler">Abgelehnt</span>
+          </div>
+          <p class="beispiel-label" style="margin-top:var(--vtm-space-24)">Meldungen</p>
+          <div style="display:grid;gap:.75rem">
+            <p role="status" style="margin:0;padding:.75rem 1rem;border-radius:var(--vtm-radius-m);background:var(--sem-erfolg-flaeche);color:var(--sem-erfolg-text);font-size:var(--vtm-size-s)"><strong>Gespeichert.</strong> Angebot A-2026-041 wurde aktualisiert.</p>
+            <p style="margin:0;padding:.75rem 1rem;border-radius:var(--vtm-radius-m);background:var(--sem-beleg-flaeche);color:var(--sem-beleg-text);font-size:var(--vtm-size-s)"><strong>Freigabe erforderlich.</strong> Paketrabatt 18 % liegt über der 15-%-Grenze.</p>
+            <p role="alert" style="margin:0;padding:.75rem 1rem;border-radius:var(--vtm-radius-m);background:var(--sem-fehler-flaeche);color:var(--sem-fehler-text);font-size:var(--vtm-size-s)"><strong>Nicht gespeichert.</strong> Der Team-Server war nicht erreichbar — Änderungen liegen lokal und werden erneut übertragen.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h3>Datenbox — die Beleg-Komponente</h3>
+    <div class="duo">
+      <div class="beispiel-flaeche">
+        <div style="background:var(--vtm-weiss);border:var(--vtm-linie-haar);border-radius:var(--datenbox-radius);padding:var(--vtm-space-24);max-width:22rem">
+          <p style="font:500 var(--vtm-size-xs)/1.4 var(--vtm-font-text);letter-spacing:var(--vtm-tracking-label);text-transform:uppercase;color:var(--sem-text-gedaempft);margin:0 0 .5rem">Podcast-Reichweite</p>
+          <p style="font:var(--datenbox-wert-font);letter-spacing:var(--vtm-tracking-heading);margin:0">35.000</p>
+          <p style="font:400 var(--vtm-size-s)/1.5 var(--vtm-font-text);color:var(--sem-text-sekundaer);margin:.25rem 0 1rem">Downloads pro Monat · Insurance Monday</p>
+          <p class="quellzeile" style="margin:0">Quelle: Podcast-Hosting-Statistik · Stand: 08/2026</p>
+        </div>
+      </div>
+      <div>
+        <ul style="margin-top:0">
+          <li>Wert in Schibsted Grotesk, Kontext in Inter, Quelle in Mono mit goldener Belegmarke.</li>
+          <li>Eine Datenbox = eine Zahl. Mehrere Kennzahlen werden asymmetrisch gewichtet (die wichtigste dominiert), nie als gleichförmige Kachelreihe.</li>
+          <li>Ohne Quellenzeile keine Datenbox — eine unbelegte Zahl ist eine Behauptung.</li>
+          <li>Zeitraum, Stichprobe und Grenzen stehen an der Zahl, nicht im Fußnotenkeller.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="duo" style="margin-top:var(--vtm-space-48)">
+      <div>
+        <h3 style="margin-top:0">Tabelle</h3>
+        <div class="beispiel-flaeche beispiel-flaeche--weiss">
+          <div class="tabellen-scroll">
+          <table class="regeln" style="min-width:26rem">
+            <caption class="beispiel-label" style="text-align:left">Demonstrationsinhalt des Design Systems</caption>
+            <thead><tr><th scope="col">Nummer</th><th scope="col">Leistung</th><th scope="col" class="zahl">Netto</th><th scope="col">Status</th></tr></thead>
+            <tbody>
+              <tr><td style="font-family:var(--vtm-font-mono);font-size:var(--vtm-size-s)">A-2026-039</td><td>Fachartikel</td><td class="zahl">900,00 €</td><td><span class="status-punkt status-punkt--erfolg">Freigegeben</span></td></tr>
+              <tr style="background:var(--sem-auswahl-flaeche);box-shadow:inset 3px 0 0 var(--sem-auswahl-linie)" aria-selected="true"><td style="font-family:var(--vtm-font-mono);font-size:var(--vtm-size-s)">A-2026-040</td><td>Newsletter-Sponsoring, 3 Monate</td><td class="zahl">5.700,00 €</td><td><span class="status-punkt status-punkt--warnung">In Prüfung</span></td></tr>
+              <tr><td style="font-family:var(--vtm-font-mono);font-size:var(--vtm-size-s)">A-2026-041</td><td>Executive Interview</td><td class="zahl">1.200,00 €</td><td><span class="status-punkt status-punkt--neutral">Entwurf</span></td></tr>
+            </tbody>
+          </table>
+          </div>
+        </div>
+      </div>
+      <div>
+        <h3 style="margin-top:0">Weitere Komponenten</h3>
+        <div class="tabellen-scroll"><table class="regeln">
+          <tbody>
+            <tr><td>Navigation</td><td>64 px, Weiß mit Blur, aktiver Punkt mit 2-px-Signallinie und <code>aria-current</code>.</td></tr>
+            <tr><td>Karte</td><td>Weiß, Haarlinie, Radius 12 px; Hover hebt mit Schatten <code>m</code>. Karten unterscheiden sich in Größe/Inhaltstyp — keine Klonreihen.</td></tr>
+            <tr><td>Tabs</td><td>Unterlinie als Haarlinie, aktiver Tab mit Electric-Marker; Pfeiltasten-Navigation.</td></tr>
+            <tr><td>Dialog</td><td>Max. 34 rem, Radius 20 px, Nachtblau-Schleier 55 %; Fokusfalle, Esc schließt, Fokus kehrt zurück.</td></tr>
+            <tr><td>Tooltip</td><td>Nachtblau, 12-px-Text; erscheint bei Hover <em>und</em> Fokus; nie einziger Zugang zu Information.</td></tr>
+            <tr><td>Laden</td><td>Skeleton in Eisblau (schimmert; statisch bei reduzierter Bewegung), <code>aria-busy</code> und Textalternative.</td></tr>
+            <tr><td>Leere Daten</td><td>Erklärung + genau eine Aktion („Noch keine Angebote — erstes Angebot anlegen“). Keine Illustrations-Deko nötig.</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     11 · BEWEGUNG & INTERAKTION
+     ============================================================ -->
+<section class="kapitel kapitel--soft" id="bewegung" aria-labelledby="motion-titel">
+  <div class="shell">
+    <div class="kap-kopf">
+      <div>
+        <p class="kap-nr">Kapitel 11</p>
+        <h2 class="kap-titel" id="motion-titel">Bewegung und Interaktion</h2>
+      </div>
+      <p class="kap-intro">Bewegung erklärt Zustand, Übergang oder Bedeutung — sonst
+      findet sie nicht statt. Alles funktioniert vollständig ohne Animation.</p>
+    </div>
+
+    <div class="duo">
+      <div>
+        <h3 style="margin-top:0">Bewegungs-Token</h3>
+        <div class="tabellen-scroll"><table class="regeln">
+          <thead><tr><th scope="col">Token</th><th scope="col" class="zahl">Dauer</th><th scope="col">Einsatz</th></tr></thead>
+          <tbody>
+            <tr><td><code>micro</code></td><td class="zahl">120 ms</td><td>Hover, Taste, Fokusring</td></tr>
+            <tr><td><code>kurz</code></td><td class="zahl">200 ms</td><td>Zustandswechsel, Tabs, Toggles</td></tr>
+            <tr><td><code>mittel</code></td><td class="zahl">320 ms</td><td>Panels, Dialoge, Einblenden</td></tr>
+            <tr><td><code>lang</code></td><td class="zahl">560 ms</td><td>Narrative Übergänge, Scrollytelling-Schritte</td></tr>
+          </tbody>
+        </table></div>
+        <p style="margin-top:var(--vtm-space-16)">Kurven: <code>standard</code> für
+        Zustandswechsel, <code>eintritt</code> für Erscheinen, <code>austritt</code> für
+        Verschwinden. Bewegt werden nur <code>transform</code> und <code>opacity</code>.</p>
+        <h3>Verbindliche Regeln</h3>
+        <ul>
+          <li>Kein Scroll-Hijacking; Scrollen bleibt immer nativ.</li>
+          <li>Keine Bewegung, die Lesen erschwert; Text bewegt sich nicht unter dem Auge.</li>
+          <li>Dauerhafte Bewegung ist pausierbar (sichtbarer Schalter) und stoppt außerhalb des Viewports.</li>
+          <li>Inhalte sind nie nur per Hover erreichbar; Touch und Tastatur erhalten gleichwertige Wege.</li>
+          <li>Bei <code>prefers-reduced-motion</code> startet keine automatische Bewegung — global über <code>tokens.css</code> erzwungen.</li>
+          <li>Bei Datensparmodus (<code>Save-Data</code>) laden weder Videos noch schwere Effekte.</li>
+          <li>Jede Animation hat einen statischen Ersatz. Pro Abschnitt höchstens ein dominanter Effekt.</li>
+        </ul>
+      </div>
+      <div>
+        <h3 style="margin-top:0">Scrollytelling</h3>
+        <p>Scrollytelling ist zulässig, wenn es einen echten Übergang erklärt — zum Beispiel
+        den redaktionellen Prozess:</p>
+        <ol>
+          <li>Marktbewegung erkennen — Rauschen sichtbar</li>
+          <li>Quellen und Interessen prüfen — Linien ordnen sich</li>
+          <li>Folgen für Versicherer einordnen — Signal verstärkt sich</li>
+          <li>Bessere Entscheidung ermöglichen — Belegmarke setzt den Punkt</li>
+        </ol>
+        <p>Umsetzung: Abschnitte mit <code>position: sticky</code> und IntersectionObserver,
+        Text bleibt nativ scrollbar. Ohne JavaScript und bei reduzierter Bewegung erscheinen
+        die vier Schritte als statische Sequenz untereinander — vollwertig, nicht als Notlösung.</p>
+        <div class="hinweis">
+          <p><strong>3D, WebGL, Video:</strong> <span class="regel-status regel-status--kann">Optional</span>
+          und nur als kleine, getrennt ladende Funktionsinseln (Lazy Import nach Interaktion
+          oder Sichtbarkeit). Poster-Bild Pflicht, Autoplay nur stumm und pausierbar, nichts
+          davon im kritischen Ladepfad. Maus-/Pointer-Reaktionen bleiben dezent
+          (Parallaxe max. 8 px) und entfallen auf Touch.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     12–18 · KANALSYSTEME
+     ============================================================ -->
+<section class="kapitel" id="kanaele" aria-labelledby="kanaele-titel">
+  <div class="shell">
+    <div class="kap-kopf">
+      <div>
+        <p class="kap-nr">Kapitel 12–18</p>
+        <h2 class="kap-titel" id="kanaele-titel">Kanalsysteme</h2>
+      </div>
+      <p class="kap-intro">Ein System, viele Erfahrungsräume: Jeder Kanal setzt die
+      Grammatik Aussage → Einordnung → Beleg → Handlung eigenständig um. Zu jedem Kanal
+      existiert eine vollständige Beispieldatei.</p>
+    </div>
+    <div class="tabellen-scroll"><table class="regeln breit">
+      <thead><tr><th scope="col">Kanal</th><th scope="col">Referenzdatei</th><th scope="col">Zeigt</th></tr></thead>
+      <tbody>
+        <tr><td>Website / Über uns</td><td><a href="beispiele/ueber-uns.html">beispiele/ueber-uns.html</a></td><td>Verbindliche Über-uns-Dramaturgie, Menschen zuerst, drei Nutzergruppen, Reichweite als Beleg</td></tr>
+        <tr><td>Artikel</td><td><a href="beispiele/artikel.html">beispiele/artikel.html</a></td><td>Vollständiges Artikelsystem inkl. Datenbox, Diagramm, Quellen, Kennzeichnung</td></tr>
+        <tr><td>SaaS-Produkt</td><td><a href="beispiele/saas-ui.html">beispiele/saas-ui.html</a></td><td>Arbeitsoberfläche, Tabellen, Formulare, Zustände, KI-Transparenz</td></tr>
+        <tr><td>Newsletter</td><td><a href="beispiele/newsletter.html">beispiele/newsletter.html</a></td><td>E-Mail-sicheres VTM Briefing: Leitthese, drei Signale, ein Schritt</td></tr>
+        <tr><td>LinkedIn / Social</td><td><a href="beispiele/social.html">beispiele/social.html</a></td><td>Alle Social-Formate in Echtmaßen mit Regeln</td></tr>
+        <tr><td>Dokumente</td><td><a href="beispiele/geschaeftsbrief.html">beispiele/geschaeftsbrief.html</a></td><td>Druckfähiges A4-Angebot mit Briefkopf und Leistungstabelle</td></tr>
+        <tr><td>Präsentationen</td><td><a href="praesentation/">praesentation/</a></td><td>.potx-Vorlage, Beispieldeck mit allen Folientypen, Nutzungs-README</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</section>
+
+<!-- ---------- 12 · WEBSITE ---------- -->
+<section class="kapitel kapitel--soft" id="website" aria-labelledby="web-titel">
+  <div class="shell">
+    <div class="kap-kopf">
+      <div>
+        <p class="kap-nr">Kapitel 12</p>
+        <h2 class="kap-titel" id="web-titel">Website und Landingpages</h2>
+      </div>
+      <p class="kap-intro">Jede Seite ist aus Nutzersicht komponiert und beantwortet fünf
+      Fragen in fester Reihenfolge — Vertrauen kommt vor Conversion.</p>
+    </div>
+
+    <div class="duo">
+      <div>
+        <h3 style="margin-top:0">Über-uns-Dramaturgie <span class="regel-status regel-status--muss">Verbindlich</span></h3>
+        <ol>
+          <li><strong>Menschen und Verantwortung</strong> — erster Bildschirm: echte Teamfotos, Namen, Zuständigkeiten, zwei Sätze zu VTM.</li>
+          <li><strong>Identität und Positionierung</strong> — unabhängige Fachredaktion, Leitidee.</li>
+          <li><strong>Arbeitsweise und redaktioneller Prozess</strong> — inklusive Kennzeichnungsgrundsatz.</li>
+          <li><strong>Beispiele der Arbeit</strong> — Formate mit echten Inhalten.</li>
+          <li><strong>Konkrete Nutzungsmöglichkeiten</strong> — drei Gruppen, drei Wege.</li>
+          <li><strong>Reichweite und Netzwerk</strong> — Kennzahlen mit Belegmarke, Partner.</li>
+          <li><strong>Persönlicher Kontakt</strong> — erreichbarer Mensch, eine Aktion.</li>
+        </ol>
+        <p>Eine Über-uns-Seite, die zuerst Produkte, Reichweiten oder Markenbotschaften
+        verkauft, ist nicht zulässig.</p>
+      </div>
+      <div>
+        <h3 style="margin-top:0">Drei Nutzergruppen, drei Wege</h3>
+        <div class="tabellen-scroll"><table class="regeln">
+          <thead><tr><th scope="col">Gruppe</th><th scope="col">Nutzen</th><th scope="col">Handlung</th></tr></thead>
+          <tbody>
+            <tr><td>Entscheider in Versicherern</td><td>Analysen lesen, Entwicklungen früher erkennen, Praxis und Regulatorik verstehen</td><td>Newsletter abonnieren</td></tr>
+            <tr><td>Fachleute der Branche</td><td>Wissen teilen, Interviewpartner werden, Debatten mitgestalten</td><td>Thema vorschlagen</td></tr>
+            <tr><td>Technologieanbieter</td><td>Expertise zeigen, Studien und Podcasts entwickeln, Thought Leadership — ausdrücklich ohne Lead-Versprechen</td><td>Mediadaten anfragen</td></tr>
+          </tbody>
+        </table></div>
+        <div class="hinweis" style="margin-top:var(--vtm-space-24)">
+          <p><strong>Landingpage-Regel:</strong> Eine Landingpage hat ein Thema, eine
+          Hauptaktion und mindestens einen sichtbaren Beleg (Kennzahl, Zitat, Quelle).
+          Der Hero ist links ausgerichtet und asymmetrisch — das zentrierte
+          Badge-Headline-CTA-Muster ist nicht zulässig.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ---------- 13 · SAAS ---------- -->
+<section class="kapitel" id="saas" aria-labelledby="saas-titel">
+  <div class="shell">
+    <div class="kap-kopf">
+      <div>
+        <p class="kap-nr">Kapitel 13</p>
+        <h2 class="kap-titel" id="saas-titel">SaaS- und Produktdesign</h2>
+      </div>
+      <p class="kap-intro">Dieselbe Marke, ein anderer Erfahrungsraum: ruhige
+      Arbeitsflächen und hohe Informationsdichte statt redaktioneller Bühne.</p>
+    </div>
+    <div class="duo">
+      <div>
+        <h3 style="margin-top:0">Grundsätze</h3>
+        <ul>
+          <li>Die Marke zeigt sich über Typografie, Farben, Datenlogik, Sprache und Detailqualität — nicht über dekorative Flächen oder Magazin-Motive.</li>
+          <li>Arbeitsflächen sind Weiß/Eisblau; Nachtblau nur als kompakte Werkzeugleiste.</li>
+          <li>Electric markiert ausschließlich Aktives: Navigation, Auswahl, Fokus, primäre Aktion.</li>
+          <li>Gold kennzeichnet verifizierte Daten und Quellen („Katalogpreis verifiziert · Stand 08/2026“).</li>
+          <li>Komplexe Funktionen öffnen sich progressiv (<code>details</code>, Stufen) — der Standardblick bleibt ruhig.</li>
+          <li>Fehlermeldungen sagen, was passiert ist und wie es weitergeht; Erfolgsmeldungen bestätigen konkret.</li>
+          <li>Tabellen: Mono-Nummernkreise, rechtsbündige tabellarische Beträge, Status als Punkt + Text, Zeilenauswahl mit Electric-Fläche.</li>
+        </ul>
+      </div>
+      <div>
+        <h3 style="margin-top:0">Nachvollziehbare KI</h3>
+        <p>KI-Ausgaben in VTM-Produkten sind immer als solche erkennbar und überprüfbar:</p>
+        <ul>
+          <li>Sichtbarer Herkunftshinweis in Mono: „KI-Vorschlag — vor Versand prüfen“.</li>
+          <li>Angabe, aus welchen Feldern/Quellen der Vorschlag erzeugt wurde.</li>
+          <li>Übernehmen ist eine bewusste Handlung — nie stille Auto-Übernahme.</li>
+          <li>Datenquellen jeder Ansicht sind benannt (Herkunft, Stand, Synchronisationszeit).</li>
+        </ul>
+        <div class="hinweis hinweis--beleg">
+          <p><strong>Dichteregel:</strong> UI kompakt heißt 14-px-Schrift und engere
+          Zeilen — aber Touchziele bleiben mindestens 44 px; kompaktere Höhen nur per
+          <code>@media (pointer: fine)</code>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ---------- 14 · ARTIKEL ---------- -->
+<section class="kapitel kapitel--soft" id="artikel" aria-labelledby="artikel-titel">
+  <div class="shell">
+    <div class="kap-kopf">
+      <div>
+        <p class="kap-nr">Kapitel 14</p>
+        <h2 class="kap-titel" id="artikel-titel">Artikel und Redaktion</h2>
+      </div>
+      <p class="kap-intro">Das redaktionelle System ist das Herz der Marke: optimale
+      Lesebreite, ruhiger Rhythmus, Belege an der Aussage.</p>
+    </div>
+    <div class="duo">
+      <div>
+        <h3 style="margin-top:0">Aufbau eines Artikels</h3>
+        <ol>
+          <li><strong>Artikelkopf:</strong> Kategorie (Versal-Label mit Signallinie), Headline (Schibsted, max. 22 Zeichen Breite), Unterzeile, Metazeile in Mono: Autor mit Foto, Datum, Lesedauer, Stand.</li>
+          <li><strong>Aufmacher:</strong> Bild mit Legende und Credit; generierte Motive tragen „Illustration“.</li>
+          <li><strong>Lead:</strong> 1–3 Sätze in Inter 18–20 px — die Aussage des Artikels.</li>
+          <li><strong>Lesetext:</strong> Newsreader 18/1,7 auf max. 42 rem; Zwischenüberschriften alle 3–5 Absätze.</li>
+          <li><strong>Belegelemente im Fluss:</strong> Datenboxen, Diagramme, Tabellen, Zitate — jeweils mit Quellenzeile direkt am Element.</li>
+          <li><strong>Einordnung der Unsicherheit:</strong> Eigene Fläche benennt, was die Daten nicht belegen.</li>
+          <li><strong>Abschluss:</strong> Quellenverzeichnis (Mono, nummeriert), weiterführende Beiträge (asymmetrisch), Newsletter-Einladung mit genau einer Aktion.</li>
+        </ol>
+      </div>
+      <div>
+        <h3 style="margin-top:0">Verbindliche Regeln</h3>
+        <ul>
+          <li>Quellen, Zeitraum, Stichprobe und Grenzen stehen <em>an</em> der Zahl oder Aussage — nicht gesammelt am Seitenende.</li>
+          <li>Sponsored Content trägt ein sichtbares Label über dem Artikelkopf und eine Erklärzeile („Bezahlter Beitrag. Die Redaktion war an der Erstellung nicht beteiligt.“ bzw. das zutreffende Modell).</li>
+          <li>Autorenschaft ist Pflicht: Name, Foto, Verantwortung, Kontaktweg.</li>
+          <li>Pull-Quotes in Newsreader Italic mit Electric-Linie; maximal eines pro Bildschirmhöhe.</li>
+          <li>Lesedauer ehrlich berechnet (Wörter ÷ 200/min, gerundet).</li>
+        </ul>
+        <div class="hinweis">
+          <p><strong>Referenz:</strong> <a href="beispiele/artikel.html">beispiele/artikel.html</a>
+          zeigt jedes Element im Zusammenhang eines echten Themas.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ---------- 15 · NEWSLETTER ---------- -->
+<section class="kapitel" id="newsletter" aria-labelledby="nl-titel">
+  <div class="shell">
+    <div class="kap-kopf">
+      <div>
+        <p class="kap-nr">Kapitel 15</p>
+        <h2 class="kap-titel" id="nl-titel">Newsletter — das VTM Briefing</h2>
+      </div>
+      <p class="kap-intro">Kein Kachelteppich, sondern eine redaktionelle Depesche:
+      eine These, drei Signale, ein Schritt.</p>
+    </div>
+    <div class="duo">
+      <div>
+        <h3 style="margin-top:0">Struktur</h3>
+        <ol>
+          <li><strong>Eine Leitthese</strong> — groß, Schibsted (Fallback Arial fett), maximal zwei Zeilen.</li>
+          <li><strong>Drei priorisierte Signale</strong> — nummeriert nach Relevanz, unterschiedlich lang, je zwei Sätze Einordnung und ein Link.</li>
+          <li><strong>Kurze Einordnung</strong> — persönlicher Absatz des Herausgebers mit Foto und Namen.</li>
+          <li><strong>Ein klarer nächster Schritt</strong> — genau ein Button.</li>
+        </ol>
+        <h3>Technische Regeln</h3>
+        <ul>
+          <li>600 px Tabellenlayout, Inline-Styles, <code>bgcolor</code>-Fallbacks; Webfonts nur als Progressive Enhancement, Grundzustand Arial/Georgia.</li>
+          <li>Lesbar bei blockierten Bildern: Alt-Texte, kein Bild trägt alleinige Information.</li>
+          <li>Kontraste wie im Web (AA); Darkmode-sicher durch helle Grundflächen.</li>
+          <li>Klarer Absender („VTM Briefing · Maximilian Hempel“), Impressum und Abmeldung im Fuß.</li>
+          <li>Sponsor-Slots eindeutig gekennzeichnet: „Anzeige · Sponsor dieser Ausgabe“.</li>
+        </ul>
+      </div>
+      <div>
+        <div class="beispiel-flaeche">
+          <p class="beispiel-label">Struktur-Schema · VTM Briefing</p>
+          <svg viewBox="0 0 320 340" style="width:100%;max-width:20rem;height:auto" role="img" aria-label="Schema des Newsletter-Aufbaus: Kopf, Leitthese, drei Signale, Einordnung, ein Button, Fußzeile">
+            <rect x="10" y="8" width="300" height="30" rx="4" fill="#F7FAFE" stroke="#D5DBE6"/><text x="20" y="27" font-family="IBM Plex Mono,monospace" font-size="10" fill="#5C6980">Logo · Datum (Mono)</text>
+            <rect x="10" y="46" width="300" height="56" rx="4" fill="#EFF4FC"/><text x="20" y="78" font-family="IBM Plex Mono,monospace" font-size="10" fill="#0D1C3C">LEITTHESE — eine Aussage</text>
+            <rect x="10" y="110" width="300" height="34" rx="4" fill="#FFFFFF" stroke="#D5DBE6"/><text x="20" y="131" font-family="IBM Plex Mono,monospace" font-size="10" fill="#173BC4">01 · Signal mit Einordnung</text>
+            <rect x="10" y="150" width="300" height="28" rx="4" fill="#FFFFFF" stroke="#D5DBE6"/><text x="20" y="168" font-family="IBM Plex Mono,monospace" font-size="10" fill="#173BC4">02 · Signal</text>
+            <rect x="10" y="184" width="300" height="24" rx="4" fill="#FFFFFF" stroke="#D5DBE6"/><text x="20" y="200" font-family="IBM Plex Mono,monospace" font-size="10" fill="#173BC4">03 · Signal</text>
+            <rect x="10" y="216" width="300" height="44" rx="4" fill="#F7FAFE" stroke="#D5DBE6"/><text x="20" y="241" font-family="IBM Plex Mono,monospace" font-size="10" fill="#3A4763">Einordnung · Foto + Absender</text>
+            <rect x="10" y="268" width="140" height="30" rx="4" fill="#1F4EFF"/><text x="20" y="287" font-family="IBM Plex Mono,monospace" font-size="10" fill="#FFFFFF">Ein Schritt</text>
+            <rect x="10" y="306" width="300" height="26" rx="4" fill="#F4F6FA"/><text x="20" y="323" font-family="IBM Plex Mono,monospace" font-size="10" fill="#5C6980">Impressum · Abmelden</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ---------- 16 · SOCIAL ---------- -->
+<section class="kapitel kapitel--soft" id="social" aria-labelledby="social-titel">
+  <div class="shell">
+    <div class="kap-kopf">
+      <div>
+        <p class="kap-nr">Kapitel 16</p>
+        <h2 class="kap-titel" id="social-titel">LinkedIn und Social Media</h2>
+      </div>
+      <p class="kap-intro">Ein Visual, eine Aussage. Absender sichtbar, Zahl belegt,
+      auf dem Smartphone lesbar.</p>
+    </div>
+    <div class="duo">
+      <div>
+        <h3 style="margin-top:0">Formatfamilie</h3>
+        <div class="tabellen-scroll"><table class="regeln">
+          <thead><tr><th scope="col">Format</th><th scope="col" class="zahl">Maß</th><th scope="col">Kern</th></tr></thead>
+          <tbody>
+            <tr><td>Artikel-Teaser</td><td class="zahl">1080×1350</td><td>These auf Motiv mit Nachtblau-Schleier</td></tr>
+            <tr><td>Zahl / Studie</td><td class="zahl">1080×1350</td><td>Eine Zahl, Belegmarke, Quellenzeile — Pflicht</td></tr>
+            <tr><td>Zitat</td><td class="zahl">1080×1080</td><td>Newsreader Italic, Sprecher mit Foto und Rolle</td></tr>
+            <tr><td>Kommentar / Einordnung</td><td class="zahl">1080×1350</td><td>These + Absenderzeile der Redaktion</td></tr>
+            <tr><td>Podcast-Ausschnitt</td><td class="zahl">1080×1080</td><td>Nachtblau-Bühne, Episodentitel, Gast</td></tr>
+            <tr><td>Carousel</td><td class="zahl">1080×1350</td><td>Titelthese, ein Punkt pro Seite, Handlung am Ende</td></tr>
+            <tr><td>Partnerschaft / Event / Stellen</td><td class="zahl">1080×1080</td><td>Kennzeichnung, Logozone, ein Fakt</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+      <div>
+        <h3 style="margin-top:0">Regeln</h3>
+        <ul>
+          <li>Genau eine zentrale Aussage; Textmenge maximal ~20 Wörter auf der Fläche.</li>
+          <li>Zahlen nur mit Mono-Quellenzeile; dekorative Zahlen ohne Quelle sind nicht zulässig.</li>
+          <li>VTM-Absender auf jedem Visual (Logo oder „versicherungstech-magazin.de“ in Mono).</li>
+          <li>Sponsored-Formate tragen „Anzeige“ sichtbar auf dem Visual selbst.</li>
+          <li>Nicht zulässig: Clickbait, künstliche Dramatik, Stockmotive, Textwände, mehrere Aussagen pro Visual.</li>
+          <li>Mindestschriftgröße auf 1080er-Fläche: 44 px (lesbar im Smartphone-Feed).</li>
+        </ul>
+        <div class="hinweis">
+          <p><strong>Referenz:</strong> <a href="beispiele/social.html">beispiele/social.html</a>
+          zeigt alle Formate in Echtmaßen mit Kurzregeln.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ---------- 17 · DOKUMENTE ---------- -->
+<section class="kapitel" id="dokumente" aria-labelledby="dok-titel">
+  <div class="shell">
+    <div class="kap-kopf">
+      <div>
+        <p class="kap-nr">Kapitel 17</p>
+        <h2 class="kap-titel" id="dok-titel">Dokumente und Geschäfts&shy;kommunikation</h2>
+      </div>
+      <p class="kap-intro">Briefe, Angebote, Studien, Whitepaper, Mediakits, Protokolle:
+      seriös, ruhig, druckfähig — und in Graustufen vollwertig.</p>
+    </div>
+    <div class="duo">
+      <div>
+        <h3 style="margin-top:0">Gemeinsame Regeln</h3>
+        <ul>
+          <li>Hierarchie in jedem Dokument: <strong>Aussage → Einordnung → Beleg → Handlung.</strong></li>
+          <li>Grundschrift Inter 10,5 pt/1,55; Überschriften Schibsted Grotesk; Meta und Nummern IBM Plex Mono 8,5 pt.</li>
+          <li>Satzspiegel: Rand 22 mm umlaufend, einspaltig für Briefe, 7/5-Spaltigkeit für Studien.</li>
+          <li>Klare Absenderlogik: Logo oben links, Metablock (Nummer, Datum, Gültigkeit, Betreuer) in Mono oben rechts, vollständige Firmenangaben in der Fußzeile.</li>
+          <li>Farbeinsatz minimal: Nachtblau-Text, Electric sparsam für Verweise, Gold nur als Belegzeile. In Graustufen bleibt jede Information erhalten.</li>
+          <li>Tabellenbeträge rechtsbündig in Mono mit tabellarischen Ziffern und deutschen Formaten.</li>
+          <li>Barrierearm: echte Textebenen (kein Text in Bildern), logische Lesereihenfolge, PDF mit Tags exportieren.</li>
+        </ul>
+      </div>
+      <div>
+        <h3 style="margin-top:0">Dokumentfamilie</h3>
+        <div class="tabellen-scroll"><table class="regeln">
+          <thead><tr><th scope="col">Typ</th><th scope="col">Besonderheit</th></tr></thead>
+          <tbody>
+            <tr><td>Geschäftsbrief</td><td>DIN-5008-nahe Anordnung, Fensterkuvert-tauglich</td></tr>
+            <tr><td>Angebot</td><td>Anschreiben + Leistungstabelle, Nummernkreis A-JJJJ-NNN, Gültigkeitsdatum</td></tr>
+            <tr><td>Rechnungsbegleitung</td><td>Nummernkreis VTM-JJJJ-NNNN, Zahlungsziel sichtbar</td></tr>
+            <tr><td>Studie / Whitepaper</td><td>Deckblatt mit Motiv, Methodikseite Pflicht (Zeitraum, n, Grenzen)</td></tr>
+            <tr><td>Mediakit</td><td>Kennzahlen ausschließlich mit Quellenzeile und Stand</td></tr>
+            <tr><td>Workshop / Protokoll</td><td>Mono-Zeitmarken, Verantwortliche pro Punkt</td></tr>
+          </tbody>
+        </table></div>
+        <div class="hinweis">
+          <p><strong>Referenz:</strong> <a href="beispiele/geschaeftsbrief.html">beispiele/geschaeftsbrief.html</a>
+          — zweiseitiges A4-Angebot, am Bildschirm und im Druck geprüft.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ---------- 18 · PRÄSENTATIONEN ---------- -->
+<section class="kapitel kapitel--soft" id="praesentationen" aria-labelledby="praes-titel">
+  <div class="shell">
+    <div class="kap-kopf">
+      <div>
+        <p class="kap-nr">Kapitel 18</p>
+        <h2 class="kap-titel" id="praes-titel">Präsentationen</h2>
+      </div>
+      <p class="kap-intro">Eine Aussage pro Folie, Folientitel als These, Weiß trägt —
+      Nachtblau nur auf Cover, Kapiteltrennern und Abschluss.</p>
+    </div>
+    <div class="duo">
+      <div>
+        <h3 style="margin-top:0">Vorlagen</h3>
+        <ul>
+          <li><code>praesentation/VTM-Vorlage.potx</code> — Master und Layouts, Logo und Fußzeile (Foliennummer, Marke, Datum) auf dem Master, nie auf Einzelfolien.</li>
+          <li><code>praesentation/VTM-Beispieldeck.pptx</code> — jeder Folientyp einmal, mit Sprechernotizen zu Einsatz, Übergängen und Versand.</li>
+          <li>Versanddecks funktionieren vollständig statisch; zusätzlich wird eine PDF-Fassung erzeugt.</li>
+          <li>Diagramme bleiben native PowerPoint-Diagramme — editierbar, nicht als Bild eingefügt.</li>
+        </ul>
+        <h3>Typografie im Deck</h3>
+        <div class="tabellen-scroll"><table class="regeln">
+          <tbody>
+            <tr><td>Folientitel</td><td>Schibsted Grotesk 700 · 28–40 pt — formuliert als Aussage („Der Newsletter erreicht die Entscheider“), nicht als Thema („Newsletter“)</td></tr>
+            <tr><td>Fließtext</td><td>Inter 400 · 16 pt · max. 6 Zeilen pro Textblock</td></tr>
+            <tr><td>Quellen/Meta</td><td>IBM Plex Mono · 11 pt · Gold nur für Belegzeilen</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+      <div>
+        <h3 style="margin-top:0">Folientypen</h3>
+        <p>Cover · Agenda · Kapiteltrenner · Statement · Team · Leistungsübersicht ·
+        Prozess · Stufenmodell · Diagramm · Kennzahlen · Vergleich · Fallbeispiel ·
+        Zitat · Vollbildfoto · Kontakt/Abschluss.</p>
+        <div class="hinweis hinweis--warn">
+          <p><strong>Nicht zulässig im Deck:</strong> Folien mit mehr als einer Kernaussage ·
+          Aufzählungs-Friedhöfe (&gt;6 Punkte) · Deko-Icons neben jedem Punkt ·
+          Diagramme als Screenshots · erfundene Zahlen oder Platzhalterdaten in
+          Kundendecks · animierte Übergänge im Versanddeck.</p>
+        </div>
+        <p>Animationen im Vortrag: nur „Erscheinen“-Stufen zum Führen des Blicks,
+        dokumentiert in den Sprechernotizen. Jede Folie funktioniert ohne die Animation.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ---------- 19 · DIAGRAMME ---------- -->
+<section class="kapitel" id="diagramme" aria-labelledby="chart-titel">
+  <div class="shell">
+    <div class="kap-kopf">
+      <div>
+        <p class="kap-nr">Kapitel 19</p>
+        <h2 class="kap-titel" id="chart-titel">Diagramme und Daten</h2>
+      </div>
+      <p class="kap-intro">Diagramme verdichten Information. Electric zeigt die Daten,
+      Gold zeigt den einen Wert, auf den es ankommt.</p>
+    </div>
+    <div class="duo">
+      <div>
+        <h3 style="margin-top:0">Verbindliche Regeln</h3>
+        <ul>
+          <li>Farblogik: Electric-600 für Standardreihen, Electric-300/Nacht-700 für Nebenreihen, <strong>Gold-500 ausschließlich für den entscheidenden oder belegten Wert</strong> (maximal einer pro Diagramm).</li>
+          <li>Kein Chartjunk: keine 3D-Effekte, keine Schatten, keine Rahmen, kein Deko-Raster — Raster nur als Haarlinien in Neutral-100.</li>
+          <li>Ringdiagramme: maximal fünf Segmente; kleinere Anteile werden zusammengefasst und benannt.</li>
+          <li>Achsen beginnen bei null oder machen den Ausschnitt unübersehbar kenntlich.</li>
+          <li>Beschriftung direkt an der Datenreihe statt Legenden-Rätsel; Legenden nur wenn unvermeidbar, dann verständlich.</li>
+          <li>Deutsche Zahlenformate; Achsentext und Werte in Mono 12 px.</li>
+          <li>Pflichtangaben an jedem Diagramm: Quelle, Stand-Datum, Zeitraum, Stichprobe (n), Grenzen der Aussage.</li>
+          <li>Möglichst native, editierbare Diagramme (SVG im Web, Chart-Objekte in Office) — keine Screenshots.</li>
+          <li>Keine erfundenen Zahlen und keine Platzhalterdaten in finalen Kundendecks; Demo-Daten sind immer sichtbar gekennzeichnet.</li>
+        </ul>
+      </div>
+      <div>
+        <div class="beispiel-flaeche beispiel-flaeche--weiss">
+          <p class="beispiel-label">Referenz-Balkendiagramm · echte VTM-Reichweite</p>
+          <svg viewBox="0 0 420 240" style="width:100%;height:auto" role="img" aria-label="Balkendiagramm der VTM-Reichweite: Podcast 35.000 Downloads pro Monat als belegter Goldwert, Newsletter 6.000 Empfänger, LinkedIn 20.000 Follower, jeweils Stand August 2026">
+            <line x1="90" y1="30" x2="90" y2="200" stroke="#E8ECF2"/>
+            <line x1="90" y1="200" x2="410" y2="200" stroke="#B6BFCF"/>
+            <rect x="90" y="46"  width="300" height="34" fill="#C9A035"/>
+            <rect x="90" y="100" width="52"  height="34" fill="#1F4EFF"/>
+            <rect x="90" y="154" width="172" height="34" fill="#1F4EFF"/>
+            <text x="84" y="68"  text-anchor="end" font-family="IBM Plex Mono,monospace" font-size="11" fill="#5C6980">Podcast</text>
+            <text x="84" y="122" text-anchor="end" font-family="IBM Plex Mono,monospace" font-size="11" fill="#5C6980">Newsletter</text>
+            <text x="84" y="176" text-anchor="end" font-family="IBM Plex Mono,monospace" font-size="11" fill="#5C6980">LinkedIn</text>
+            <text x="380" y="68"  text-anchor="end" font-family="IBM Plex Mono,monospace" font-size="12" font-weight="600" fill="#0D1C3C">35.000</text>
+            <text x="150" y="122" font-family="IBM Plex Mono,monospace" font-size="12" fill="#0D1C3C">6.000+</text>
+            <text x="270" y="176" font-family="IBM Plex Mono,monospace" font-size="12" fill="#0D1C3C">20.000+</text>
+            <text x="90" y="222" font-family="IBM Plex Mono,monospace" font-size="10.5" fill="#8A6512">Quelle: Hosting-/Plattformstatistiken · Stand: 08/2026 · Monatswerte</text>
+          </svg>
+          <p style="font-size:var(--vtm-size-s);color:var(--sem-text-sekundaer);margin:.75rem 0 0">
+          Der Podcast-Wert trägt Gold, weil er der belegte Kernwert der Aussage ist —
+          die übrigen Reihen bleiben Electric. Werte direkt am Balken, Quellenzeile am Diagramm.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ---------- 20 · SPRACHE ---------- -->
+<section class="kapitel kapitel--soft" id="sprache" aria-labelledby="sprache-titel">
+  <div class="shell">
+    <div class="kap-kopf">
+      <div>
+        <p class="kap-nr">Kapitel 20</p>
+        <h2 class="kap-titel" id="sprache-titel">Sprache</h2>
+      </div>
+      <p class="kap-intro">Deutsch, journalistisch, aktiv, belegt. Die Sprache ist Teil
+      des Designs — sie trägt denselben Signal-Anspruch wie die Fläche.</p>
+    </div>
+    <div class="duo">
+      <div>
+        <h3 style="margin-top:0">Grundsätze</h3>
+        <ul>
+          <li>Einfach und präzise: kurze Sätze, aktive Verben, konkrete Subjekte.</li>
+          <li>Technische Begriffe nur, wenn nötig — und beim ersten Auftreten erklärt.</li>
+          <li>Unsicherheit wird sichtbar benannt („Belastbare Marktzahlen fehlen bisher“).</li>
+          <li>Behauptungen werden belegt oder als Einschätzung gekennzeichnet.</li>
+          <li>Anrede „Sie“; Menschen werden mit Namen und Verantwortung genannt.</li>
+          <li>Keine Erfolgs- oder Lead-Versprechen — VTM verspricht fachliche Sichtbarkeit, nicht Abschlüsse.</li>
+        </ul>
+        <div class="do-dont" style="margin-top:var(--vtm-space-24)">
+          <div class="dd dd--do"><p class="dd-kopf">So klingt VTM</p><div class="dd-body"><ul>
+            <li>„Drei Versicherer testen die Schadenautomatisierung bereits im Regelbetrieb.“</li>
+            <li>„Die Zahl stammt aus einer Anbieterstudie — unabhängige Werte fehlen.“</li>
+            <li>„Was das für Ihre IT-Roadmap bedeutet, zeigt die Analyse.“</li>
+          </ul></div></div>
+          <div class="dd dd--dont"><p class="dd-kopf">So nicht</p><div class="dd-body"><ul>
+            <li>„Wir revolutionieren die Versicherungsbranche.“</li>
+            <li>„Zukunftsweisende, maßgeschneiderte 360-Grad-Lösungen.“</li>
+            <li>„Der Gamechanger für Ihren Vertriebserfolg.“</li>
+          </ul></div></div>
+        </div>
+      </div>
+      <div>
+        <h3 style="margin-top:0">Verbotsliste <span class="regel-status regel-status--muss">Verbindlich</span></h3>
+        <p>„Wir revolutionieren …“ · „zukunftsweisend“ · „innovative Lösungen“ ·
+        „Gamechanger“ · „360-Grad“ · „maßgeschneidert“ · unbelegte Superlative ·
+        künstliche Dramatik · Erfolgs- und Lead-Versprechen.</p>
+        <h3>Mikrotexte</h3>
+        <div class="tabellen-scroll"><table class="regeln">
+          <tbody>
+            <tr><td>Buttons</td><td>Verb der Handlung: „Analyse lesen“, „Thema vorschlagen“ — nie „Hier klicken“, „Absenden“.</td></tr>
+            <tr><td>Fehler</td><td>Was passiert ist + wie es weitergeht. Nie Schuldzuweisung an Nutzer.</td></tr>
+            <tr><td>Leere Zustände</td><td>Erklärung + nächster Schritt, kein Entschuldigungston.</td></tr>
+            <tr><td>Kennzeichnung</td><td>„Sponsored Content“, „Anzeige“, „In Partnerschaft mit …“ — nie euphemistisch („Empfehlung“, „Partner-Insight“).</td></tr>
+            <tr><td>KI-Hinweise</td><td>„KI-Vorschlag — vor Versand prüfen“; Herkunft der Daten benannt.</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ---------- 21 · BARRIEREFREIHEIT ---------- -->
+<section class="kapitel" id="barrierefreiheit" aria-labelledby="a11y-titel">
+  <div class="shell">
+    <div class="kap-kopf">
+      <div>
+        <p class="kap-nr">Kapitel 21</p>
+        <h2 class="kap-titel" id="a11y-titel">Barrierefreiheit</h2>
+      </div>
+      <p class="kap-intro">WCAG 2.2 AA ist Mindeststandard und Teil des Designs —
+      kein nachgelagerter Prüfpunkt. In der Prioritätsregel steht Barrierefreiheit
+      über allen Markenregeln.</p>
+    </div>
+    <ul class="check breit">
+      <li>Textkontrast mindestens 4,5:1; große Schrift und UI-Elemente mindestens 3:1 — alle Token-Paare sind nachgerechnet (Kapitel 04)</li>
+      <li>Fokuszustände klar sichtbar (<code>--sem-fokus-ring</code>, 2 px Versatz + 2 px Ring), niemals entfernt</li>
+      <li>Vollständige Tastaturbedienung: alle Funktionen ohne Maus erreichbar, logische Tab-Reihenfolge, Skip-Link</li>
+      <li>Sinnvolle Überschriftenstruktur ohne Ebenensprünge; ein <code>h1</code> pro Seite</li>
+      <li>Semantisches HTML: <code>header</code>, <code>nav</code>, <code>main</code>, <code>section</code>, <code>table</code> mit <code>scope</code>, echte <code>button</code>/<code>a</code></li>
+      <li>Alt-Texte für informative Bilder; dekorative Bilder mit leerem <code>alt</code></li>
+      <li>Keine Information nur über Farbe — Status immer als Punkt + Text, Links unterstrichen</li>
+      <li>Touchflächen mindestens 44 × 44 px (Token <code>--btn-hoehe</code>)</li>
+      <li>Reflow bei 320 CSS-Pixeln ohne horizontales Scrollen (Tabellen scrollen im eigenen Container)</li>
+      <li>200 % und 400 % Zoom funktionsfähig (rem-basierte Größen, fluid clamp())</li>
+      <li>Reduzierte Bewegung global erzwungen über <code>tokens.css</code>; keine Autoplay-Bewegung</li>
+      <li>Videos und Animationen pausierbar; Untertitel für Bewegtbild mit Ton</li>
+      <li>Formulare: sichtbare Labels, Hilfetexte via <code>aria-describedby</code>, konkrete Fehlermeldungen, <code>autocomplete</code></li>
+      <li>Sprachauszeichnung <code>lang="de"</code>; verständliche Linktexte („Analyse lesen“ statt „mehr“)</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ---------- 22 · TECHNIK ---------- -->
+<section class="kapitel kapitel--soft" id="technik" aria-labelledby="tech-titel">
+  <div class="shell">
+    <div class="kap-kopf">
+      <div>
+        <p class="kap-nr">Kapitel 22</p>
+        <h2 class="kap-titel" id="tech-titel">Technische Qualität</h2>
+      </div>
+      <p class="kap-intro">Schnell und stabil ist Teil der Glaubwürdigkeit: Ein Medium,
+      das über Technologie schreibt, lädt nicht langsam.</p>
+    </div>
+    <div class="duo">
+      <div>
+        <h3 style="margin-top:0">Budgets <span class="regel-status regel-status--muss">Verbindlich</span></h3>
+        <div class="tabellen-scroll"><table class="regeln">
+          <thead><tr><th scope="col">Metrik</th><th scope="col" class="zahl">Ziel</th></tr></thead>
+          <tbody>
+            <tr><td>LCP (Largest Contentful Paint)</td><td class="zahl">≤ 2,5 s</td></tr>
+            <tr><td>INP (Interaction to Next Paint)</td><td class="zahl">≤ 200 ms</td></tr>
+            <tr><td>CLS (Cumulative Layout Shift)</td><td class="zahl">≤ 0,1</td></tr>
+            <tr><td>JavaScript initial</td><td class="zahl">so wenig wie möglich; Kern ohne JS funktionsfähig</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+      <div>
+        <h3 style="margin-top:0">Umsetzungsregeln</h3>
+        <ul>
+          <li>Keine Videos und schweren Effekte beim ersten Laden; Nachladen erst bei Sichtbarkeit oder Interaktion, nie bei <code>Save-Data</code>.</li>
+          <li>Responsive Bilder (<code>srcset</code>/<code>sizes</code>) mit festen <code>width</code>/<code>height</code>-Attributen gegen Layoutsprünge; <code>loading="lazy"</code> unterhalb des Folds.</li>
+          <li>Schriften als <code>woff2</code> mit <code>font-display: swap</code>; für Produktion selbst hosten und subsetten (Google-Fonts-Einbindung nur für Prototypen).</li>
+          <li>Animationen als kleine, getrennte Funktionsinseln; IntersectionObserver stoppt alles außerhalb des Viewports; keine doppelten Schleifen.</li>
+          <li>Jeder Abschnitt hat bewusst gestaltete responsive Varianten — Desktop, Tablet und Smartphone sind eigene Kompositionen, keine Verkleinerungen.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ---------- 23 · ABNAHME ---------- -->
+<section class="kapitel" id="checklisten" aria-labelledby="check-titel">
+  <div class="shell">
+    <div class="kap-kopf">
+      <div>
+        <p class="kap-nr">Kapitel 23</p>
+        <h2 class="kap-titel" id="check-titel">Abnahme und Checklisten</h2>
+      </div>
+      <p class="kap-intro">Ein Ergebnis gilt erst als fertig, wenn jede Zeile dieser
+      Liste bestanden ist. Die Liste ist Bestandteil jeder Freigabe.</p>
+    </div>
+    <h3 style="margin-top:0">Verbindliche Abnahme-Checkliste</h3>
+    <ul class="check breit">
+      <li>Wirkt nicht generisch oder „KI-generiert“; eindeutig als VTM erkennbar</li>
+      <li>Logo unverändert, mit Schutzraum und korrekter Variante eingesetzt</li>
+      <li>Kernfarben korrekt: Weiß/Eisblau tragen, Electric handelt, Gold nur Beleg</li>
+      <li>Menschen sichtbar im Mittelpunkt (echte, freigegebene Fotos)</li>
+      <li>Alle Kanäle folgen der Grammatik Aussage → Einordnung → Beleg → Handlung</li>
+      <li>Typografie: Schibsted/Inter/Newsreader/Plex Mono in den definierten Rollen</li>
+      <li>Jede zentrale Seite hat eine klare Dramaturgie mit einer Hauptaktion pro Fläche</li>
+      <li>Alle Funktionen per Tastatur und Touch bedienbar</li>
+      <li>Reduzierte Bewegung geprüft (Systemeinstellung aktiviert und getestet)</li>
+      <li>Responsive auf 320 px, Tablet und Desktop als eigene Kompositionen geprüft</li>
+      <li>Kontraste (AA) und Fokuszustände bestanden</li>
+      <li>Keine Platzhalter, keine erfundenen Zahlen; Demo-Inhalte sichtbar gekennzeichnet</li>
+      <li>Inhalte, Links und Quellen geprüft; Stände aktuell</li>
+      <li>Sponsored-Inhalte eindeutig gekennzeichnet</li>
+      <li>Alle Dateien technisch funktionsfähig (Druck, E-Mail-Clients, Office-Versionen)</li>
+      <li>Gestaltung überzeugt auch vollständig statisch — ohne Animation, ohne Hover</li>
+    </ul>
+
+    <div class="duo" style="margin-top:var(--vtm-space-64)">
+      <div>
+        <h3 style="margin-top:0">Kanal-Schnellchecks</h3>
+        <div class="tabellen-scroll"><table class="regeln">
+          <tbody>
+            <tr><td>Website</td><td>Fünf Nutzerfragen beantwortet? Hero asymmetrisch? Beleg sichtbar? LCP ≤ 2,5 s?</td></tr>
+            <tr><td>Artikel</td><td>Quellen an der Zahl? Lesebreite ≤ 42 rem? Autor mit Verantwortung? Kennzeichnung korrekt?</td></tr>
+            <tr><td>SaaS</td><td>Status nie nur Farbe? Fehler mit Lösungsweg? KI-Ausgaben gekennzeichnet? 44-px-Ziele?</td></tr>
+            <tr><td>Newsletter</td><td>These–3 Signale–1 Schritt? Ohne Bilder lesbar? Absender klar? Anzeige gekennzeichnet?</td></tr>
+            <tr><td>Social</td><td>Eine Aussage? Quelle an der Zahl? Absender auf dem Visual? Smartphone-lesbar?</td></tr>
+            <tr><td>Dokumente</td><td>Graustufen-tauglich? Fußzeile vollständig? Beträge in Mono rechtsbündig? Druckbild geprüft?</td></tr>
+            <tr><td>Präsentation</td><td>Eine Aussage pro Folie? Diagramme nativ? Versanddeck statisch? Notizen gepflegt?</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+      <div>
+        <h3 style="margin-top:0">Governance</h3>
+        <ul>
+          <li>Änderungen am System laufen über die Token-Dateien und dieses Dokument — nie über Einzeldateien.</li>
+          <li>Freigabe von Abweichungen: Herausgeber. Jede Abweichung wird dokumentiert.</li>
+          <li>Neue Muster entstehen aus wiederholtem Bedarf (dreimal gebraucht = Komponente), nicht aus Einzelfällen.</li>
+          <li>Dieses System ersetzt „Master-Next 4.2“. Bestehende Anwendungen migrieren bei der nächsten inhaltlichen Überarbeitung.</li>
+        </ul>
+        <div class="hinweis hinweis--beleg">
+          <p><strong>Quelle der Wahrheit:</strong> <code>design-system/tokens.css</code> ·
+          <code>design-system/tokens.json</code> · dieses Handbuch. Stand: 08/2026.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="anker" style="margin-top:var(--vtm-space-96)">
+      <div>
+        <h2>Fragen zum System?</h2>
+        <p>Maximilian Hempel verantwortet Marke und Redaktion des VersicherungsTech
+        Magazins — Abweichungen, Erweiterungen und Freigaben laufen über ihn.</p>
+      </div>
+      <div style="display:flex;gap:var(--vtm-space-16);align-items:center;justify-content:flex-end;flex-wrap:wrap">
+        <img src="assets/team/maximilian-hempel.jpg" alt="Maximilian Hempel" width="72" height="90" style="border-radius:var(--vtm-radius-m);width:72px;height:auto">
+        <a class="btn btn--primaer" href="mailto:info@versicherungstech-magazin.de">E-Mail schreiben</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="site">
+  <div class="shell zeile">
+    <img src="assets/logo/vtm-logo-farbe.png" alt="VersicherungsTech Magazin" width="1007" height="177" style="width:auto">
+    <p style="margin:0">VersicherungsTech Media UG (haftungsbeschränkt) · Moitzfeld 17 · 51429 Bergisch Gladbach · HRB 126738, Amtsgericht Köln</p>
+    <p style="margin:0;font:500 var(--vtm-size-xs)/1.4 var(--vtm-font-mono)">Design System 5.0 · Signal · Stand 08/2026</p>
+  </div>
+</footer>
+
+</body>
+</html>

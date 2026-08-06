@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VTM Angebotsdesk · SaaS-Referenzoberfläche · VTM Design System 5.0</title>
+<meta name="description" content="Referenz-Arbeitsoberfläche der VTM-SaaS-Produkte am Beispiel der internen Angebotssoftware „VTM Angebotsdesk“. Beispielseite des VTM Design Systems 5.0 „Signal“.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Schibsted+Grotesk:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../tokens.css">
+<style>
+/* =============================================================
+   VTM Angebotsdesk – Referenz-Arbeitsoberfläche
+   Ruhige Arbeitsfläche, hohe Dichte ohne Unruhe.
+   14px-UI · Touchziele ≥ 44px · kompakte Höhen nur auf Zeigegeräten
+   ============================================================= */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { height: 100%; }
+
+body {
+  margin: 0;
+  min-height: 100%;
+  font: 400 var(--vtm-size-s)/var(--vtm-leading-ui) var(--vtm-font-text);
+  color: var(--sem-text);
+  background: var(--sem-flaeche-soft);
+  -webkit-font-smoothing: antialiased;
+}
+
+img { max-width: 100%; height: auto; }
+
+/* --- Fokus: immer sichtbar ---------------------------------- */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+summary:focus-visible,
+[tabindex]:focus-visible {
+  outline: none;
+  box-shadow: var(--sem-fokus-ring);
+  border-radius: var(--vtm-radius-s);
+}
+.seitenleiste a:focus-visible,
+.seitenleiste button:focus-visible {
+  box-shadow: var(--sem-fokus-ring-invers);
+}
+
+/* --- Skip-Link ---------------------------------------------- */
+.skip-link {
+  position: absolute;
+  left: var(--vtm-space-16);
+  top: -100px;
+  z-index: calc(var(--vtm-ebene-toast) + 1);
+  padding: var(--vtm-space-12) var(--vtm-space-16);
+  background: var(--vtm-weiss);
+  color: var(--sem-text-link);
+  font-weight: 600;
+  border-radius: var(--vtm-radius-m);
+  box-shadow: var(--vtm-schatten-m);
+  text-decoration: none;
+  transition: top var(--vtm-dauer-micro) var(--vtm-ease-standard);
+}
+.skip-link:focus-visible { top: var(--vtm-space-16); }
+
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* --- Grundgerüst: Leiste + Fläche --------------------------- */
+.app {
+  display: grid;
+  grid-template-columns: 15rem 1fr;
+  min-height: 100vh;
+}
+
+/* --- Seitenleiste (Nachtblau als kompakter Werkzeug-Anker) -- */
+.seitenleiste {
+  background: var(--sem-flaeche-anker);
+  color: var(--sem-text-invers);
+  display: flex;
+  flex-direction: column;
+  padding: var(--vtm-space-24) var(--vtm-space-16);
+  gap: var(--vtm-space-32);
+}
+.seitenleiste .logo-zeile {
+  display: block;
+  padding: var(--vtm-space-4) var(--vtm-space-8);
+}
+.seitenleiste .produktname {
+  display: block;
+  margin-top: var(--vtm-space-8);
+  padding: 0 var(--vtm-space-8);
+  font: 500 var(--vtm-size-2xs)/1.4 var(--vtm-font-mono);
+  letter-spacing: var(--vtm-tracking-label);
+  text-transform: uppercase;
+  color: var(--sem-text-invers-sekundaer);
+}
+.hauptnav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--vtm-space-2);
+}
+.hauptnav a {
+  display: flex;
+  align-items: center;
+  gap: var(--vtm-space-12);
+  min-height: 2.75rem;                 /* 44px Touchziel */
+  padding: 0 var(--vtm-space-12);
+  border-left: 2px solid transparent;
+  border-radius: 0 var(--vtm-radius-m) var(--vtm-radius-m) 0;
+  color: var(--sem-text-invers-sekundaer);
+  text-decoration: none;
+  font-weight: 500;
+  transition: background var(--vtm-dauer-micro) var(--vtm-ease-standard),
+              color var(--vtm-dauer-micro) var(--vtm-ease-standard);
+}
+.hauptnav a:hover {
+  color: var(--sem-text-invers);
+  background: rgb(255 255 255 / 0.06);
+}
+.hauptnav a[aria-current="page"] {
+  border-left-color: var(--vtm-electric-400);   /* Signallinie */
+  color: var(--sem-text-invers);
+  background: rgb(255 255 255 / 0.08);
+  font-weight: 600;
+}
+.hauptnav .nav-icon {
+  width: 8px; height: 8px;
+  border-radius: var(--vtm-radius-rund);
+  background: rgb(255 255 255 / 0.28);
+  flex: none;
+}
+.hauptnav a[aria-current="page"] .nav-icon {
+  background: var(--vtm-electric-400);
+}
+.leiste-fuss {
+  margin-top: auto;
+  padding: var(--vtm-space-12) var(--vtm-space-8) 0;
+  border-top: var(--vtm-linie-invers);
+  font: 400 var(--vtm-size-2xs)/1.6 var(--vtm-font-mono);
+  letter-spacing: var(--vtm-tracking-mono);
+  color: var(--sem-text-invers-sekundaer);
+}
+
+/* --- Rechte Fläche ------------------------------------------ */
+.flaeche { min-width: 0; display: flex; flex-direction: column; }
+
+/* Kopfzeile */
+.kopf {
+  position: sticky;
+  top: 0;
+  z-index: var(--vtm-ebene-sticky);
+  background: var(--nav-bg);
+  backdrop-filter: blur(8px);
+  border-bottom: var(--nav-linie);
+  padding: var(--vtm-space-12) var(--vtm-space-32);
+  display: flex;
+  align-items: center;
+  gap: var(--vtm-space-24);
+  flex-wrap: wrap;
+}
+.kopf .bereich { min-width: 0; }
+.systemlabel {
+  display: block;
+  font: 500 var(--vtm-size-xs)/1.4 var(--vtm-font-mono);
+  letter-spacing: var(--vtm-tracking-mono);
+  color: var(--sem-text-gedaempft);
+}
+.kopf h1 {
+  margin: var(--vtm-space-2) 0 0;
+  font: 700 var(--vtm-size-xl)/var(--vtm-leading-heading) var(--vtm-font-display);
+  letter-spacing: var(--vtm-tracking-heading);
+}
+.kopf-suche {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--vtm-space-8);
+}
+.kopf-suche label {
+  font: 600 var(--vtm-size-xs)/1.3 var(--vtm-font-text);
+  letter-spacing: var(--vtm-tracking-label);
+  text-transform: uppercase;
+  color: var(--sem-text-sekundaer);
+}
+.kopf-suche input[type="search"] {
+  width: clamp(10rem, 22vw, 18rem);
+}
+.nutzer {
+  display: flex;
+  align-items: center;
+  gap: var(--vtm-space-12);
+  min-height: 2.75rem;
+}
+.nutzer img {
+  width: 36px; height: 36px;
+  border-radius: var(--vtm-radius-rund);
+  object-fit: cover;
+  border: var(--vtm-linie-haar);
+}
+.nutzer .nutzer-name { font-weight: 600; line-height: 1.25; }
+.nutzer .nutzer-rolle {
+  display: block;
+  font: 500 var(--vtm-size-2xs)/1.3 var(--vtm-font-mono);
+  color: var(--sem-text-gedaempft);
+}
+
+/* Hauptbereich */
+.inhalt {
+  padding: var(--vtm-space-32);
+  display: flex;
+  flex-direction: column;
+  gap: var(--vtm-space-48);
+  max-width: 90rem;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.demo-hinweis {
+  font: 500 var(--vtm-size-xs)/1.5 var(--vtm-font-mono);
+  letter-spacing: var(--vtm-tracking-mono);
+  color: var(--sem-text-gedaempft);
+}
+
+h2 {
+  margin: 0 0 var(--vtm-space-16);
+  font: 700 var(--vtm-size-l)/var(--vtm-leading-heading) var(--vtm-font-display);
+  letter-spacing: var(--vtm-tracking-heading);
+}
+h3 {
+  margin: 0 0 var(--vtm-space-8);
+  font: 600 var(--vtm-size-m)/var(--vtm-leading-heading) var(--vtm-font-display);
+}
+
+/* --- Kennzahlen: 3 ungleich gewichtete Datenboxen ----------- */
+.kennzahlen {
+  display: grid;
+  grid-template-columns: 5fr 4fr 3fr;
+  gap: var(--vtm-space-16);
+  align-items: stretch;
+}
+.datenbox {
+  background: var(--datenbox-bg);
+  border: var(--vtm-linie-haar);
+  border-radius: var(--datenbox-radius);
+  padding: var(--vtm-space-24);
+  display: flex;
+  flex-direction: column;
+  gap: var(--vtm-space-8);
+}
+.datenbox .kz-label {
+  font: 600 var(--vtm-size-xs)/1.3 var(--vtm-font-text);
+  letter-spacing: var(--vtm-tracking-label);
+  text-transform: uppercase;
+  color: var(--sem-text-sekundaer);
+}
+.datenbox .kz-wert {
+  font: 700 var(--vtm-size-4xl)/1.05 var(--vtm-font-display);
+  letter-spacing: var(--vtm-tracking-display);
+  font-variant-numeric: tabular-nums;
+}
+.datenbox--gross .kz-wert { font-size: var(--vtm-size-5xl); }
+.datenbox--klein .kz-wert { font-size: var(--vtm-size-3xl); }
+.datenbox .kz-meta {
+  margin-top: auto;
+  font: 500 var(--vtm-size-xs)/1.5 var(--vtm-font-mono);
+  letter-spacing: var(--vtm-tracking-mono);
+  color: var(--sem-text-gedaempft);
+}
+
+/* --- Arbeitszone: Liste 7 / Detail 5 ------------------------ */
+.arbeitszone {
+  display: grid;
+  grid-template-columns: 7fr 5fr;
+  gap: var(--vtm-space-24);
+  align-items: start;
+}
+
+.panel {
+  background: var(--karte-bg);
+  border: var(--karte-linie);
+  border-radius: var(--karte-radius);
+}
+.panel-innen { padding: var(--karte-pad); }
+
+/* Filterleiste */
+.filterleiste {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--vtm-space-16);
+  padding: var(--vtm-space-16) var(--karte-pad);
+  border-bottom: var(--vtm-linie-haar);
+}
+.filterfeld { display: flex; flex-direction: column; gap: var(--vtm-space-4); }
+.filterfeld label {
+  font: var(--input-label-font);
+  color: var(--sem-text-sekundaer);
+}
+.filterfeld--suche { flex: 1 1 12rem; }
+
+/* Eingaben */
+input[type="text"],
+input[type="search"],
+input[type="email"],
+input[type="date"],
+select {
+  height: var(--input-hoehe);
+  padding: 0 var(--vtm-space-12);
+  font: 400 var(--vtm-size-s)/1 var(--vtm-font-text);
+  color: var(--input-text);
+  background: var(--input-bg);
+  border: var(--input-linie);
+  border-radius: var(--input-radius);
+}
+input::placeholder { color: var(--input-platzhalter); }
+input:focus-visible, select:focus-visible {
+  border-color: var(--input-linie-fokus);
+}
+input[aria-invalid="true"] {
+  border-color: var(--input-linie-fehler);
+  border-width: 1.5px;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--vtm-space-8);
+  min-height: var(--btn-hoehe);
+  padding: 0 var(--btn-pad-x);
+  font: var(--btn-font);
+  font-size: var(--vtm-size-s);
+  border-radius: var(--btn-radius);
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background var(--vtm-dauer-micro) var(--vtm-ease-standard);
+}
+.btn--primaer {
+  background: var(--btn-primaer-bg);
+  color: var(--btn-primaer-text);
+}
+.btn--primaer:hover { background: var(--btn-primaer-bg-hover); }
+.btn--sekundaer {
+  background: var(--vtm-weiss);
+  border: var(--btn-sekundaer-linie);
+  color: var(--btn-sekundaer-text);
+}
+.btn--sekundaer:hover { background: var(--btn-sekundaer-bg-hover); }
+.btn:disabled {
+  background: var(--sem-deaktiviert-flaeche);
+  border: 1px solid var(--sem-deaktiviert-linie);
+  color: var(--sem-deaktiviert-text);
+  cursor: not-allowed;
+}
+
+/* --- Tabelle ------------------------------------------------ */
+.tabelle-rollbereich { overflow-x: auto; }
+table.angebote {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--vtm-size-s);
+}
+table.angebote caption {
+  text-align: left;
+  padding: var(--vtm-space-12) var(--karte-pad);
+  font: 500 var(--vtm-size-xs)/1.5 var(--vtm-font-mono);
+  color: var(--sem-text-gedaempft);
+}
+table.angebote th {
+  background: var(--tabelle-kopf-bg);
+  font: var(--tabelle-kopf-font);
+  text-align: left;
+  padding: var(--vtm-space-8) var(--vtm-space-12);
+  border-top: var(--tabelle-zeile-linie);
+  border-bottom: var(--tabelle-zeile-linie);
+  color: var(--sem-text-sekundaer);
+  white-space: nowrap;
+}
+table.angebote td {
+  padding: var(--vtm-space-12);
+  border-bottom: var(--tabelle-zeile-linie);
+  vertical-align: middle;
+}
+table.angebote tbody tr { min-height: 2.75rem; }
+table.angebote tbody tr:hover td { background: var(--tabelle-zeile-hover); }
+table.angebote tr[aria-selected="true"] td {
+  background: var(--sem-auswahl-flaeche);
+}
+table.angebote tr[aria-selected="true"] td:first-child {
+  box-shadow: inset 3px 0 0 var(--sem-auswahl-linie);
+}
+.mono, .num {
+  font-family: var(--vtm-font-mono);
+  font-size: var(--vtm-size-s);
+  letter-spacing: var(--vtm-tracking-mono);
+}
+.num { font-variant-numeric: tabular-nums; }
+th.zahl, td.zahl { text-align: right; }
+td .kunde-name { font-weight: 600; }
+
+/* Statusanzeige: Punkt + Text, nie nur Farbe */
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--vtm-space-8);
+  font: var(--status-font);
+  letter-spacing: var(--vtm-tracking-mono);
+  white-space: nowrap;
+}
+.status::before {
+  content: "";
+  width: 8px; height: 8px;
+  border-radius: var(--status-radius);
+  flex: none;
+}
+.status--entwurf     { color: var(--vtm-neutral-700); }
+.status--entwurf::before     { background: var(--vtm-neutral-400); }
+.status--pruefung    { color: var(--sem-warnung-text); }
+.status--pruefung::before    { background: var(--vtm-gold-500); }
+.status--freigegeben { color: var(--sem-erfolg-text); }
+.status--freigegeben::before { background: var(--vtm-mint-500); }
+.status--versendet   { color: var(--sem-auswahl-text); }
+.status--versendet::before   { background: var(--vtm-electric-600); }
+.status--abgelehnt   { color: var(--sem-fehler-text); }
+.status--abgelehnt::before   { background: var(--vtm-coral-600); }
+
+/* --- Detail-Panel ------------------------------------------- */
+.detail-kopf {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--vtm-space-16);
+  flex-wrap: wrap;
+  margin-bottom: var(--vtm-space-16);
+}
+.detail-kopf h2 { margin: 0; }
+.detail-meta {
+  font: 500 var(--vtm-size-xs)/1.6 var(--vtm-font-mono);
+  color: var(--sem-text-gedaempft);
+  margin: 0 0 var(--vtm-space-16);
+}
+.positionen { margin: 0 0 var(--vtm-space-16); padding: 0; list-style: none; }
+.positionen li {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--vtm-space-16);
+  padding: var(--vtm-space-8) 0;
+  border-bottom: var(--vtm-linie-haar);
+}
+.positionen li.summe {
+  border-bottom: none;
+  border-top: 2px solid var(--vtm-nacht-900);
+  font-weight: 700;
+}
+.positionen .rabatt { color: var(--sem-text-sekundaer); }
+
+/* Hinweise: Warnung / Fehler / Erfolg */
+.hinweis {
+  display: flex;
+  gap: var(--vtm-space-12);
+  padding: var(--vtm-space-12) var(--vtm-space-16);
+  border-radius: var(--vtm-radius-m);
+  margin: 0 0 var(--vtm-space-16);
+  font-size: var(--vtm-size-s);
+}
+.hinweis strong { display: block; margin-bottom: var(--vtm-space-2); }
+.hinweis--warnung {
+  background: var(--sem-warnung-flaeche);
+  border: 1px solid var(--vtm-gold-500);
+  color: var(--sem-warnung-text);
+}
+.hinweis--fehler {
+  background: var(--sem-fehler-flaeche);
+  border: 1px solid var(--sem-fehler-linie);
+  color: var(--sem-fehler-text);
+}
+.hinweis--erfolg {
+  background: var(--sem-erfolg-flaeche);
+  border: 1px solid var(--sem-erfolg-linie);
+  color: var(--sem-erfolg-text);
+}
+
+/* Belegzeile (Gold = ausschließlich Beleg) */
+.beleg {
+  margin: 0 0 var(--vtm-space-16);
+}
+.beleg::before {
+  content: "";
+  display: block;
+  width: 24px; height: 3px;
+  background: var(--sem-beleg-marke);
+  margin-bottom: var(--vtm-space-8);
+}
+.beleg p {
+  margin: 0;
+  font: 500 var(--vtm-size-xs)/1.5 var(--vtm-font-mono);
+  letter-spacing: var(--vtm-tracking-mono);
+  color: var(--sem-beleg-text);
+}
+
+/* KI-Ausgabe: sichtbare Herkunft */
+.ki-block {
+  border: var(--vtm-linie-mittel);
+  border-radius: var(--vtm-radius-m);
+  margin: 0 0 var(--vtm-space-16);
+  overflow: hidden;
+}
+.ki-block .ki-kopf {
+  display: flex;
+  align-items: center;
+  gap: var(--vtm-space-8);
+  padding: var(--vtm-space-8) var(--vtm-space-16);
+  background: var(--sem-flaeche-soft);
+  border-bottom: var(--vtm-linie-haar);
+  font: 600 var(--vtm-size-xs)/1.4 var(--vtm-font-mono);
+  letter-spacing: var(--vtm-tracking-mono);
+  color: var(--sem-text-sekundaer);
+}
+.ki-block .ki-text {
+  margin: 0;
+  padding: var(--vtm-space-16);
+  color: var(--sem-text);
+  max-width: var(--vtm-measure-text);
+}
+.ki-block .ki-quellen {
+  margin: 0;
+  padding: var(--vtm-space-8) var(--vtm-space-16);
+  border-top: var(--vtm-linie-haar);
+  font: 400 var(--vtm-size-2xs)/1.6 var(--vtm-font-mono);
+  letter-spacing: var(--vtm-tracking-mono);
+  color: var(--sem-text-gedaempft);
+}
+.detail-aktionen {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--vtm-space-12);
+}
+
+/* --- Zustands-Demos ----------------------------------------- */
+.zustaende {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: var(--vtm-space-16);
+}
+.zustand {
+  background: var(--karte-bg);
+  border: var(--karte-linie);
+  border-radius: var(--karte-radius);
+  padding: var(--vtm-space-16);
+}
+.zustand .zustand-titel {
+  display: block;
+  margin-bottom: var(--vtm-space-12);
+  font: 600 var(--vtm-size-xs)/1.3 var(--vtm-font-text);
+  letter-spacing: var(--vtm-tracking-label);
+  text-transform: uppercase;
+  color: var(--sem-text-gedaempft);
+}
+.skelett { display: flex; flex-direction: column; gap: var(--vtm-space-8); }
+.skelett .balken {
+  height: 0.875rem;
+  border-radius: var(--vtm-radius-s);
+  background: linear-gradient(90deg,
+    var(--vtm-neutral-100) 25%,
+    var(--vtm-eis-100) 40%,
+    var(--vtm-neutral-100) 60%);
+  background-size: 300% 100%;
+  animation: schimmer 1.6s var(--vtm-ease-standard) infinite;
+}
+.skelett .balken:nth-child(2) { width: 78%; }
+.skelett .balken:nth-child(3) { width: 56%; }
+@keyframes schimmer {
+  from { background-position: 100% 0; }
+  to   { background-position: 0 0; }
+}
+.leer-text {
+  margin: 0 0 var(--vtm-space-12);
+  color: var(--sem-text-sekundaer);
+}
+
+/* Toast */
+.toast {
+  position: fixed;
+  right: var(--vtm-space-24);
+  bottom: var(--vtm-space-24);
+  z-index: var(--vtm-ebene-toast);
+  display: flex;
+  align-items: center;
+  gap: var(--vtm-space-12);
+  padding: var(--vtm-space-12) var(--vtm-space-16);
+  background: var(--vtm-weiss);
+  border: 1px solid var(--sem-erfolg-linie);
+  border-left-width: 3px;
+  border-radius: var(--vtm-radius-m);
+  box-shadow: var(--vtm-schatten-l);
+  color: var(--sem-erfolg-text);
+  font-weight: 500;
+  max-width: min(24rem, calc(100vw - 3rem));
+}
+.toast[hidden] { display: none; }
+.toast .toast-schliessen {
+  border: none;
+  background: none;
+  padding: var(--vtm-space-8);
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  cursor: pointer;
+  color: var(--sem-text-sekundaer);
+  font: 600 var(--vtm-size-s)/1 var(--vtm-font-text);
+}
+
+/* --- Formular ----------------------------------------------- */
+.formular-raster {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--vtm-space-24);
+}
+.feld { display: flex; flex-direction: column; gap: var(--vtm-space-4); min-width: 0; }
+.feld input, .feld select, .feld textarea { width: 100%; min-width: 0; }
+.feld label { font: var(--input-label-font); }
+.feld .pflicht { color: var(--sem-fehler-text); }
+.feld .hilfe {
+  font-size: var(--vtm-size-xs);
+  color: var(--sem-text-gedaempft);
+}
+.feld .fehler-text {
+  font-size: var(--vtm-size-xs);
+  font-weight: 600;
+  color: var(--sem-fehler-text);
+}
+.pflicht-legende {
+  font-size: var(--vtm-size-xs);
+  color: var(--sem-text-gedaempft);
+  margin: 0 0 var(--vtm-space-16);
+}
+details.erweitert {
+  grid-column: 1 / -1;
+  border: var(--vtm-linie-haar);
+  border-radius: var(--vtm-radius-m);
+  background: var(--sem-flaeche-soft);
+}
+details.erweitert summary {
+  cursor: pointer;
+  padding: var(--vtm-space-12) var(--vtm-space-16);
+  min-height: 2.75rem;
+  display: flex;
+  align-items: center;
+  gap: var(--vtm-space-8);
+  font-weight: 600;
+  list-style: none;
+}
+details.erweitert summary::-webkit-details-marker { display: none; }
+details.erweitert summary::before {
+  content: "";
+  width: 0; height: 0;
+  border-left: 5px solid var(--sem-text-sekundaer);
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  transition: transform var(--vtm-dauer-micro) var(--vtm-ease-standard);
+}
+details.erweitert[open] summary::before { transform: rotate(90deg); }
+details.erweitert .erweitert-innen {
+  padding: var(--vtm-space-4) var(--vtm-space-16) var(--vtm-space-16);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--vtm-space-24);
+}
+.formular-aktionen {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--vtm-space-12);
+}
+
+/* --- Fußzeile ----------------------------------------------- */
+.app-fuss {
+  margin-top: auto;
+  padding: var(--vtm-space-16) var(--vtm-space-32);
+  border-top: var(--vtm-linie-haar);
+  font: 400 var(--vtm-size-xs)/1.6 var(--vtm-font-mono);
+  letter-spacing: var(--vtm-tracking-mono);
+  color: var(--sem-text-gedaempft);
+}
+
+/* =============================================================
+   Dichte: kompakte Höhen NUR auf Zeigegeräten
+   ============================================================= */
+@media (hover: hover) and (pointer: fine) {
+  input[type="text"],
+  input[type="search"],
+  input[type="email"],
+  input[type="date"],
+  select { height: var(--btn-hoehe-kompakt); }
+  .btn { min-height: var(--btn-hoehe-kompakt); }
+  .hauptnav a { min-height: 2.25rem; }
+  table.angebote td { padding: var(--vtm-space-8) var(--vtm-space-12); }
+  details.erweitert summary { min-height: 2.25rem; padding-block: var(--vtm-space-8); }
+}
+
+/* =============================================================
+   Unter 900px: Leiste wird obere Leiste, Tabelle wird Kartenliste
+   ============================================================= */
+@media (max-width: 899px) {
+  .app { grid-template-columns: 1fr; }
+
+  /* Grid-Kinder dürfen schrumpfen, sonst sprengt die nowrap-Navigation die Seite */
+  .seitenleiste { min-width: 0; }
+  .hauptnav { min-width: 0; }
+
+  .seitenleiste {
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--vtm-space-16);
+    padding: var(--vtm-space-12) var(--vtm-space-16);
+  }
+  .seitenleiste .logo-zeile img { width: 110px; height: 23px; }
+  .seitenleiste .produktname { display: none; }
+  .hauptnav { width: 100%; overflow-x: auto; }
+  .hauptnav ul {
+    flex-direction: row;
+    gap: var(--vtm-space-4);
+  }
+  .hauptnav a {
+    border-left: none;
+    border-bottom: 2px solid transparent;
+    border-radius: var(--vtm-radius-s) var(--vtm-radius-s) 0 0;
+    white-space: nowrap;
+    padding: 0 var(--vtm-space-12);
+  }
+  .hauptnav a[aria-current="page"] {
+    border-bottom-color: var(--vtm-electric-400);
+  }
+  .leiste-fuss { display: none; }
+
+  .kopf { padding: var(--vtm-space-12) var(--vtm-space-16); }
+  .kopf-suche { margin-left: 0; width: 100%; }
+  .kopf-suche input[type="search"] { width: 100%; flex: 1; }
+  .nutzer { margin-left: auto; }
+  .inhalt { padding: var(--vtm-space-16); gap: var(--vtm-space-32); }
+
+  .kennzahlen { grid-template-columns: 1fr; }
+  .arbeitszone { grid-template-columns: 1fr; }
+  .formular-raster,
+  details.erweitert .erweitert-innen { grid-template-columns: 1fr; }
+
+  /* Tabelle → bewusste Kartenliste */
+  table.angebote, table.angebote tbody,
+  table.angebote tr, table.angebote td,
+  table.angebote caption { display: block; }
+  table.angebote thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  table.angebote tr {
+    border: var(--vtm-linie-haar);
+    border-radius: var(--vtm-radius-m);
+    margin: 0 var(--vtm-space-16) var(--vtm-space-12);
+    padding: var(--vtm-space-8) 0;
+    background: var(--vtm-weiss);
+  }
+  table.angebote tr[aria-selected="true"] {
+    border-color: var(--sem-auswahl-linie);
+    box-shadow: inset 3px 0 0 var(--sem-auswahl-linie);
+  }
+  table.angebote tr[aria-selected="true"] td { background: var(--sem-auswahl-flaeche); }
+  table.angebote tr[aria-selected="true"] td:first-child { box-shadow: none; }
+  table.angebote td {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--vtm-space-16);
+    border-bottom: none;
+    padding: var(--vtm-space-4) var(--vtm-space-16);
+  }
+  table.angebote td::before {
+    content: attr(data-label);
+    font: 500 var(--vtm-size-2xs)/1.4 var(--vtm-font-mono);
+    letter-spacing: var(--vtm-tracking-label);
+    text-transform: uppercase;
+    color: var(--sem-text-gedaempft);
+    flex: none;
+  }
+  th.zahl, td.zahl { text-align: left; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#hauptbereich">Zum Inhalt springen</a>
+
+<div class="app">
+
+  <!-- Seitenleiste: Nachtblau als kompakter Werkzeug-Anker -->
+  <header class="seitenleiste">
+    <div>
+      <a class="logo-zeile" href="#" aria-label="VTM Angebotsdesk – Startseite">
+        <img src="../assets/logo/vtm-logo-weiss.png" alt="VersicherungsTech Magazin" width="136" height="28">
+      </a>
+      <span class="produktname">Angebotsdesk</span>
+    </div>
+    <nav class="hauptnav" aria-label="Hauptnavigation">
+      <ul>
+        <li><a href="#"><span class="nav-icon" aria-hidden="true"></span>Dashboard</a></li>
+        <li><a href="#" aria-current="page"><span class="nav-icon" aria-hidden="true"></span>Angebote</a></li>
+        <li><a href="#"><span class="nav-icon" aria-hidden="true"></span>Kunden</a></li>
+        <li><a href="#"><span class="nav-icon" aria-hidden="true"></span>Produkte</a></li>
+        <li><a href="#"><span class="nav-icon" aria-hidden="true"></span>Freigaben</a></li>
+        <li><a href="#"><span class="nav-icon" aria-hidden="true"></span>Einstellungen</a></li>
+      </ul>
+    </nav>
+    <p class="leiste-fuss">VTM Angebotsdesk<br>Design System 5.0 · Signal</p>
+  </header>
+
+  <div class="flaeche">
+
+    <!-- Kopfzeile: Bereichstitel, globale Suche, Nutzer -->
+    <div class="kopf">
+      <div class="bereich">
+        <span class="systemlabel">VTM Design System 5.0 · Signal · Beispielseite</span>
+        <h1>Angebote</h1>
+      </div>
+      <form class="kopf-suche" role="search" action="#" method="get">
+        <label for="globale-suche">Suche</label>
+        <input type="search" id="globale-suche" name="q"
+               placeholder="Angebot, Kunde oder Nummer …">
+      </form>
+      <div class="nutzer">
+        <img src="../assets/team/maximilian-hempel.jpg" alt="" width="36" height="36">
+        <span>
+          <span class="nutzer-name">Maximilian Hempel</span>
+          <span class="nutzer-rolle">Geschäftsführung</span>
+        </span>
+      </div>
+    </div>
+
+    <main id="hauptbereich" class="inhalt">
+
+      <!-- Kennzahlen -->
+      <section aria-labelledby="kz-titel">
+        <h2 id="kz-titel" class="sr-only">Kennzahlen</h2>
+        <p class="demo-hinweis">Demonstrationsinhalt des Design Systems · alle Zahlen und Kunden fiktiv</p>
+        <div class="kennzahlen" style="margin-top: var(--vtm-space-12);">
+          <div class="datenbox datenbox--gross">
+            <span class="kz-label">Pipeline netto</span>
+            <span class="kz-wert">63.649&nbsp;€</span>
+            <span class="kz-meta">Summe offener Angebote · Stand&nbsp;05.08.2026</span>
+          </div>
+          <div class="datenbox">
+            <span class="kz-label">Offene Angebote</span>
+            <span class="kz-wert">14</span>
+            <span class="kz-meta">davon 3 in Prüfung · 2 über Wiedervorlage</span>
+          </div>
+          <div class="datenbox datenbox--klein">
+            <span class="kz-label">Abschlussquote</span>
+            <span class="kz-wert">38&#8239;%</span>
+            <span class="kz-meta">letzte 90 Tage · n=29 Angebote</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Arbeitszone: Liste + Detail -->
+      <div class="arbeitszone">
+
+        <!-- Angebotsliste -->
+        <section class="panel" aria-labelledby="liste-titel">
+          <h2 id="liste-titel" class="sr-only">Angebotsliste</h2>
+
+          <!-- Filterleiste -->
+          <form class="filterleiste" action="#" method="get">
+            <div class="filterfeld">
+              <label for="filter-status">Status</label>
+              <select id="filter-status" name="status">
+                <option>Alle Status</option>
+                <option>Entwurf</option>
+                <option>In Prüfung</option>
+                <option>Freigegeben</option>
+                <option>Versendet</option>
+                <option>Abgelehnt</option>
+              </select>
+            </div>
+            <div class="filterfeld">
+              <label for="filter-betreuer">Betreuer</label>
+              <select id="filter-betreuer" name="betreuer">
+                <option>Alle Betreuer</option>
+                <option>Maximilian Dahmen</option>
+                <option>Lukas Härle</option>
+                <option>Johannes Oberhofer</option>
+                <option>Karl Heinz Passler</option>
+              </select>
+            </div>
+            <div class="filterfeld filterfeld--suche">
+              <label for="filter-suche">In der Liste suchen</label>
+              <input type="text" id="filter-suche" name="listensuche"
+                     placeholder="z.&nbsp;B. Newsletter">
+            </div>
+          </form>
+
+          <div class="tabelle-rollbereich">
+            <table class="angebote">
+              <caption>8 von 14 Angeboten · Demonstrationsinhalt des Design Systems</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Nummer</th>
+                  <th scope="col">Kunde</th>
+                  <th scope="col">Betreff</th>
+                  <th scope="col">Betreuer</th>
+                  <th scope="col" class="zahl">Netto</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Wiedervorlage</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr aria-selected="true">
+                  <td data-label="Nummer" class="mono">A-2026-041</td>
+                  <td data-label="Kunde"><span class="kunde-name">Hanseatik Assekuranz AG</span></td>
+                  <td data-label="Betreff">Newsletter-Sponsoring · 3&nbsp;Monate</td>
+                  <td data-label="Betreuer">Lukas Härle</td>
+                  <td data-label="Netto" class="zahl num">4.674,00&nbsp;€</td>
+                  <td data-label="Status"><span class="status status--pruefung">In Prüfung</span></td>
+                  <td data-label="Wiedervorlage" class="mono">07.08.2026</td>
+                </tr>
+                <tr>
+                  <td data-label="Nummer" class="mono">A-2026-040</td>
+                  <td data-label="Kunde"><span class="kunde-name">Rheinland Digital GmbH</span></td>
+                  <td data-label="Betreff">Podcast-Episode Insurance Monday</td>
+                  <td data-label="Betreuer">Maximilian Dahmen</td>
+                  <td data-label="Netto" class="zahl num">3.500,00&nbsp;€</td>
+                  <td data-label="Status"><span class="status status--freigegeben">Freigegeben</span></td>
+                  <td data-label="Wiedervorlage" class="mono">10.08.2026</td>
+                </tr>
+                <tr>
+                  <td data-label="Nummer" class="mono">A-2026-039</td>
+                  <td data-label="Kunde"><span class="kunde-name">InsurStart Solutions UG</span></td>
+                  <td data-label="Betreff">Case Study inkl. Lead-Liste</td>
+                  <td data-label="Betreuer">Johannes Oberhofer</td>
+                  <td data-label="Netto" class="zahl num">3.000,00&nbsp;€</td>
+                  <td data-label="Status"><span class="status status--versendet">Versendet</span></td>
+                  <td data-label="Wiedervorlage" class="mono">14.08.2026</td>
+                </tr>
+                <tr>
+                  <td data-label="Nummer" class="mono">A-2026-038</td>
+                  <td data-label="Kunde"><span class="kunde-name">Süddeutsche Makler-Verbund eG</span></td>
+                  <td data-label="Betreff">Fachartikel + Executive Interview</td>
+                  <td data-label="Betreuer">Karl Heinz Passler</td>
+                  <td data-label="Netto" class="zahl num">2.100,00&nbsp;€</td>
+                  <td data-label="Status"><span class="status status--entwurf">Entwurf</span></td>
+                  <td data-label="Wiedervorlage" class="mono">—</td>
+                </tr>
+                <tr>
+                  <td data-label="Nummer" class="mono">A-2026-037</td>
+                  <td data-label="Kunde"><span class="kunde-name">Kompass Versicherungs-Service GmbH</span></td>
+                  <td data-label="Betreff">Sponsored LinkedIn Posts · 5&nbsp;Stück (−10&#8239;%)</td>
+                  <td data-label="Betreuer">Lukas Härle</td>
+                  <td data-label="Netto" class="zahl num">3.375,00&nbsp;€</td>
+                  <td data-label="Status"><span class="status status--versendet">Versendet</span></td>
+                  <td data-label="Wiedervorlage" class="mono">11.08.2026</td>
+                </tr>
+                <tr>
+                  <td data-label="Nummer" class="mono">A-2026-036</td>
+                  <td data-label="Kunde"><span class="kunde-name">Nordstern InsurTech GmbH</span></td>
+                  <td data-label="Betreff">Quartalssponsoring Insurance Monday</td>
+                  <td data-label="Betreuer">Maximilian Dahmen</td>
+                  <td data-label="Netto" class="zahl num">30.000,00&nbsp;€</td>
+                  <td data-label="Status"><span class="status status--pruefung">In Prüfung</span></td>
+                  <td data-label="Wiedervorlage" class="mono">08.08.2026</td>
+                </tr>
+                <tr>
+                  <td data-label="Nummer" class="mono">A-2026-035</td>
+                  <td data-label="Kunde"><span class="kunde-name">Claimsflow Technologies GmbH</span></td>
+                  <td data-label="Betreff">Jahresprogramm Startup Presence</td>
+                  <td data-label="Betreuer">Johannes Oberhofer</td>
+                  <td data-label="Netto" class="zahl num">12.000,00&nbsp;€</td>
+                  <td data-label="Status"><span class="status status--freigegeben">Freigegeben</span></td>
+                  <td data-label="Wiedervorlage" class="mono">17.08.2026</td>
+                </tr>
+                <tr>
+                  <td data-label="Nummer" class="mono">A-2026-034</td>
+                  <td data-label="Kunde"><span class="kunde-name">Averso Rück AG</span></td>
+                  <td data-label="Betreff">Website-Banner · 2&nbsp;Monate</td>
+                  <td data-label="Betreuer">Karl Heinz Passler</td>
+                  <td data-label="Netto" class="zahl num">2.400,00&nbsp;€</td>
+                  <td data-label="Status"><span class="status status--abgelehnt">Abgelehnt</span></td>
+                  <td data-label="Wiedervorlage" class="mono">—</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Detail-Panel -->
+        <section class="panel" aria-labelledby="detail-titel">
+          <div class="panel-innen">
+            <div class="detail-kopf">
+              <h2 id="detail-titel">Angebot <span class="mono">A-2026-041</span></h2>
+              <span class="status status--pruefung">In Prüfung</span>
+            </div>
+            <p class="detail-meta">
+              Hanseatik Assekuranz AG · Betreuer: Lukas Härle ·
+              angelegt 01.08.2026 · Demonstrationsinhalt
+            </p>
+
+            <h3 class="sr-only">Positionen</h3>
+            <ul class="positionen">
+              <li>
+                <span>Newsletter-Sponsoring · 3&nbsp;Monate</span>
+                <span class="num">5.700,00&nbsp;€</span>
+              </li>
+              <li class="rabatt">
+                <span>Paketrabatt 18&#8239;%</span>
+                <span class="num">−1.026,00&nbsp;€</span>
+              </li>
+              <li class="summe">
+                <span>Netto gesamt</span>
+                <span class="num">4.674,00&nbsp;€</span>
+              </li>
+            </ul>
+
+            <div class="hinweis hinweis--warnung">
+              <p style="margin:0;">
+                <strong>Freigabe erforderlich (Vier-Augen-Regel)</strong>
+                Paketrabatt 18&#8239;% &gt; 15&#8239;% — Freigabe durch die
+                Administration erforderlich, bevor das Angebot versendet werden kann.
+              </p>
+            </div>
+
+            <div class="beleg">
+              <p>Katalogpreis verifiziert · Quelle: VTM-Leistungskatalog · Stand: 08/2026</p>
+            </div>
+
+            <h3>Anschreiben-Vorschlag</h3>
+            <div class="ki-block">
+              <p class="ki-kopf">KI-Vorschlag — vor Versand prüfen</p>
+              <p class="ki-text">
+                Sehr geehrte Frau Feddersen, vielen Dank für das Gespräch am
+                30.&nbsp;Juli. Wie besprochen erhalten Sie unser Angebot für ein
+                dreimonatiges Newsletter-Sponsoring. Der Newsletter erreicht über
+                6.000 Empfänger in der DACH-Versicherungsbranche bei rund
+                50&#8239;% Öffnungsrate. Bei Fragen zu Laufzeit oder Formaten
+                melde ich mich gern — oder Sie erreichen mich direkt.
+              </p>
+              <p class="ki-quellen">
+                Verwendete Felder: kunde.ansprechpartner · positionen ·
+                laufzeit · reichweite.newsletter (Stand&nbsp;08/2026)
+              </p>
+            </div>
+
+            <div class="detail-aktionen">
+              <button type="button" class="btn btn--primaer">Zur Freigabe einreichen</button>
+              <button type="button" class="btn btn--sekundaer">Anschreiben bearbeiten</button>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Zustands-Demos -->
+      <section aria-labelledby="zustand-titel">
+        <h2 id="zustand-titel">Systemzustände</h2>
+        <p class="demo-hinweis" style="margin: 0 0 var(--vtm-space-16);">Demonstrationsinhalt des Design Systems</p>
+        <div class="zustaende">
+
+          <div class="zustand" aria-busy="true">
+            <span class="zustand-titel">Laden</span>
+            <div class="skelett" aria-hidden="true">
+              <span class="balken"></span>
+              <span class="balken"></span>
+              <span class="balken"></span>
+            </div>
+            <p class="sr-only">Angebote werden geladen.</p>
+          </div>
+
+          <div class="zustand">
+            <span class="zustand-titel">Leerzustand</span>
+            <p class="leer-text">
+              Für diese Filter gibt es keine Angebote. Setzen Sie die Filter
+              zurück oder legen Sie ein neues Angebot an.
+            </p>
+            <button type="button" class="btn btn--sekundaer">Filter zurücksetzen</button>
+          </div>
+
+          <div class="zustand">
+            <span class="zustand-titel">Fehler</span>
+            <div class="hinweis hinweis--fehler" style="margin:0;">
+              <p style="margin:0;">
+                <strong>Versand fehlgeschlagen</strong>
+                Angebot A-2026-038 konnte nicht versendet werden: Im
+                Kundenprofil fehlt die E-Mail-Adresse des Ansprechpartners.
+                Ergänzen Sie die Adresse und senden Sie erneut.
+              </p>
+            </div>
+          </div>
+
+          <div class="zustand">
+            <span class="zustand-titel">Erfolg</span>
+            <div class="hinweis hinweis--erfolg">
+              <p style="margin:0;">
+                <strong>Gespeichert</strong>
+                Angebot A-2026-040 wurde freigegeben.
+              </p>
+            </div>
+            <button type="button" class="btn btn--sekundaer" id="toast-ausloeser">
+              Erfolgs-Toast anzeigen
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Formulardemo -->
+      <section class="panel" aria-labelledby="formular-titel">
+        <div class="panel-innen">
+          <h2 id="formular-titel">Neues Angebot</h2>
+          <p class="pflicht-legende">
+            Felder mit <span class="pflicht" aria-hidden="true">*</span>
+            <span class="sr-only">Stern</span> sind Pflichtfelder.
+          </p>
+
+          <form class="formular-raster" action="#" method="post" novalidate>
+
+            <div class="feld">
+              <label for="feld-kunde">Kunde <span class="pflicht" aria-hidden="true">*</span></label>
+              <input type="text" id="feld-kunde" name="kunde" required
+                     aria-describedby="hilfe-kunde" autocomplete="organization">
+              <p class="hilfe" id="hilfe-kunde" style="margin:0;">
+                Firmenname wie im Handelsregister, z.&nbsp;B. „Hanseatik Assekuranz AG“.
+              </p>
+            </div>
+
+            <div class="feld">
+              <label for="feld-email">E-Mail des Ansprechpartners <span class="pflicht" aria-hidden="true">*</span></label>
+              <input type="email" id="feld-email" name="email" required
+                     value="a.feddersen@hanseatik" aria-invalid="true"
+                     aria-describedby="fehler-email">
+              <p class="fehler-text" id="fehler-email" style="margin:0;">
+                Fehler: Die Adresse ist unvollständig. Geben Sie eine vollständige
+                E-Mail-Adresse an, z.&nbsp;B. name@firma.de.
+              </p>
+            </div>
+
+            <div class="feld">
+              <label for="feld-leistung">Leistung <span class="pflicht" aria-hidden="true">*</span></label>
+              <select id="feld-leistung" name="leistung" required aria-describedby="hilfe-leistung">
+                <option>Fachartikel — 900&nbsp;€</option>
+                <option>Executive Interview — 1.200&nbsp;€</option>
+                <option selected>Newsletter-Sponsoring — 1.900&nbsp;€/Monat</option>
+                <option>Podcast-Episode — 3.500&nbsp;€</option>
+                <option>Case Study inkl. Lead-Liste — 3.000&nbsp;€</option>
+                <option>Website-Banner — 1.200&nbsp;€/Monat</option>
+              </select>
+              <p class="hilfe" id="hilfe-leistung" style="margin:0;">
+                Nettopreise laut VTM-Leistungskatalog, Stand 08/2026.
+              </p>
+            </div>
+
+            <div class="feld">
+              <label for="feld-betreuer">Betreuer</label>
+              <select id="feld-betreuer" name="betreuer">
+                <option>Maximilian Dahmen</option>
+                <option>Lukas Härle</option>
+                <option>Johannes Oberhofer</option>
+                <option>Karl Heinz Passler</option>
+              </select>
+            </div>
+
+            <!-- Progressive Offenlegung -->
+            <details class="erweitert">
+              <summary>Erweiterte Einstellungen</summary>
+              <div class="erweitert-innen">
+                <div class="feld">
+                  <label for="feld-rabatt">Paketrabatt in Prozent</label>
+                  <input type="text" id="feld-rabatt" name="rabatt" inputmode="decimal"
+                         aria-describedby="hilfe-rabatt">
+                  <p class="hilfe" id="hilfe-rabatt" style="margin:0;">
+                    Über 15&#8239;% ist eine Freigabe durch die Administration
+                    erforderlich (Vier-Augen-Regel).
+                  </p>
+                </div>
+                <div class="feld">
+                  <label for="feld-gueltig">Gültig bis</label>
+                  <input type="date" id="feld-gueltig" name="gueltig" value="2026-09-30">
+                </div>
+                <div class="feld">
+                  <label for="feld-zahlungsziel">Zahlungsziel</label>
+                  <select id="feld-zahlungsziel" name="zahlungsziel">
+                    <option>14 Tage netto</option>
+                    <option selected>30 Tage netto</option>
+                    <option>60 Tage netto</option>
+                  </select>
+                </div>
+              </div>
+            </details>
+
+            <div class="formular-aktionen">
+              <button type="submit" class="btn btn--primaer">Angebot anlegen</button>
+              <button type="button" class="btn btn--sekundaer">Als Entwurf speichern</button>
+              <button type="button" class="btn" disabled aria-describedby="hilfe-pdf">PDF erzeugen</button>
+              <span class="hilfe" id="hilfe-pdf">PDF ist erst nach dem Anlegen verfügbar.</span>
+            </div>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <footer class="app-fuss">
+      VTM Angebotsdesk · VersicherungsTech Media UG (haftungsbeschränkt) ·
+      Beispielseite des VTM Design Systems 5.0 „Signal“ · Demonstrationsinhalt
+    </footer>
+  </div>
+</div>
+
+<!-- Erfolgs-Toast (per JS ausgelöst; statisches Beispiel oben bleibt ohne JS sichtbar) -->
+<div class="toast" id="toast" role="status" hidden>
+  <span class="status status--freigegeben" aria-hidden="true"></span>
+  <span>Angebot A-2026-040 wurde freigegeben.</span>
+  <button type="button" class="toast-schliessen" id="toast-schliessen" aria-label="Meldung schließen">✕</button>
+</div>
+
+<script>
+/* Minimales, progressives JS: nur die Toast-Demo.
+   Alles andere funktioniert vollständig ohne JavaScript. */
+(function () {
+  var toast = document.getElementById('toast');
+  var ausloeser = document.getElementById('toast-ausloeser');
+  var schliessen = document.getElementById('toast-schliessen');
+  if (!toast || !ausloeser) return;
+  var timer = null;
+  ausloeser.addEventListener('click', function () {
+    toast.hidden = false;
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(function () { toast.hidden = true; }, 6000);
+  });
+  if (schliessen) {
+    schliessen.addEventListener('click', function () {
+      toast.hidden = true;
+      if (timer) clearTimeout(timer);
+    });
+  }
+})();
+</script>
+</body>
+</html>

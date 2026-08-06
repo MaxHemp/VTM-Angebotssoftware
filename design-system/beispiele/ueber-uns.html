@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Über uns · VersicherungsTech Magazin</title>
+<meta name="description" content="Wer hinter dem VersicherungsTech Magazin steht: die Redaktion, ihre Arbeitsweise, ihre Formate und ihr Netzwerk. Unabhängiges Fachmedium für KI und Automatisierung in der DACH-Versicherungsbranche.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Schibsted+Grotesk:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../tokens.css">
+<style>
+/* =========================================================
+   Über uns · VTM Design System 5.0 „Signal"
+   Aufbau: 7 Sektionen, jede mit eigener Layoutfamilie.
+   ========================================================= */
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: var(--vtm-font-text);
+  font-size: var(--vtm-size-m);
+  line-height: var(--vtm-leading-text);
+  color: var(--sem-text);
+  background: var(--sem-flaeche-seite);
+  -webkit-font-smoothing: antialiased;
+}
+img { max-width: 100%; height: auto; display: block; }
+h1, h2, h3 { margin: 0; font-family: var(--vtm-font-display); letter-spacing: var(--vtm-tracking-heading); }
+p { margin: 0; }
+a { color: var(--sem-text-link); }
+a:focus-visible,
+button:focus-visible {
+  outline: none;
+  box-shadow: var(--sem-fokus-ring);
+  border-radius: var(--vtm-radius-s);
+}
+
+/* --------- Wiederkehrende Bausteine --------- */
+.shell { max-width: 74rem; margin-inline: auto; padding-inline: clamp(1.25rem, 4vw, 3rem); }
+.sektion { padding-block: clamp(4rem, 9vw, 7.5rem); }
+.mono {
+  font-family: var(--vtm-font-mono);
+  font-size: var(--vtm-size-xs);
+  letter-spacing: var(--vtm-tracking-mono);
+  font-variant-numeric: tabular-nums;
+}
+.versal-label {
+  font-family: var(--vtm-font-mono);
+  font-weight: 600;
+  font-size: var(--vtm-size-xs);
+  letter-spacing: var(--vtm-tracking-label);
+  text-transform: uppercase;
+  color: var(--sem-text-gedaempft);
+}
+.h2 {
+  font-size: var(--vtm-size-4xl);
+  font-weight: 700;
+  line-height: var(--vtm-leading-heading);
+  max-width: var(--vtm-measure-display);
+}
+.h2 .signal-strich {
+  display: block;
+  width: 3rem; height: 2px;
+  background: var(--sem-auswahl-linie);
+  margin-bottom: var(--vtm-space-16);
+}
+.beleg-marke {
+  width: 24px; height: 3px;
+  background: var(--sem-beleg-marke);
+  margin-bottom: var(--vtm-space-8);
+}
+.quelle {
+  font-family: var(--vtm-font-mono);
+  font-weight: 500;
+  font-size: var(--vtm-size-xs);
+  line-height: 1.5;
+  color: var(--sem-beleg-text);
+  font-variant-numeric: tabular-nums;
+}
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: var(--vtm-space-8);
+  min-height: var(--btn-hoehe);
+  padding-inline: var(--btn-pad-x);
+  border-radius: var(--btn-radius);
+  font: var(--btn-font);
+  text-decoration: none;
+  border: 1px solid transparent;
+  transition: background var(--vtm-dauer-micro) var(--vtm-ease-standard),
+              transform var(--vtm-dauer-micro) var(--vtm-ease-standard);
+}
+.btn:active { transform: translateY(1px); }
+.btn-primaer { background: var(--btn-primaer-bg); color: var(--btn-primaer-text); }
+.btn-primaer:hover { background: var(--btn-primaer-bg-hover); }
+.btn-sekundaer { border: var(--btn-sekundaer-linie); color: var(--btn-sekundaer-text); background: transparent; }
+.btn-sekundaer:hover { background: var(--btn-sekundaer-bg-hover); }
+.text-link {
+  font-weight: 600;
+  color: var(--sem-text-link);
+  text-decoration: none;
+  border-bottom: 2px solid var(--vtm-electric-200);
+  padding-bottom: 1px;
+  transition: border-color var(--vtm-dauer-micro) var(--vtm-ease-standard);
+}
+.text-link:hover { border-color: var(--sem-auswahl-linie); }
+
+/* --------- Skip-Link --------- */
+.skip-link {
+  position: absolute; left: 1rem; top: -4rem;
+  z-index: calc(var(--vtm-ebene-sticky) + 1);
+  background: var(--sem-flaeche-anker); color: var(--sem-text-invers);
+  padding: 0.75rem 1.25rem; border-radius: var(--vtm-radius-m);
+  text-decoration: none; font-weight: 600;
+  transition: top var(--vtm-dauer-kurz) var(--vtm-ease-standard);
+}
+.skip-link:focus { top: 1rem; }
+.skip-link:focus-visible { top: 1rem; box-shadow: var(--sem-fokus-ring); }
+
+/* --------- Systemlabel + Navigation --------- */
+.systemlabel {
+  border-bottom: var(--vtm-linie-haar);
+  background: var(--sem-flaeche-soft);
+  color: var(--sem-text-gedaempft);
+  padding-block: var(--vtm-space-8);
+  text-align: center;
+}
+.nav {
+  position: sticky; top: 0;
+  z-index: var(--vtm-ebene-sticky);
+  background: var(--nav-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: var(--nav-linie);
+}
+.nav-innen {
+  height: var(--nav-hoehe);
+  display: flex; align-items: center; gap: var(--vtm-space-24);
+}
+.nav-logo { display: inline-flex; align-items: center; flex: 0 0 auto; }
+.nav-logo img { height: 28px; width: auto; }
+.nav-menu { margin-left: auto; display: flex; align-items: center; gap: var(--vtm-space-16); min-width: 0; }
+.nav-liste {
+  list-style: none; margin: 0 0 0 auto; padding: 0;
+  display: flex; align-items: center; gap: var(--vtm-space-4);
+  overflow-x: auto;
+}
+.nav-liste a {
+  display: inline-flex; align-items: center;
+  min-height: 2.75rem;
+  padding-inline: var(--vtm-space-12);
+  color: var(--nav-text);
+  font-size: var(--vtm-size-s);
+  font-weight: 500;
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+}
+.nav-liste a:hover { color: var(--nav-aktiv); border-bottom: var(--nav-aktiv-marker); }
+.nav-kontakt {
+  flex: 0 0 auto;
+  display: inline-flex; align-items: center;
+  min-height: 2.75rem;
+  padding-inline: var(--vtm-space-16);
+  border: var(--btn-sekundaer-linie);
+  border-radius: var(--btn-radius);
+  color: var(--btn-sekundaer-text);
+  font-size: var(--vtm-size-s);
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.nav-kontakt:hover { background: var(--btn-sekundaer-bg-hover); }
+@media (max-width: 47rem) {
+  .nav-liste { display: none; }
+}
+
+/* =========================================================
+   1 · Menschen und Verantwortung
+   Layoutfamilie: 5/7-Split, redaktionelle Bildstaffelung
+   ========================================================= */
+.team-raster {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: clamp(1.5rem, 3.5vw, 3rem);
+  align-items: start;
+}
+.team-text { grid-column: 1 / span 5; padding-top: var(--vtm-space-24); }
+.team-text h1 {
+  font-size: var(--vtm-size-5xl);
+  font-weight: 800;
+  line-height: var(--vtm-leading-display);
+  letter-spacing: var(--vtm-tracking-display);
+  max-width: var(--vtm-measure-display);
+  margin-bottom: var(--vtm-space-24);
+}
+.team-text .lead {
+  font-size: var(--vtm-size-l);
+  color: var(--sem-text-sekundaer);
+  max-width: var(--vtm-measure-lead);
+}
+.team-text .lead + .lead { margin-top: var(--vtm-space-16); }
+.team-collage {
+  grid-column: 6 / span 7;
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr;
+  gap: clamp(1rem, 2vw, 1.75rem);
+  padding: clamp(0.75rem, 1.5vw, 1.5rem);
+}
+/* Passermarken-Ecken, dezent, 1px Nachtblau 12 % */
+.team-collage::before, .team-collage::after {
+  content: ""; position: absolute; width: 1.25rem; height: 1.25rem; pointer-events: none;
+}
+.team-collage::before { top: 0; left: 0; border-top: 1px solid rgb(13 28 60 / 0.12); border-left: 1px solid rgb(13 28 60 / 0.12); }
+.team-collage::after { bottom: 0; right: 0; border-bottom: 1px solid rgb(13 28 60 / 0.12); border-right: 1px solid rgb(13 28 60 / 0.12); }
+.team-figur { margin: 0; }
+.team-figur img {
+  width: 100%;
+  border-radius: var(--vtm-radius-l);
+  box-shadow: var(--vtm-schatten-s);
+}
+.team-figur figcaption { padding-top: var(--vtm-space-12); }
+.team-figur .legende-meta {
+  display: block;
+  font-family: var(--vtm-font-mono);
+  font-weight: 500;
+  font-size: var(--vtm-size-2xs);
+  letter-spacing: var(--vtm-tracking-label);
+  text-transform: uppercase;
+  color: var(--sem-text-gedaempft);
+  margin-bottom: var(--vtm-space-4);
+}
+.team-figur .legende-name { display: block; font-weight: 600; font-size: var(--vtm-size-s); line-height: 1.35; }
+.team-figur .legende-text {
+  display: block;
+  font-size: var(--vtm-size-xs);
+  color: var(--sem-text-sekundaer);
+  line-height: 1.5;
+  margin-top: var(--vtm-space-2);
+}
+/* Herausgeber prominent: erste Spalte, zwei Zeilen hoch */
+.team-figur-herausgeber { grid-column: 1; grid-row: 1 / span 2; }
+.team-figur-herausgeber img { border-radius: var(--vtm-radius-xl); box-shadow: var(--vtm-schatten-m); }
+.team-figur-herausgeber .legende-name { font-size: var(--vtm-size-m); }
+/* Staffelung: dritte Spalte versetzt nach unten */
+.team-figur-versetzt { margin-top: clamp(1.5rem, 4vw, 3.25rem); }
+@media (max-width: 62rem) {
+  .team-text { grid-column: 1 / -1; }
+  .team-collage { grid-column: 1 / -1; }
+}
+@media (max-width: 40rem) {
+  .team-collage { grid-template-columns: 1fr 1fr; padding: 0; }
+  .team-collage::before, .team-collage::after { display: none; }
+  .team-figur-herausgeber { grid-column: 1 / -1; grid-row: auto; }
+  .team-figur-herausgeber img { max-width: 22rem; }
+  .team-figur-versetzt { margin-top: 0; }
+}
+
+/* =========================================================
+   2 · Identität und Positionierung
+   Layoutfamilie: Statement links, Rollen-Kontobuch rechts (5/7)
+   ========================================================= */
+.identitaet { background: var(--sem-flaeche-soft); }
+.identitaet-raster {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: clamp(1.5rem, 3.5vw, 3rem);
+}
+.identitaet-statement { grid-column: 1 / span 5; }
+.identitaet-statement .h2 { margin-bottom: var(--vtm-space-24); }
+.identitaet-statement .prosa {
+  font-family: var(--vtm-font-serif);
+  font-size: var(--vtm-size-l);
+  line-height: var(--vtm-leading-artikel);
+  color: var(--sem-text-sekundaer);
+  max-width: var(--vtm-measure-lead);
+}
+.identitaet-rollen {
+  grid-column: 7 / span 6;
+  list-style: none; margin: 0; padding: 0;
+  border-top: var(--vtm-linie-mittel);
+}
+.identitaet-rollen li {
+  display: grid;
+  grid-template-columns: minmax(11rem, 16rem) 1fr;
+  gap: var(--vtm-space-24);
+  padding-block: var(--vtm-space-24);
+  border-bottom: var(--vtm-linie-haar);
+}
+.identitaet-rollen .rolle {
+  font-family: var(--vtm-font-display);
+  font-weight: 700;
+  font-size: var(--vtm-size-xl);
+  line-height: var(--vtm-leading-heading);
+}
+.identitaet-rollen .rolle-text { color: var(--sem-text-sekundaer); font-size: var(--vtm-size-s); align-self: center; }
+@media (max-width: 62rem) {
+  .identitaet-statement, .identitaet-rollen { grid-column: 1 / -1; }
+}
+@media (max-width: 40rem) {
+  .identitaet-rollen li { grid-template-columns: 1fr; gap: var(--vtm-space-8); }
+}
+
+/* =========================================================
+   3 · Arbeitsweise: nummerierte Prozesslinie (echte Reihenfolge)
+   Layoutfamilie: schmale Kopfzeile + durchlaufende Linie
+   ========================================================= */
+.prozess-kopf { max-width: var(--vtm-measure-text); margin-bottom: clamp(2.5rem, 5vw, 4rem); }
+.prozess-kopf p { margin-top: var(--vtm-space-16); color: var(--sem-text-sekundaer); }
+.prozess-liste {
+  list-style: none; margin: 0; padding: 0;
+  counter-reset: schritt;
+  max-width: 46rem;
+}
+.prozess-liste li {
+  counter-increment: schritt;
+  position: relative;
+  padding: 0 0 clamp(2rem, 4vw, 2.75rem) 4.25rem;
+}
+/* durchlaufende Linie */
+.prozess-liste li::before {
+  content: "";
+  position: absolute; left: 1.375rem; top: 2.75rem; bottom: 0;
+  width: 2px;
+  background: var(--vtm-electric-200);
+}
+.prozess-liste li:last-child::before { display: none; }
+/* Nummernmarke */
+.prozess-liste li::after {
+  content: counter(schritt);
+  position: absolute; left: 0; top: 0;
+  width: 2.75rem; height: 2.75rem;
+  display: grid; place-items: center;
+  border-radius: var(--vtm-radius-rund);
+  background: var(--sem-aktion-flaeche);
+  color: var(--sem-auswahl-text);
+  border: 2px solid var(--sem-auswahl-linie);
+  font-family: var(--vtm-font-mono);
+  font-weight: 600;
+  font-size: var(--vtm-size-m);
+}
+.prozess-liste h3 { font-size: var(--vtm-size-2xl); font-weight: 700; padding-top: 0.4rem; }
+.prozess-liste p { margin-top: var(--vtm-space-8); color: var(--sem-text-sekundaer); max-width: var(--vtm-measure-text); }
+.grundsatz {
+  max-width: 46rem;
+  margin-top: clamp(1.5rem, 3vw, 2.5rem);
+  border: var(--vtm-linie-mittel);
+  border-radius: var(--vtm-radius-l);
+  padding: var(--vtm-space-24);
+  background: var(--sem-flaeche-karte);
+}
+.grundsatz .versal-label { display: block; margin-bottom: var(--vtm-space-8); }
+.grundsatz p { color: var(--sem-text-sekundaer); font-size: var(--vtm-size-s); }
+.grundsatz .kennzeichnung {
+  display: inline-block;
+  margin-top: var(--vtm-space-12);
+  font-family: var(--vtm-font-mono);
+  font-weight: 600;
+  font-size: var(--vtm-size-xs);
+  color: var(--sem-text);
+  background: var(--sem-flaeche-eis);
+  border-radius: var(--vtm-radius-s);
+  padding: 0.3125rem 0.625rem;
+}
+
+/* =========================================================
+   4 · Beispiele der Arbeit
+   Layoutfamilie: 1 dominanter Teaser + 2 gestapelte (7/5)
+   ========================================================= */
+.formate { background: var(--sem-flaeche-soft); }
+.formate .h2 { margin-bottom: clamp(2.5rem, 5vw, 4rem); }
+.formate-raster {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+}
+.teaser { margin: 0; }
+.teaser figure { margin: 0; }
+.teaser img { border-radius: var(--vtm-radius-xl); width: 100%; }
+.teaser .illustration-caption {
+  display: block;
+  margin-top: var(--vtm-space-8);
+  font-family: var(--vtm-font-mono);
+  font-weight: 500;
+  font-size: var(--vtm-size-2xs);
+  letter-spacing: var(--vtm-tracking-label);
+  text-transform: uppercase;
+  color: var(--sem-text-gedaempft);
+}
+.teaser h3 {
+  font-size: var(--vtm-size-2xl);
+  font-weight: 700;
+  margin-top: var(--vtm-space-12);
+}
+.teaser p { margin-top: var(--vtm-space-8); color: var(--sem-text-sekundaer); max-width: var(--vtm-measure-text); }
+.teaser-gross { grid-column: 1 / span 7; }
+.teaser-gross h3 { font-size: var(--vtm-size-3xl); }
+.formate-nebenspalte {
+  grid-column: 8 / span 5;
+  display: grid;
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+  align-content: start;
+}
+.formate-nebenspalte .teaser { display: grid; grid-template-columns: 9rem 1fr; gap: var(--vtm-space-16); align-items: start; }
+.formate-nebenspalte .teaser h3 { font-size: var(--vtm-size-xl); margin-top: 0; }
+.formate-nebenspalte .teaser p { font-size: var(--vtm-size-s); }
+.formate-nebenspalte .teaser img { border-radius: var(--vtm-radius-l); }
+@media (max-width: 62rem) {
+  .teaser-gross, .formate-nebenspalte { grid-column: 1 / -1; }
+}
+@media (max-width: 40rem) {
+  .formate-nebenspalte .teaser { grid-template-columns: 1fr; }
+}
+
+/* =========================================================
+   5 · Konkrete Nutzung: drei Zielgruppen, ungleich gewichtet
+   Layoutfamilie: dominante linke Fläche + rechte Doppelspalte
+   ========================================================= */
+.nutzen .h2 { margin-bottom: clamp(2.5rem, 5vw, 4rem); }
+.nutzen-raster {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+  align-items: stretch;
+}
+.gruppe { border-radius: var(--vtm-radius-l); }
+.gruppe h3 { font-size: var(--vtm-size-2xl); font-weight: 700; }
+.gruppe ul { margin: var(--vtm-space-16) 0 0; padding: 0; list-style: none; }
+.gruppe li {
+  position: relative;
+  padding-left: 1.375rem;
+  color: var(--sem-text-sekundaer);
+  font-size: var(--vtm-size-s);
+}
+.gruppe li + li { margin-top: var(--vtm-space-12); }
+.gruppe li::before {
+  content: "";
+  position: absolute; left: 0; top: 0.55em;
+  width: 0.625rem; height: 2px;
+  background: var(--sem-auswahl-linie);
+}
+.gruppe .handlung { margin-top: var(--vtm-space-24); }
+.gruppe-entscheider {
+  grid-column: 1 / span 7;
+  background: var(--sem-flaeche-eis);
+  padding: clamp(1.5rem, 3.5vw, 3rem);
+  display: flex; flex-direction: column;
+}
+.gruppe-entscheider h3 { font-size: var(--vtm-size-3xl); max-width: 24ch; }
+.gruppe-entscheider .einordnung { margin-top: var(--vtm-space-12); color: var(--sem-text-sekundaer); max-width: var(--vtm-measure-text); }
+.gruppe-entscheider .handlung { margin-top: auto; padding-top: var(--vtm-space-24); }
+.nutzen-nebenspalte {
+  grid-column: 8 / span 5;
+  display: grid; gap: clamp(1.5rem, 3vw, 2.5rem); align-content: start;
+}
+.gruppe-fachleute { padding: var(--vtm-space-24) 0 0; border-top: 2px solid var(--vtm-nacht-900); }
+.gruppe-anbieter { padding: var(--vtm-space-24) 0 0; border-top: var(--vtm-linie-mittel); }
+.gruppe-anbieter .ohne-versprechen {
+  margin-top: var(--vtm-space-16);
+  font-size: var(--vtm-size-s);
+  color: var(--sem-text-sekundaer);
+  border-left: 3px solid var(--vtm-neutral-300);
+  padding-left: var(--vtm-space-12);
+}
+@media (max-width: 62rem) {
+  .gruppe-entscheider, .nutzen-nebenspalte { grid-column: 1 / -1; }
+}
+
+/* =========================================================
+   6 · Reichweite und Netzwerk
+   Layoutfamilie: asymmetrisches Datenraster + Logozeile
+   ========================================================= */
+.reichweite { background: var(--sem-flaeche-soft); }
+.reichweite-kopf { max-width: var(--vtm-measure-text); margin-bottom: clamp(2.5rem, 5vw, 4rem); }
+.reichweite-kopf p { margin-top: var(--vtm-space-16); color: var(--sem-text-sekundaer); }
+.daten-raster {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: clamp(1rem, 2.5vw, 1.75rem);
+}
+.datenbox {
+  background: var(--vtm-weiss);
+  border: var(--vtm-linie-haar);
+  border-radius: var(--datenbox-radius);
+  padding: var(--vtm-space-24);
+  display: flex; flex-direction: column;
+}
+.datenbox .wert {
+  font: var(--datenbox-wert-font);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: var(--vtm-tracking-heading);
+}
+.datenbox .beschreibung { margin-top: var(--vtm-space-8); color: var(--sem-text-sekundaer); font-size: var(--vtm-size-s); }
+.datenbox .beleg { margin-top: auto; padding-top: var(--vtm-space-24); }
+.datenbox-podcast { grid-column: 1 / span 6; grid-row: 1 / span 2; justify-content: flex-start; }
+.datenbox-podcast .wert { font-size: var(--vtm-size-6xl); }
+.datenbox-newsletter { grid-column: 7 / span 6; }
+.datenbox-oeffnung { grid-column: 7 / span 3; }
+.datenbox-linkedin { grid-column: 10 / span 3; }
+@media (max-width: 62rem) {
+  .datenbox-podcast { grid-column: 1 / -1; grid-row: auto; }
+  .datenbox-newsletter { grid-column: 1 / -1; }
+  .datenbox-oeffnung { grid-column: 1 / span 6; }
+  .datenbox-linkedin { grid-column: 7 / span 6; }
+}
+@media (max-width: 40rem) {
+  .datenbox-oeffnung, .datenbox-linkedin { grid-column: 1 / -1; }
+}
+.partner-zeile { margin-top: clamp(3rem, 6vw, 4.5rem); }
+.partner-zeile .versal-label { display: block; margin-bottom: var(--vtm-space-24); }
+.partner-logos {
+  list-style: none; margin: 0; padding: 0;
+  display: flex; flex-wrap: wrap; align-items: center;
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+}
+.partner-logos img {
+  height: 3rem; width: auto;
+  filter: grayscale(1);
+  opacity: 0.72;
+  transition: filter var(--vtm-dauer-kurz) var(--vtm-ease-standard),
+              opacity var(--vtm-dauer-kurz) var(--vtm-ease-standard);
+}
+.partner-logos li:hover img,
+.partner-logos li:focus-within img { filter: grayscale(0); opacity: 1; }
+
+/* =========================================================
+   7 · Persönlicher Kontakt: kompakter dunkler Anker
+   ========================================================= */
+.kontakt-band {
+  background: var(--sem-flaeche-anker);
+  color: var(--sem-text-invers);
+  border-radius: var(--vtm-radius-xl);
+  padding: clamp(2rem, 5vw, 3.5rem);
+  display: grid;
+  grid-template-columns: minmax(9rem, 13rem) 1fr;
+  gap: clamp(1.5rem, 4vw, 3rem);
+  align-items: center;
+}
+.kontakt-band img { border-radius: var(--vtm-radius-l); width: 100%; }
+.kontakt-band .versal-label { color: var(--sem-text-invers-sekundaer); display: block; margin-bottom: var(--vtm-space-12); }
+.kontakt-band h2 { font-size: var(--vtm-size-3xl); font-weight: 700; max-width: 22ch; }
+.kontakt-band p { margin-top: var(--vtm-space-12); color: var(--sem-text-invers-sekundaer); max-width: var(--vtm-measure-text); }
+.kontakt-band .adresse { font-family: var(--vtm-font-mono); font-size: var(--vtm-size-s); margin-top: var(--vtm-space-16); color: var(--sem-text-invers); }
+.kontakt-band .handlung { margin-top: var(--vtm-space-24); }
+.kontakt-band a:focus-visible { box-shadow: var(--sem-fokus-ring-invers); }
+@media (max-width: 40rem) {
+  .kontakt-band { grid-template-columns: 1fr; }
+  .kontakt-band img { max-width: 11rem; }
+}
+
+/* --------- Footer --------- */
+.footer { border-top: var(--vtm-linie-haar); padding-block: var(--vtm-space-48); }
+.footer-raster {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+  align-items: start;
+}
+.footer-marke { grid-column: 1 / span 5; }
+.footer-marke img { height: 24px; width: auto; margin-bottom: var(--vtm-space-16); }
+.footer-marke p { font-size: var(--vtm-size-s); color: var(--sem-text-sekundaer); max-width: var(--vtm-measure-lead); }
+.footer-firma { grid-column: 7 / span 6; }
+.footer-firma address {
+  font-style: normal;
+  font-family: var(--vtm-font-mono);
+  font-size: var(--vtm-size-xs);
+  line-height: 1.7;
+  color: var(--sem-text-sekundaer);
+}
+.footer-firma a { color: var(--sem-text-link); }
+@media (max-width: 62rem) {
+  .footer-marke, .footer-firma { grid-column: 1 / -1; }
+}
+
+/* --------- Scroll-Reveal (nur mit JS, respektiert reduced motion) --------- */
+@media (prefers-reduced-motion: no-preference) {
+  html.js [data-reveal] {
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity var(--vtm-dauer-lang) var(--vtm-ease-eintritt),
+                transform var(--vtm-dauer-lang) var(--vtm-ease-eintritt);
+  }
+  html.js [data-reveal].sichtbar { opacity: 1; transform: none; }
+}
+</style>
+</head>
+<body id="top">
+
+<a class="skip-link" href="#inhalt">Zum Inhalt springen</a>
+
+<div class="systemlabel mono">VTM Design System 5.0 · Signal · Beispielseite</div>
+
+<header class="nav">
+  <div class="shell nav-innen">
+    <a class="nav-logo" href="#top" aria-label="Zum Seitenanfang">
+      <img src="../assets/logo/vtm-logo-farbe.png" alt="VersicherungsTech Magazin" width="1007" height="177">
+    </a>
+    <nav class="nav-menu" aria-label="Hauptnavigation">
+      <ul class="nav-liste">
+        <li><a href="#team">Team</a></li>
+        <li><a href="#identitaet">Auftrag</a></li>
+        <li><a href="#arbeitsweise">Arbeitsweise</a></li>
+        <li><a href="#formate">Formate</a></li>
+        <li><a href="#reichweite">Reichweite</a></li>
+      </ul>
+      <a class="nav-kontakt" href="#kontakt">Kontakt</a>
+    </nav>
+  </div>
+</header>
+
+<main id="inhalt">
+
+  <!-- ===== 1 · Menschen und Verantwortung ===== -->
+  <section id="team" class="sektion" aria-labelledby="team-h">
+    <div class="shell team-raster">
+      <div class="team-text">
+        <h1 id="team-h">Die Menschen hinter dem&nbsp;Signal.</h1>
+        <p class="lead">Das VersicherungsTech Magazin ist ein unabhängiges digitales Fachmedium für KI, Automatisierung und digitale Technologien in der Versicherungsbranche des deutschsprachigen Raums.</p>
+        <p class="lead">Bevor wir über Formate und Reichweite sprechen, zeigen wir, wer hier arbeitet und wer wofür die Verantwortung trägt.</p>
+      </div>
+      <div class="team-collage">
+        <figure class="team-figur team-figur-herausgeber">
+          <img src="../assets/team/maximilian-hempel.jpg" alt="Porträt von Maximilian Hempel, Gründer und Herausgeber des VersicherungsTech Magazins" width="320" height="400" fetchpriority="high">
+          <figcaption>
+            <span class="legende-meta">Gründer und Herausgeber</span>
+            <span class="legende-name">Maximilian Hempel</span>
+            <span class="legende-text">Führt die Geschäfte, verantwortet Redaktion und Partnerschaften. Ihr direkter Ansprechpartner für alle inhaltlichen Fragen.</span>
+          </figcaption>
+        </figure>
+        <figure class="team-figur">
+          <img src="../assets/team/maximilian-dahmen.jpg" alt="Porträt von Maximilian Dahmen, Partnerbetreuung und Vertrieb" width="320" height="400">
+          <figcaption>
+            <span class="legende-meta">Partnerbetreuung und Vertrieb</span>
+            <span class="legende-name">Maximilian Dahmen</span>
+          </figcaption>
+        </figure>
+        <figure class="team-figur team-figur-versetzt">
+          <img src="../assets/team/lukas-haerle.jpg" alt="Porträt von Lukas Härle, Partnerbetreuung und Vertrieb" width="320" height="400">
+          <figcaption>
+            <span class="legende-meta">Partnerbetreuung und Vertrieb</span>
+            <span class="legende-name">Lukas Härle</span>
+          </figcaption>
+        </figure>
+        <figure class="team-figur">
+          <img src="../assets/team/johannes-oberhofer.jpg" alt="Porträt von Johannes Oberhofer, Partnerbetreuung und Vertrieb" width="320" height="400">
+          <figcaption>
+            <span class="legende-meta">Partnerbetreuung und Vertrieb</span>
+            <span class="legende-name">Johannes Oberhofer</span>
+          </figcaption>
+        </figure>
+        <figure class="team-figur team-figur-versetzt">
+          <img src="../assets/team/karl-heinz-passler.jpg" alt="Porträt von Karl Heinz Passler, Partnerbetreuung und Vertrieb" width="320" height="400">
+          <figcaption>
+            <span class="legende-meta">Partnerbetreuung und Vertrieb</span>
+            <span class="legende-name">Karl Heinz Passler</span>
+          </figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 2 · Identität und Positionierung ===== -->
+  <section id="identitaet" class="sektion identitaet" aria-labelledby="identitaet-h">
+    <div class="shell identitaet-raster">
+      <div class="identitaet-statement" data-reveal>
+        <h2 id="identitaet-h" class="h2"><span class="signal-strich" aria-hidden="true"></span>Aus Marktgeräusch ein belastbares Signal.</h2>
+        <p class="prosa">Zwischen Produktankündigungen, Panel-Zitaten und Pilotprojekt-Meldungen geht oft unter, was eine Entwicklung für die Versicherungspraxis tatsächlich bedeutet. Genau dort setzen wir an: Wir beobachten den Markt, prüfen Behauptungen und ordnen ein, was danach noch trägt.</p>
+      </div>
+      <ul class="identitaet-rollen" data-reveal>
+        <li>
+          <span class="rolle">Unabhängige Fachredaktion</span>
+          <span class="rolle-text">Wir entscheiden selbst, worüber wir berichten. Bezahlte Inhalte sind immer sichtbar gekennzeichnet.</span>
+        </li>
+        <li>
+          <span class="rolle">Marktbeobachter</span>
+          <span class="rolle-text">Wir verfolgen Anbieter, Projekte und Technologien der DACH-Versicherungsbranche kontinuierlich, nicht anlassbezogen.</span>
+        </li>
+        <li>
+          <span class="rolle">Übersetzer technologischer Entwicklungen</span>
+          <span class="rolle-text">Wir übersetzen technische Entwicklungen in die Sprache von Fachbereich, IT und Vorstand.</span>
+        </li>
+        <li>
+          <span class="rolle">Plattform für Branchenstimmen</span>
+          <span class="rolle-text">Wir geben Praktikerinnen und Praktikern Raum, eigene Erfahrungen öffentlich einzuordnen.</span>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===== 3 · Arbeitsweise ===== -->
+  <section id="arbeitsweise" class="sektion" aria-labelledby="arbeitsweise-h">
+    <div class="shell">
+      <div class="prozess-kopf" data-reveal>
+        <h2 id="arbeitsweise-h" class="h2"><span class="signal-strich" aria-hidden="true"></span>So entsteht ein Beitrag.</h2>
+        <p>Vier Schritte, immer in dieser Reihenfolge. Was sich nicht belegen lässt, wird als offen benannt oder erscheint nicht.</p>
+      </div>
+      <ol class="prozess-liste">
+        <li data-reveal>
+          <h3>Beobachten</h3>
+          <p>Wir sichten laufend Marktmeldungen, Anbieterlandschaft und Fachdiskussion im deutschsprachigen Raum und sammeln, was für die Praxis relevant werden könnte.</p>
+        </li>
+        <li data-reveal>
+          <h3>Prüfen</h3>
+          <p>Behauptungen gleichen wir mit Quellen, Gesprächen und eigener Recherche ab. Unsicherheiten verschweigen wir nicht, wir schreiben sie hin.</p>
+        </li>
+        <li data-reveal>
+          <h3>Einordnen</h3>
+          <p>Wir bewerten, was eine Entwicklung für Versicherer konkret bedeutet: Aufwand, Nutzen, offene Fragen. Auch dann, wenn das Ergebnis ernüchternd ausfällt.</p>
+        </li>
+        <li data-reveal>
+          <h3>Veröffentlichen</h3>
+          <p>Beiträge erscheinen im Magazin, im Newsletter und im Podcast. Redaktionelle und bezahlte Inhalte bleiben dabei strikt getrennt.</p>
+        </li>
+      </ol>
+      <div class="grundsatz" data-reveal>
+        <span class="versal-label">Redaktionsgrundsatz</span>
+        <p>Bezahlte Inhalte tragen bei uns immer einen sichtbaren Hinweis. Die redaktionelle Bewertung ist nicht käuflich, auch nicht für Partner.</p>
+        <span class="kennzeichnung">Sponsored Content · Kennzeichnung nach §6 TMG-Logik</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 4 · Beispiele der Arbeit ===== -->
+  <section id="formate" class="sektion formate" aria-labelledby="formate-h">
+    <div class="shell">
+      <h2 id="formate-h" class="h2"><span class="signal-strich" aria-hidden="true"></span>Drei Formate, ein Anspruch.</h2>
+      <div class="formate-raster">
+        <article class="teaser teaser-gross" data-reveal>
+          <figure>
+            <img src="../assets/bilder/motiv-datenstrom.jpg" alt="Abstrahierte Darstellung eines Datenstroms in Blautönen" width="1600" height="893" loading="lazy">
+            <figcaption class="illustration-caption">Illustration</figcaption>
+          </figure>
+          <h3>Die Analyse</h3>
+          <p>Marktentwicklungen, Technologien und Anbieter, geprüft und für die Entscheidungspraxis eingeordnet. Mit Quellenangabe und benannten offenen Fragen statt Zukunftsprosa.</p>
+        </article>
+        <div class="formate-nebenspalte">
+          <article class="teaser" data-reveal>
+            <figure>
+              <img src="../assets/bilder/motiv-buero-abend.jpg" alt="Bürogebäude am Abend mit beleuchteten Fenstern" width="1600" height="893" loading="lazy">
+              <figcaption class="illustration-caption">Illustration</figcaption>
+            </figure>
+            <div>
+              <h3>Das Executive Interview</h3>
+              <p>Entscheiderinnen und Entscheider der Branche im Gespräch über Strategien, Projekte und das, was nicht funktioniert hat.</p>
+            </div>
+          </article>
+          <article class="teaser" data-reveal>
+            <figure>
+              <img src="../assets/bilder/motiv-skyline-blaue-stunde.jpg" alt="Skyline einer Großstadt zur blauen Stunde" width="1600" height="893" loading="lazy">
+              <figcaption class="illustration-caption">Illustration</figcaption>
+            </figure>
+            <div>
+              <h3>Insurance Monday</h3>
+              <p>Der Podcast unseres Netzwerks: wöchentliche Gespräche über Versicherung und Technologie, jeden Montag.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 5 · Konkrete Nutzung ===== -->
+  <section id="nutzen" class="sektion" aria-labelledby="nutzen-h">
+    <div class="shell">
+      <h2 id="nutzen-h" class="h2"><span class="signal-strich" aria-hidden="true"></span>Was Sie hier konkret finden.</h2>
+      <div class="nutzen-raster">
+        <div class="gruppe gruppe-entscheider" data-reveal>
+          <h3>Für Entscheider in Versicherern</h3>
+          <p class="einordnung">Sie müssen bewerten, welche Technologie eine Investition rechtfertigt. Wir liefern die unabhängige Einordnung dazu.</p>
+          <ul>
+            <li>Unabhängige Analysen statt Anbieterfolien</li>
+            <li>Kontinuierliche Marktbeobachtung für den DACH-Raum</li>
+            <li>Kompakter Newsletter als kurzes, belastbares Signal ins Postfach</li>
+          </ul>
+          <p class="handlung"><a class="btn btn-primaer" href="https://versicherungstech-magazin.de">Newsletter kennenlernen</a></p>
+        </div>
+        <div class="nutzen-nebenspalte">
+          <div class="gruppe gruppe-fachleute" data-reveal>
+            <h3>Für Fachleute der Branche</h3>
+            <ul>
+              <li>Podcast und Interviews als laufender Fachdiskurs</li>
+              <li>Raum für die eigene Stimme: Gastbeitrag oder Interview</li>
+            </ul>
+            <p class="handlung"><a class="text-link" href="mailto:info@versicherungstech-magazin.de?subject=Themenvorschlag">Thema vorschlagen</a></p>
+          </div>
+          <div class="gruppe gruppe-anbieter" data-reveal>
+            <h3>Für Technologieanbieter</h3>
+            <ul>
+              <li>Fachliche Sichtbarkeit im redaktionellen Umfeld, immer klar gekennzeichnet</li>
+              <li>Formate vom Fachartikel bis zur Podcast-Episode</li>
+            </ul>
+            <p class="ohne-versprechen">Wir versprechen Sichtbarkeit im Fachpublikum. Leads, Abschlüsse oder Vertriebserfolge versprechen wir ausdrücklich nicht.</p>
+            <p class="handlung"><a class="text-link" href="mailto:info@versicherungstech-magazin.de?subject=Mediadaten">Mediadaten anfragen</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 6 · Reichweite und Netzwerk ===== -->
+  <section id="reichweite" class="sektion reichweite" aria-labelledby="reichweite-h">
+    <div class="shell">
+      <div class="reichweite-kopf" data-reveal>
+        <h2 id="reichweite-h" class="h2"><span class="signal-strich" aria-hidden="true"></span>Reichweite, die Sie nachprüfen können.</h2>
+        <p>Vier Kennzahlen, jede mit Quelle und Stand. Mehr behaupten wir nicht.</p>
+      </div>
+      <div class="daten-raster">
+        <div class="datenbox datenbox-podcast" data-reveal>
+          <p class="wert">35.000</p>
+          <p class="beschreibung">Podcast-Downloads pro Monat über den Insurance Monday Podcast, das Audio-Format unseres Netzwerks.</p>
+          <div class="beleg">
+            <div class="beleg-marke" aria-hidden="true"></div>
+            <p class="quelle">Quelle: Hosting-Auswertung Insurance Monday · Stand: 08/2026</p>
+          </div>
+        </div>
+        <div class="datenbox datenbox-newsletter" data-reveal>
+          <p class="wert">6.000+</p>
+          <p class="beschreibung">Empfängerinnen und Empfänger des Newsletters</p>
+          <div class="beleg">
+            <div class="beleg-marke" aria-hidden="true"></div>
+            <p class="quelle">Quelle: Versandsystem · Stand: 08/2026</p>
+          </div>
+        </div>
+        <div class="datenbox datenbox-oeffnung" data-reveal>
+          <p class="wert">≈&#8239;50&#8239;%</p>
+          <p class="beschreibung">Öffnungsrate des Newsletters</p>
+          <div class="beleg">
+            <div class="beleg-marke" aria-hidden="true"></div>
+            <p class="quelle">Quelle: Versandsystem · Stand: 08/2026</p>
+          </div>
+        </div>
+        <div class="datenbox datenbox-linkedin" data-reveal>
+          <p class="wert">20.000+</p>
+          <p class="beschreibung">LinkedIn-Follower im Team-Netzwerk</p>
+          <div class="beleg">
+            <div class="beleg-marke" aria-hidden="true"></div>
+            <p class="quelle">Quelle: LinkedIn-Teamprofile · Stand: 08/2026</p>
+          </div>
+        </div>
+      </div>
+      <div class="partner-zeile" data-reveal>
+        <span class="versal-label">Netzwerk und Partner</span>
+        <ul class="partner-logos">
+          <li><img src="../assets/partner/partner-insurance-monday.jpg" alt="Insurance Monday Podcast" width="640" height="640" loading="lazy"></li>
+          <li><img src="../assets/partner/partner-insurlab.png" alt="InsurLab Germany" width="640" height="245" loading="lazy"></li>
+          <li><img src="../assets/partner/partner-insurtech-werft.png" alt="InsurTech Werft" width="720" height="370" loading="lazy"></li>
+          <li><img src="../assets/partner/partner-frida.jpg" alt="FRIDA e.V." width="516" height="323" loading="lazy"></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 7 · Persönlicher Kontakt ===== -->
+  <section id="kontakt" class="sektion" aria-labelledby="kontakt-h">
+    <div class="shell">
+      <div class="kontakt-band" data-reveal>
+        <img src="../assets/team/maximilian-hempel.jpg" alt="Maximilian Hempel, Ihr Ansprechpartner beim VersicherungsTech Magazin" width="320" height="400" loading="lazy">
+        <div>
+          <span class="versal-label">Direkter Kontakt</span>
+          <h2 id="kontakt-h">Sprechen Sie direkt mit dem Herausgeber.</h2>
+          <p>Fragen zur Redaktion, ein Themenhinweis oder Interesse an einer Zusammenarbeit: Maximilian Hempel antwortet persönlich, ohne Umweg über ein Formular.</p>
+          <p class="adresse">info@versicherungstech-magazin.de</p>
+          <p class="handlung"><a class="btn btn-primaer" href="mailto:info@versicherungstech-magazin.de">E-Mail schreiben</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="shell footer-raster">
+    <div class="footer-marke">
+      <img src="../assets/logo/vtm-logo-farbe.png" alt="VersicherungsTech Magazin" width="1007" height="177">
+      <p>Unabhängiges digitales Fachmedium für KI, Automatisierung und digitale Technologien in der DACH-Versicherungsbranche.</p>
+    </div>
+    <div class="footer-firma">
+      <address>
+        VersicherungsTech Media UG (haftungsbeschränkt)<br>
+        Moitzfeld 17 · 51429 Bergisch Gladbach<br>
+        HRB 126738 · Amtsgericht Köln<br>
+        Geschäftsführer: Maximilian Hempel<br>
+        <a href="mailto:info@versicherungstech-magazin.de">info@versicherungstech-magazin.de</a> ·
+        <a href="https://versicherungstech-magazin.de">versicherungstech-magazin.de</a>
+      </address>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* Dezente Scroll-Reveals. Progressiv: ohne JS (oder ohne
+   IntersectionObserver) bleibt alles sofort sichtbar; die
+   Reveal-Styles greifen nur unter html.js und nur bei
+   prefers-reduced-motion: no-preference. */
+(function () {
+  if (!('IntersectionObserver' in window)) return;
+  document.documentElement.classList.add('js');
+  var beobachter = new IntersectionObserver(function (eintraege) {
+    eintraege.forEach(function (eintrag) {
+      if (eintrag.isIntersecting) {
+        eintrag.target.classList.add('sichtbar');
+        beobachter.unobserve(eintrag.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+  document.querySelectorAll('[data-reveal]').forEach(function (el) {
+    beobachter.observe(el);
+  });
+})();
+</script>
+
+</body>
+</html>

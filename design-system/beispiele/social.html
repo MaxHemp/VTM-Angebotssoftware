@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Social-Formate · VTM Design System 5.0 „Signal" (Beispielseite)</title>
+<meta name="description" content="LinkedIn- und Social-Formate des VersicherungsTech Magazins: sechs Kompositionen in Originalmaßen 1080×1350 und 1080×1080 Pixel, mit Kurzregeln zu Textmenge, Absender und Quellenpflicht.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Schibsted+Grotesk:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../tokens.css">
+<style>
+  /* =========================================================
+     VTM · Social-Format-Galerie
+     Kompositionen in Originalgröße (1080×1350 / 1080×1080 px),
+     für die Galerie über transform: scale() verkleinert.
+     ========================================================= */
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    font: 400 var(--vtm-size-m)/var(--vtm-leading-text) var(--vtm-font-text);
+    color: var(--sem-text);
+    background: var(--sem-flaeche-seite);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: var(--sem-text-link); }
+  a:focus-visible {
+    outline: none;
+    box-shadow: var(--sem-fokus-ring);
+    border-radius: var(--vtm-radius-s);
+  }
+
+  .skip-link {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    z-index: var(--vtm-ebene-toast);
+    background: var(--vtm-weiss);
+    color: var(--sem-text);
+    padding: var(--vtm-space-12) var(--vtm-space-16);
+    font: 600 var(--vtm-size-s)/1 var(--vtm-font-text);
+    border-radius: var(--vtm-radius-m);
+    box-shadow: var(--vtm-schatten-m);
+    text-decoration: none;
+  }
+  .skip-link:focus-visible { left: var(--vtm-space-16); top: var(--vtm-space-16); }
+
+  .rahmen {
+    max-width: 76rem;
+    margin: 0 auto;
+    padding-inline: var(--vtm-space-16);
+  }
+  @media (min-width: 660px) { .rahmen { padding-inline: var(--vtm-space-32); } }
+
+  /* ---- Kopf ---- */
+  .systemzeile {
+    border-bottom: var(--vtm-linie-haar);
+    padding-block: var(--vtm-space-12);
+  }
+  .systemzeile p {
+    margin: 0;
+    font: 500 var(--vtm-size-xs)/1.4 var(--vtm-font-mono);
+    letter-spacing: var(--vtm-tracking-mono);
+    color: var(--sem-text-gedaempft);
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--vtm-space-8) var(--vtm-space-24);
+    justify-content: space-between;
+  }
+
+  .kopf {
+    padding-block: var(--vtm-space-48) var(--vtm-space-64);
+    display: grid;
+    gap: var(--vtm-space-32);
+  }
+  @media (min-width: 900px) {
+    .kopf {
+      grid-template-columns: 7fr 5fr;
+      gap: var(--vtm-space-64);
+      align-items: end;
+      padding-block: var(--vtm-space-64) var(--vtm-space-96);
+    }
+  }
+  .kopf .logo { height: 40px; width: auto; margin-bottom: var(--vtm-space-32); }
+  .kopf h1 {
+    margin: 0 0 var(--vtm-space-16);
+    font: 800 var(--vtm-size-6xl)/var(--vtm-leading-display) var(--vtm-font-display);
+    letter-spacing: var(--vtm-tracking-display);
+    max-width: var(--vtm-measure-display);
+  }
+  .kopf .lead {
+    margin: 0;
+    max-width: var(--vtm-measure-lead);
+    font-size: var(--vtm-size-l);
+    color: var(--sem-text-sekundaer);
+  }
+
+  .grammatik {
+    background: var(--sem-flaeche-soft);
+    border: var(--vtm-linie-haar);
+    border-radius: var(--vtm-radius-l);
+    padding: var(--karte-pad);
+  }
+  .grammatik h2 {
+    margin: 0 0 var(--vtm-space-12);
+    font: 600 var(--vtm-size-xs)/1.3 var(--vtm-font-text);
+    letter-spacing: var(--vtm-tracking-label);
+    text-transform: uppercase;
+    color: var(--sem-text-sekundaer);
+  }
+  .grammatik ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: var(--vtm-space-8);
+  }
+  .grammatik li {
+    display: flex;
+    gap: var(--vtm-space-12);
+    align-items: baseline;
+  }
+  .grammatik .nr {
+    font: 600 var(--vtm-size-xs)/1.4 var(--vtm-font-mono);
+    color: var(--sem-auswahl-text);
+    flex: none;
+  }
+  .grammatik .demo {
+    margin: var(--vtm-space-16) 0 0;
+    font: 500 var(--vtm-size-xs)/1.5 var(--vtm-font-mono);
+    color: var(--sem-text-gedaempft);
+  }
+
+  /* ---- Formatsektionen ---- */
+  .format {
+    border-top: var(--vtm-linie-haar);
+    padding-block: var(--vtm-space-64);
+  }
+  @media (min-width: 900px) { .format { padding-block: var(--vtm-space-96); } }
+
+  .format-kopf { margin-bottom: var(--vtm-space-32); max-width: 44rem; }
+  .format-kopf .kicker {
+    display: inline-block;
+    margin: 0 0 var(--vtm-space-8);
+    font: 600 var(--vtm-size-xs)/1.3 var(--vtm-font-text);
+    letter-spacing: var(--vtm-tracking-label);
+    text-transform: uppercase;
+    color: var(--sem-text-sekundaer);
+    border-top: 2px solid var(--sem-auswahl-linie); /* Signallinie */
+    padding-top: var(--vtm-space-8);
+  }
+  .format-kopf h2 {
+    margin: 0 0 var(--vtm-space-8);
+    font: 700 var(--vtm-size-3xl)/var(--vtm-leading-heading) var(--vtm-font-display);
+    letter-spacing: var(--vtm-tracking-heading);
+  }
+  .format-kopf .spez {
+    margin: 0;
+    font: 500 var(--vtm-size-xs)/1.5 var(--vtm-font-mono);
+    letter-spacing: var(--vtm-tracking-mono);
+    color: var(--sem-text-gedaempft);
+  }
+
+  .format-grid { display: grid; gap: var(--vtm-space-32); align-items: start; }
+  @media (min-width: 900px) {
+    .format-grid { grid-template-columns: 7fr 5fr; gap: var(--vtm-space-64); }
+    .format.umgekehrt .format-grid { grid-template-columns: 5fr 7fr; }
+    .format.umgekehrt .format-grid > figure { order: 2; }
+  }
+
+  /* ---- Vorschau-Bühne (Originalmaß, skaliert) ---- */
+  figure.vorschau { margin: 0; min-width: 0; max-width: 100%; }
+  .format-grid > * { min-width: 0; }
+  .karussell-reihe { max-width: 100%; }
+  .buehne {
+    --w: 1080;
+    --h: 1350;
+    --s: 0.25;
+    position: relative;
+    overflow: hidden;
+    width: calc(var(--w) * var(--s) * 1px);
+    height: calc(var(--h) * var(--s) * 1px);
+    border-radius: var(--vtm-radius-s);
+    box-shadow: var(--vtm-schatten-m);
+    background: var(--vtm-weiss);
+    flex: none;
+  }
+  .buehne.quadrat { --h: 1080; }
+  @media (min-width: 660px)  { .buehne { --s: 0.4; } }
+  @media (min-width: 1060px) { .buehne { --s: 0.46; } }
+
+  .komposition {
+    width: calc(var(--w) * 1px);
+    height: calc(var(--h) * 1px);
+    transform: scale(var(--s));
+    transform-origin: top left;
+    display: flex;
+    flex-direction: column;
+    font-family: var(--vtm-font-text);
+    color: var(--sem-text);
+    background: var(--vtm-weiss);
+    position: relative;
+  }
+
+  figcaption.demozeile {
+    margin-top: var(--vtm-space-12);
+    font: 500 var(--vtm-size-xs)/1.5 var(--vtm-font-mono);
+    letter-spacing: var(--vtm-tracking-mono);
+    color: var(--sem-text-gedaempft);
+  }
+
+  /* ---- Kurzregeln ---- */
+  .regeln {
+    background: var(--sem-flaeche-soft);
+    border: var(--vtm-linie-haar);
+    border-radius: var(--vtm-radius-l);
+    padding: var(--karte-pad);
+  }
+  .regeln h3 {
+    margin: 0 0 var(--vtm-space-16);
+    font: 600 var(--vtm-size-xs)/1.3 var(--vtm-font-text);
+    letter-spacing: var(--vtm-tracking-label);
+    text-transform: uppercase;
+    color: var(--sem-text-sekundaer);
+  }
+  .regeln ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: var(--vtm-space-12);
+    font-size: var(--vtm-size-s);
+    line-height: var(--vtm-leading-ui);
+  }
+  .regeln li { padding-left: var(--vtm-space-16); position: relative; }
+  .regeln li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.55em;
+    width: 6px;
+    height: 6px;
+    background: var(--vtm-nacht-900);
+  }
+  .regeln li strong { font-weight: 600; }
+
+  .verbote { margin-top: var(--vtm-space-24); }
+  .verbote h4 {
+    margin: 0 0 var(--vtm-space-8);
+    font: 600 var(--vtm-size-xs)/1.3 var(--vtm-font-text);
+    letter-spacing: var(--vtm-tracking-label);
+    text-transform: uppercase;
+    color: var(--sem-fehler-text);
+  }
+  .verbote ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--vtm-space-8);
+  }
+  .verbote li {
+    font: var(--status-font);
+    padding: var(--status-pad);
+    border-radius: var(--status-radius);
+    background: var(--sem-fehler-flaeche);
+    color: var(--sem-fehler-text);
+  }
+  .verbote li::before { content: "✕ "; }
+
+  /* =========================================================
+     KOMPOSITIONEN (Maße im 1080er-Raum)
+     ========================================================= */
+
+  .k-fuss {
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 40px;
+  }
+  .k-mono {
+    font: 500 26px/1.4 var(--vtm-font-mono);
+    letter-spacing: var(--vtm-tracking-mono);
+  }
+  .k-label {
+    font: 600 28px/1.3 var(--vtm-font-mono);
+    letter-spacing: var(--vtm-tracking-label);
+    text-transform: uppercase;
+  }
+
+  /* 1 · Artikel-Teaser */
+  .k-teaser { padding: 72px; color: var(--vtm-weiss); background: var(--vtm-nacht-900); }
+  .k-teaser .motiv {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .k-teaser .schleier {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgb(13 28 60 / 0.42) 0%, rgb(13 28 60 / 0.62) 55%, rgb(8 18 38 / 0.86) 100%);
+  }
+  .k-teaser > * { position: relative; }
+  .k-teaser .k-label { color: var(--vtm-eis-200); }
+  .k-teaser .these {
+    margin: auto 0 64px;
+    font: 800 82px/1.08 var(--vtm-font-display);
+    letter-spacing: var(--vtm-tracking-display);
+    max-width: 900px;
+  }
+  .k-teaser .k-mono { color: rgb(255 255 255 / 0.78); }
+  .k-teaser .k-fuss { margin-top: 0; }
+
+  /* 2 · Zahl/Studie */
+  .k-zahl { padding: 80px; background: var(--vtm-eis-100); }
+  .k-zahl .k-label { color: var(--sem-text-sekundaer); }
+  .k-zahl .wert {
+    margin-top: auto;
+    font: 900 264px/1 var(--vtm-font-display);
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+    color: var(--vtm-nacht-900);
+  }
+  .k-zahl .einheit {
+    font: 700 54px/1.15 var(--vtm-font-display);
+    letter-spacing: var(--vtm-tracking-heading);
+    margin-top: 16px;
+    max-width: 760px;
+  }
+  .k-zahl .kontext {
+    font: 500 32px/1.4 var(--vtm-font-text);
+    color: var(--sem-text-sekundaer);
+    margin-top: 20px;
+  }
+  .k-zahl .belegmarke {
+    width: 48px;
+    height: 6px;
+    background: var(--sem-beleg-marke);
+    margin: 56px 0 14px;
+  }
+  .k-zahl .quelle { color: var(--sem-beleg-text); margin-bottom: 64px; }
+  .k-zahl .k-fuss { margin-top: 0; }
+  .k-zahl .k-fuss .k-mono { color: var(--sem-text-gedaempft); }
+
+  /* 3 · Zitat */
+  .k-zitat { padding: 88px; background: var(--vtm-weiss); }
+  .k-zitat blockquote {
+    margin: auto 0;
+    padding-left: 52px;
+    border-left: 8px solid var(--vtm-electric-600); /* Electric-Zitatlinie */
+  }
+  .k-zitat blockquote p {
+    margin: 0;
+    font: italic 500 56px/1.32 var(--vtm-font-serif);
+    color: var(--vtm-nacht-900);
+    max-width: 850px;
+  }
+  .k-zitat .sprecher {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    margin-top: 64px;
+  }
+  .k-zitat .sprecher img {
+    width: 108px;
+    height: 108px;
+    border-radius: var(--vtm-radius-rund);
+    object-fit: cover;
+  }
+  .k-zitat .sprecher .name { font: 600 32px/1.3 var(--vtm-font-text); }
+  .k-zitat .sprecher .rolle {
+    font: 500 24px/1.4 var(--vtm-font-mono);
+    color: var(--sem-text-gedaempft);
+    margin-top: 6px;
+  }
+  .k-zitat .k-fuss .k-mono { color: var(--sem-text-gedaempft); }
+
+  /* 4 · Podcast-Ausschnitt */
+  .k-podcast { padding: 80px; background: var(--vtm-nacht-900); color: var(--vtm-weiss); }
+  .k-podcast .k-label { color: var(--vtm-electric-400); }
+  .k-podcast .episodentitel {
+    margin: 40px 0 0;
+    font: 700 64px/1.12 var(--vtm-font-display);
+    letter-spacing: var(--vtm-tracking-heading);
+    max-width: 880px;
+  }
+  .k-podcast .welle { margin: 56px 0; }
+  .k-podcast .welle svg { display: block; width: 100%; height: 120px; }
+  .k-podcast .gast {
+    display: flex;
+    align-items: center;
+    gap: 36px;
+  }
+  .k-podcast .gastfoto {
+    width: 168px;
+    height: 168px;
+    flex: none;
+    border-radius: var(--vtm-radius-rund);
+    border: 2px dashed rgb(255 255 255 / 0.4);
+    display: grid;
+    place-items: center;
+    font: 500 22px/1.3 var(--vtm-font-mono);
+    color: rgb(255 255 255 / 0.6);
+  }
+  .k-podcast .gastname { font: 600 34px/1.3 var(--vtm-font-text); }
+  .k-podcast .gastrolle {
+    font: 500 24px/1.4 var(--vtm-font-mono);
+    color: rgb(255 255 255 / 0.7);
+    margin-top: 6px;
+  }
+  .k-podcast .k-mono { color: rgb(255 255 255 / 0.78); }
+
+  /* 5 · Karussell */
+  .karussell-reihe {
+    display: flex;
+    gap: var(--vtm-space-24);
+    overflow-x: auto;
+    padding-bottom: var(--vtm-space-12);
+  }
+  .karussell-reihe .buehne { --s: 0.2; }
+  @media (min-width: 660px)  { .karussell-reihe .buehne { --s: 0.24; } }
+  @media (min-width: 1060px) { .karussell-reihe .buehne { --s: 0.28; } }
+
+  .k-kar { padding: 72px; background: var(--vtm-weiss); }
+  .k-kar .k-label { color: var(--sem-text-sekundaer); }
+  .k-kar .these {
+    margin: auto 0;
+    font: 800 76px/1.1 var(--vtm-font-display);
+    letter-spacing: var(--vtm-tracking-display);
+    max-width: 880px;
+  }
+  .k-kar .weiter {
+    font: 700 40px/1 var(--vtm-font-display);
+    color: var(--vtm-electric-700);
+  }
+  .k-kar .nummer {
+    margin-top: auto;
+    font: 900 220px/1 var(--vtm-font-display);
+    font-variant-numeric: tabular-nums;
+    color: var(--vtm-eis-300);
+  }
+  .k-kar .punkt {
+    margin: 12px 0 0;
+    font: 700 58px/1.18 var(--vtm-font-display);
+    letter-spacing: var(--vtm-tracking-heading);
+    max-width: 880px;
+  }
+  .k-kar .erlaeuterung {
+    margin: 28px 0 auto;
+    font: 400 32px/1.5 var(--vtm-font-text);
+    color: var(--sem-text-sekundaer);
+    max-width: 840px;
+  }
+  .k-kar .handlung {
+    margin: auto 0;
+    font: 700 62px/1.18 var(--vtm-font-display);
+    letter-spacing: var(--vtm-tracking-heading);
+    max-width: 880px;
+  }
+  .k-kar .handlung .ziel { color: var(--vtm-electric-700); display: block; margin-top: 20px; }
+  .k-kar .k-fuss .k-mono { color: var(--sem-text-gedaempft); }
+  .k-kar .k-fuss { margin-top: 0; }
+
+  /* 6 · Partnerschaft/Sponsored */
+  .k-partner { padding: 80px; background: var(--vtm-weiss); }
+  .k-partner .kennzeichnung {
+    border-bottom: var(--vtm-linie-haar);
+    padding-bottom: 32px;
+  }
+  .k-partner .kennzeichnung .k-label { color: var(--vtm-nacht-900); }
+  .k-partner .kennzeichnung .k-mono {
+    display: block;
+    margin-top: 10px;
+    font-size: 22px;
+    color: var(--sem-text-gedaempft);
+    text-transform: none;
+    letter-spacing: var(--vtm-tracking-mono);
+  }
+  .k-partner .aussage {
+    margin: auto 0;
+    font: 700 60px/1.16 var(--vtm-font-display);
+    letter-spacing: var(--vtm-tracking-heading);
+    max-width: 880px;
+  }
+  .k-partner .logozone {
+    width: 380px;
+    height: 140px;
+    border: 2px dashed var(--vtm-neutral-300);
+    border-radius: var(--vtm-radius-s);
+    display: grid;
+    place-items: center;
+    font: 500 24px/1.3 var(--vtm-font-mono);
+    color: var(--sem-text-gedaempft);
+    margin-bottom: 56px;
+  }
+  .k-partner .k-fuss .k-mono { color: var(--sem-text-gedaempft); }
+
+  /* ---- Abschlussband (kompakter dunkler Anker) ---- */
+  .abschluss {
+    background: var(--sem-flaeche-anker);
+    color: var(--sem-text-invers);
+    margin-top: var(--vtm-space-64);
+  }
+  .abschluss .rahmen {
+    padding-block: var(--vtm-space-48);
+    display: grid;
+    gap: var(--vtm-space-32);
+  }
+  @media (min-width: 900px) {
+    .abschluss .rahmen { grid-template-columns: 7fr 5fr; align-items: center; }
+  }
+  .abschluss h2 {
+    margin: 0 0 var(--vtm-space-8);
+    font: 700 var(--vtm-size-2xl)/var(--vtm-leading-heading) var(--vtm-font-display);
+    letter-spacing: var(--vtm-tracking-heading);
+  }
+  .abschluss p { margin: 0; color: var(--sem-text-invers-sekundaer); max-width: var(--vtm-measure-lead); }
+  .abschluss a { color: var(--sem-text-link-invers); }
+  .abschluss a:focus-visible { box-shadow: var(--sem-fokus-ring-invers); }
+  .abschluss .impressum {
+    font: 400 var(--vtm-size-xs)/1.7 var(--vtm-font-text);
+    color: var(--sem-text-invers-sekundaer);
+  }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#inhalt">Zum Inhalt springen</a>
+
+<header>
+  <div class="systemzeile">
+    <div class="rahmen">
+      <p>
+        <span>VTM Design System 5.0 · Signal · Beispielseite</span>
+        <span>Kanal: LinkedIn / Social · Stand 08/2026</span>
+      </p>
+    </div>
+  </div>
+
+  <div class="rahmen kopf">
+    <div>
+      <img class="logo" src="../assets/logo/vtm-logo-farbe.png" alt="VersicherungsTech Magazin" width="228" height="40">
+      <h1>Social-Formate</h1>
+      <p class="lead">Sechs Kompositionen für LinkedIn in Originalmaßen 1080 × 1350 und 1080 × 1080 Pixel. Jede Fläche trägt genau eine Aussage, nennt den Absender und belegt jede Zahl.</p>
+    </div>
+    <section class="grammatik" aria-label="Kanal-Grammatik">
+      <h2>Kanal-Grammatik · gilt für jede Fläche</h2>
+      <ol>
+        <li><span class="nr">1</span><span>Aussage — eine These, eine Zahl oder ein Zitat</span></li>
+        <li><span class="nr">2</span><span>Einordnung — knapper Kontext, kein Fließtext</span></li>
+        <li><span class="nr">3</span><span>Beleg — Quelle in Gold, bei Zahlen Pflicht</span></li>
+        <li><span class="nr">4</span><span>Handlung — höchstens ein nächster Schritt</span></li>
+      </ol>
+      <p class="demo">Demonstrationsinhalt des Design Systems · Beispieltexte, keine Veröffentlichungen</p>
+    </section>
+  </div>
+</header>
+
+<main id="inhalt" class="rahmen">
+
+  <!-- ============ Format · Artikel-Teaser ============ -->
+  <section class="format" aria-labelledby="f-teaser">
+    <div class="format-kopf">
+      <p class="kicker">Format</p>
+      <h2 id="f-teaser">Artikel-Teaser</h2>
+      <p class="spez">1080 × 1350 px · 4:5 · Motiv + Nachtblau-Schleier</p>
+    </div>
+    <div class="format-grid">
+      <figure class="vorschau">
+        <div class="buehne">
+          <div class="komposition k-teaser">
+            <img class="motiv" src="../assets/bilder/motiv-skyline-blaue-stunde.jpg" alt="" width="1600" height="893" loading="lazy">
+            <div class="schleier" aria-hidden="true"></div>
+            <p class="k-label">Analyse · KI in der Schadenregulierung</p>
+            <p class="these">Ohne saubere Bestandsdaten bleibt jede KI-Strategie Theorie.</p>
+            <div class="k-fuss">
+              <img src="../assets/logo/vtm-logo-weiss.png" alt="VersicherungsTech Magazin" width="253" height="52" loading="lazy" style="height:52px;width:auto;">
+              <p class="k-mono">versicherungstech-magazin.de</p>
+            </div>
+          </div>
+        </div>
+        <figcaption class="demozeile">Demonstrationsinhalt des Design Systems · Originalmaß 1080 × 1350 px</figcaption>
+      </figure>
+      <aside class="regeln" aria-label="Kurzregeln Artikel-Teaser">
+        <h3>Kurzregeln</h3>
+        <ul>
+          <li><strong>EINE These,</strong> maximal 12 Wörter — kein zweiter Gedanke auf der Fläche.</li>
+          <li><strong>Textmenge:</strong> Kategorie-Label + These + Absender, sonst nichts.</li>
+          <li><strong>Motiv:</strong> nur eigene Motive mit Nachtblau-Schleier; Kontrast der Schrift muss AA erfüllen.</li>
+          <li><strong>Absender sichtbar:</strong> weißes VTM-Logo unten links, Domain in Mono unten rechts.</li>
+        </ul>
+        <div class="verbote">
+          <h4>Verbote</h4>
+          <ul>
+            <li>Clickbait</li>
+            <li>Stockfotos</li>
+            <li>Textwände</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ============ Format · Zahl/Studie ============ -->
+  <section class="format umgekehrt" aria-labelledby="f-zahl">
+    <div class="format-kopf">
+      <p class="kicker">Format</p>
+      <h2 id="f-zahl">Zahl/Studie</h2>
+      <p class="spez">1080 × 1350 px · 4:5 · Eisblau-Grund, Beleg in Gold</p>
+    </div>
+    <div class="format-grid">
+      <figure class="vorschau">
+        <div class="buehne">
+          <div class="komposition k-zahl">
+            <p class="k-label">Reichweite</p>
+            <p class="wert">35.000</p>
+            <p class="einheit">Podcast-Downloads pro Monat</p>
+            <p class="kontext">Insurance Monday Podcast</p>
+            <div class="belegmarke" aria-hidden="true"></div>
+            <p class="k-mono quelle">Quelle: Podcast-Hosting-Statistik · Stand 08/2026</p>
+            <div class="k-fuss">
+              <img src="../assets/logo/vtm-logo-farbe.png" alt="VersicherungsTech Magazin" width="296" height="52" loading="lazy" style="height:52px;width:auto;">
+              <p class="k-mono">versicherungstech-magazin.de</p>
+            </div>
+          </div>
+        </div>
+        <figcaption class="demozeile">Echte Kennzahl, Stand 08/2026 · Originalmaß 1080 × 1350 px</figcaption>
+      </figure>
+      <aside class="regeln" aria-label="Kurzregeln Zahl/Studie">
+        <h3>Kurzregeln</h3>
+        <ul>
+          <li><strong>EINE Zahl</strong> pro Fläche; Einordnung in maximal 6 Wörtern.</li>
+          <li><strong>Quelle Pflicht:</strong> goldene Belegmarke + Mono-Quellenzeile — ohne Quelle wird die Zahl nicht veröffentlicht.</li>
+          <li><strong>Deutsche Formate:</strong> Tausenderpunkt, Komma, schmales Leerzeichen vor %.</li>
+          <li><strong>Absender sichtbar:</strong> farbiges VTM-Logo auf hellem Grund.</li>
+        </ul>
+        <div class="verbote">
+          <h4>Verbote</h4>
+          <ul>
+            <li>Clickbait</li>
+            <li>Zahlen ohne Quelle</li>
+            <li>Textwände</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ============ Format · Zitat ============ -->
+  <section class="format" aria-labelledby="f-zitat">
+    <div class="format-kopf">
+      <p class="kicker">Format</p>
+      <h2 id="f-zitat">Zitat</h2>
+      <p class="spez">1080 × 1080 px · 1:1 · Newsreader Italic, Electric-Zitatlinie</p>
+    </div>
+    <div class="format-grid">
+      <figure class="vorschau">
+        <div class="buehne quadrat">
+          <div class="komposition k-zitat">
+            <blockquote>
+              <p>„Wir versprechen fachliche Sichtbarkeit — keine Leads. Diese Trennung schützt Redaktion und Partner gleichermaßen."</p>
+            </blockquote>
+            <div class="sprecher">
+              <img src="../assets/team/maximilian-hempel.jpg" alt="Porträt von Maximilian Hempel" width="320" height="400" loading="lazy">
+              <div>
+                <p class="name" style="margin:0;">Maximilian Hempel</p>
+                <p class="rolle" style="margin:0;">Gründer und Herausgeber · VersicherungsTech Magazin</p>
+              </div>
+            </div>
+            <div class="k-fuss" style="margin-top:48px;">
+              <img src="../assets/logo/vtm-logo-farbe.png" alt="VersicherungsTech Magazin" width="250" height="44" loading="lazy" style="height:44px;width:auto;">
+              <p class="k-mono">versicherungstech-magazin.de</p>
+            </div>
+          </div>
+        </div>
+        <figcaption class="demozeile">Demonstrationsinhalt des Design Systems · Originalmaß 1080 × 1080 px</figcaption>
+      </figure>
+      <aside class="regeln" aria-label="Kurzregeln Zitat">
+        <h3>Kurzregeln</h3>
+        <ul>
+          <li><strong>EIN Zitat,</strong> maximal 25 Wörter, wörtlich und freigegeben.</li>
+          <li><strong>Sprecherzeile Pflicht:</strong> Foto, Name, Rolle — nie ein Zitat ohne Person.</li>
+          <li><strong>Ruhiger weißer Grund;</strong> die Electric-Linie ist der einzige Akzent.</li>
+          <li><strong>Absender sichtbar:</strong> Logo und Domain unten.</li>
+        </ul>
+        <div class="verbote">
+          <h4>Verbote</h4>
+          <ul>
+            <li>Clickbait</li>
+            <li>Sinnentstellende Kürzung</li>
+            <li>Textwände</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ============ Format · Podcast-Ausschnitt ============ -->
+  <section class="format umgekehrt" aria-labelledby="f-podcast">
+    <div class="format-kopf">
+      <p class="kicker">Format</p>
+      <h2 id="f-podcast">Podcast-Ausschnitt</h2>
+      <p class="spez">1080 × 1080 px · 1:1 · Nachtblau als kompakte Bühne</p>
+    </div>
+    <div class="format-grid">
+      <figure class="vorschau">
+        <div class="buehne quadrat">
+          <div class="komposition k-podcast">
+            <p class="k-label">Insurance Monday Podcast · Neue Episode</p>
+            <p class="episodentitel">Dunkelverarbeitung im Bestand: Wo Sachbearbeitung unersetzlich bleibt</p>
+            <div class="welle" aria-hidden="true">
+              <svg viewBox="0 0 960 140" preserveAspectRatio="none" role="presentation" focusable="false">
+                <g fill="#7C96FF">
+                  <rect x="0"   y="52" width="14" height="36"  rx="7"/>
+                  <rect x="32"  y="38" width="14" height="64"  rx="7"/>
+                  <rect x="64"  y="24" width="14" height="92"  rx="7"/>
+                  <rect x="96"  y="46" width="14" height="48"  rx="7"/>
+                  <rect x="128" y="15" width="14" height="110" rx="7"/>
+                  <rect x="160" y="32" width="14" height="76"  rx="7"/>
+                  <rect x="192" y="55" width="14" height="30"  rx="7"/>
+                  <rect x="224" y="26" width="14" height="88"  rx="7"/>
+                  <rect x="256" y="8"  width="14" height="124" rx="7"/>
+                  <rect x="288" y="40" width="14" height="60"  rx="7"/>
+                  <rect x="320" y="50" width="14" height="40"  rx="7"/>
+                  <rect x="352" y="22" width="14" height="96"  rx="7"/>
+                  <rect x="384" y="35" width="14" height="70"  rx="7"/>
+                  <rect x="416" y="53" width="14" height="34"  rx="7"/>
+                  <rect x="448" y="12" width="14" height="116" rx="7"/>
+                  <rect x="480" y="28" width="14" height="84"  rx="7"/>
+                  <rect x="512" y="44" width="14" height="52"  rx="7"/>
+                  <rect x="544" y="6"  width="14" height="128" rx="7"/>
+                  <rect x="576" y="36" width="14" height="68"  rx="7"/>
+                  <rect x="608" y="48" width="14" height="44"  rx="7"/>
+                  <rect x="640" y="20" width="14" height="100" rx="7"/>
+                  <rect x="672" y="41" width="14" height="58"  rx="7"/>
+                  <rect x="704" y="25" width="14" height="90"  rx="7"/>
+                  <rect x="736" y="51" width="14" height="38"  rx="7"/>
+                  <rect x="768" y="34" width="14" height="72"  rx="7"/>
+                  <rect x="800" y="17" width="14" height="106" rx="7"/>
+                  <rect x="832" y="45" width="14" height="50"  rx="7"/>
+                  <rect x="864" y="30" width="14" height="80"  rx="7"/>
+                  <rect x="896" y="54" width="14" height="32"  rx="7"/>
+                  <rect x="928" y="39" width="14" height="62"  rx="7"/>
+                </g>
+              </svg>
+            </div>
+            <div class="gast">
+              <div class="gastfoto">Gastfoto</div>
+              <div>
+                <p class="gastname" style="margin:0;">Name der Gästin / des Gasts</p>
+                <p class="gastrolle" style="margin:0;">Rolle · Unternehmen</p>
+              </div>
+            </div>
+            <div class="k-fuss">
+              <img src="../assets/logo/vtm-logo-weiss.png" alt="VersicherungsTech Magazin" width="233" height="48" loading="lazy" style="height:48px;width:auto;">
+              <p class="k-mono">versicherungstech-magazin.de</p>
+            </div>
+          </div>
+        </div>
+        <figcaption class="demozeile">Demonstrationsinhalt des Design Systems · Originalmaß 1080 × 1080 px</figcaption>
+      </figure>
+      <aside class="regeln" aria-label="Kurzregeln Podcast-Ausschnitt">
+        <h3>Kurzregeln</h3>
+        <ul>
+          <li><strong>Episodentitel maximal 10 Wörter;</strong> keine Inhaltszusammenfassung auf der Fläche.</li>
+          <li><strong>Insurance Monday nennen</strong> — Podcast-Marke und VTM-Absender gehören beide auf die Fläche.</li>
+          <li><strong>Wellenform statisch</strong> und dezent in Electric; keine Animationen, keine Effekte.</li>
+          <li><strong>Gast-Platz:</strong> Foto, Name, Rolle — nur mit Freigabe der Person.</li>
+        </ul>
+        <div class="verbote">
+          <h4>Verbote</h4>
+          <ul>
+            <li>Clickbait</li>
+            <li>Stockfotos</li>
+            <li>Textwände</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ============ Format · Karussell ============ -->
+  <section class="format" aria-labelledby="f-karussell">
+    <div class="format-kopf">
+      <p class="kicker">Format</p>
+      <h2 id="f-karussell">Karussell — Titel + Innenseiten</h2>
+      <p class="spez">1080 × 1350 px je Seite · 4:5 · hier: Titel, Seite 2 und Schlussseite von 4</p>
+    </div>
+    <div class="format-grid">
+      <figure class="vorschau">
+        <div class="karussell-reihe" tabindex="0" role="group" aria-label="Drei Beispielseiten des Karussells, horizontal scrollbar">
+          <!-- Titelseite -->
+          <div class="buehne">
+            <div class="komposition k-kar">
+              <p class="k-label">Karussell · Titelseite</p>
+              <p class="these">Drei Prüffragen vor jedem KI-Projekt im Bestand</p>
+              <div class="k-fuss">
+                <img src="../assets/logo/vtm-logo-farbe.png" alt="VersicherungsTech Magazin" width="296" height="52" loading="lazy" style="height:52px;width:auto;">
+                <p class="weiter" aria-hidden="true">→</p>
+              </div>
+            </div>
+          </div>
+          <!-- Innenseite · Punkt 01 -->
+          <div class="buehne">
+            <div class="komposition k-kar">
+              <p class="k-label">Seite 2 von 4</p>
+              <p class="nummer" aria-hidden="true">01</p>
+              <p class="punkt">Wie vollständig sind die Bestandsdaten wirklich?</p>
+              <p class="erlaeuterung">Ohne belastbare Datenbasis lässt sich keine Automatisierungsquote seriös planen.</p>
+              <div class="k-fuss">
+                <p class="k-mono">versicherungstech-magazin.de</p>
+                <p class="weiter" aria-hidden="true">→</p>
+              </div>
+            </div>
+          </div>
+          <!-- Schlussseite · Handlung -->
+          <div class="buehne">
+            <div class="komposition k-kar">
+              <p class="k-label">Schlussseite · Handlung</p>
+              <p class="handlung">Die vollständige Analyse:<span class="ziel">versicherungstech-magazin.de</span></p>
+              <div class="k-fuss">
+                <img src="../assets/logo/vtm-logo-farbe.png" alt="VersicherungsTech Magazin" width="296" height="52" loading="lazy" style="height:52px;width:auto;">
+              </div>
+            </div>
+          </div>
+        </div>
+        <figcaption class="demozeile">Demonstrationsinhalt des Design Systems · gezeigt: Seiten 1, 2 und 4 — Seite 3 trägt Punkt 02</figcaption>
+      </figure>
+      <aside class="regeln" aria-label="Kurzregeln Karussell">
+        <h3>Kurzregeln</h3>
+        <ul>
+          <li><strong>EIN Punkt pro Seite,</strong> maximal 20 Wörter samt Erläuterung.</li>
+          <li><strong>Nummern nur bei echter Reihenfolge</strong> — die Punkte bauen aufeinander auf, 01 kommt vor 02.</li>
+          <li><strong>Letzte Seite = Handlung:</strong> „Analyse auf versicherungstech-magazin.de" — genau eine.</li>
+          <li><strong>Absender sichtbar</strong> auf Titel- und Schlussseite.</li>
+        </ul>
+        <div class="verbote">
+          <h4>Verbote</h4>
+          <ul>
+            <li>Clickbait</li>
+            <li>Nummern ohne Reihenfolge</li>
+            <li>Textwände</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ============ Format · Partnerschaft/Sponsored ============ -->
+  <section class="format umgekehrt" aria-labelledby="f-partner">
+    <div class="format-kopf">
+      <p class="kicker">Format</p>
+      <h2 id="f-partner">Partnerschaft / Sponsored</h2>
+      <p class="spez">1080 × 1080 px · 1:1 · Kennzeichnung immer zuerst</p>
+    </div>
+    <div class="format-grid">
+      <figure class="vorschau">
+        <div class="buehne quadrat">
+          <div class="komposition k-partner">
+            <div class="kennzeichnung">
+              <p class="k-label">Anzeige · in Partnerschaft mit [Partnername]</p>
+              <span class="k-mono">Sponsored Content · Kennzeichnung nach §6 TMG-Logik</span>
+            </div>
+            <p class="aussage">Gemeinsame Fachanalyse: Automatisierung in der Kfz-Schadensteuerung</p>
+            <div class="logozone">Partnerlogo-Zone</div>
+            <div class="k-fuss" style="margin-top:0;">
+              <img src="../assets/logo/vtm-logo-farbe.png" alt="VersicherungsTech Magazin" width="250" height="44" loading="lazy" style="height:44px;width:auto;">
+              <p class="k-mono">versicherungstech-magazin.de</p>
+            </div>
+          </div>
+        </div>
+        <figcaption class="demozeile">Demonstrationsinhalt des Design Systems · Originalmaß 1080 × 1080 px</figcaption>
+      </figure>
+      <aside class="regeln" aria-label="Kurzregeln Partnerschaft">
+        <h3>Kurzregeln</h3>
+        <ul>
+          <li><strong>Kennzeichnung zuerst:</strong> „Anzeige · in Partnerschaft mit …" steht oben, vor jedem Inhalt.</li>
+          <li><strong>EINE Aussage,</strong> maximal 12 Wörter; Partnerlogo in der definierten Zone, nie im Titel.</li>
+          <li><strong>Beide Absender sichtbar:</strong> Partnerlogo-Zone und VTM-Logo mit Domain.</li>
+          <li><strong>Zahlen des Partners</strong> nur mit Quelle in Gold — sonst entfällt die Zahl.</li>
+        </ul>
+        <div class="verbote">
+          <h4>Verbote</h4>
+          <ul>
+            <li>Clickbait</li>
+            <li>Verdeckte Werbung</li>
+            <li>Textwände</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+</main>
+
+<footer class="abschluss">
+  <div class="rahmen">
+    <div>
+      <h2>Fragen zu den Formaten?</h2>
+      <p>Vorlagen und Freigaben laufen über die Redaktion: <a href="mailto:info@versicherungstech-magazin.de">info@versicherungstech-magazin.de</a></p>
+    </div>
+    <p class="impressum">
+      VersicherungsTech Media UG (haftungsbeschränkt) · Moitzfeld 17 · 51429 Bergisch Gladbach<br>
+      HRB 126738 Amtsgericht Köln · Geschäftsführer: Maximilian Hempel<br>
+      versicherungstech-magazin.de
+    </p>
+  </div>
+</footer>
+</body>
+</html>

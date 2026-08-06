@@ -1,0 +1,380 @@
+/* =============================================================
+   VTM DESIGN SYSTEM 5.0 · SIGNAL
+   tokens.css – verbindliche Gestaltungs-Token für alle Kanäle
+   =============================================================
+   Drei Ebenen:
+     1. Primitive Token   (--vtm-*)      Rohwerte, nie direkt in
+                                         Komponenten verwenden
+     2. Semantische Token (--sem-*)      Bedeutung, nicht Aussehen
+     3. Komponenten-Token (--btn-*, …)   pro Bauteil, leiten sich
+                                         ausschließlich aus
+                                         semantischen Token ab
+   Kontrastangaben beziehen sich auf WCAG 2.2 (AA: 4,5:1 Text,
+   3:1 große Schrift/UI). Alle als „Text“ markierten Werte sind
+   auf Weiß bzw. Nachtblau nachgerechnet.
+   ============================================================= */
+
+:root {
+  /* -----------------------------------------------------------
+     1 · PRIMITIVE TOKEN
+     ----------------------------------------------------------- */
+
+  /* Nachtblau – Kern der Marke. Textfarbe und kompakter Anker,
+     keine langen Uniflächen. */
+  --vtm-nacht-950: #081226;
+  --vtm-nacht-900: #0D1C3C;   /* Kernfarbe · 16,8:1 auf Weiß */
+  --vtm-nacht-800: #142857;
+  --vtm-nacht-700: #1D3572;
+  --vtm-nacht-600: #28448D;
+
+  /* Electric – Aktivität, Auswahl, Daten, Interaktion. */
+  --vtm-electric-700: #173BC4; /* Text/Link · 8,5:1 auf Weiß */
+  --vtm-electric-600: #1F4EFF; /* Kernfarbe · 5,85:1 auf Weiß */
+  --vtm-electric-500: #4A6FFF;
+  --vtm-electric-400: #7C96FF; /* auf Nachtblau 6,1:1 */
+  --vtm-electric-300: #A9BAFF;
+  --vtm-electric-200: #CDD9FF;
+  --vtm-electric-100: #E2EAFF;
+  --vtm-electric-050: #F0F4FF;
+
+  /* Eisblau – trägt zusammen mit Weiß den Großteil der Flächen. */
+  --vtm-eis-050: #F7FAFE;
+  --vtm-eis-100: #EFF4FC;
+  --vtm-eis-200: #E3EBF8;
+  --vtm-eis-300: #D3DFF2;
+  --vtm-eis-400: #BCCDE8;
+
+  /* Kühle Neutraltöne – Sekundärtext, Linien, ruhige Flächen. */
+  --vtm-neutral-700: #3A4763;  /* Text · 9,3:1 auf Weiß */
+  --vtm-neutral-500: #5C6980;  /* Text · 5,5:1 auf Weiß */
+  --vtm-neutral-400: #8791A3;  /* nur große Schrift/Deko */
+  --vtm-neutral-300: #B6BFCF;
+  --vtm-neutral-200: #D5DBE6;
+  --vtm-neutral-100: #E8ECF2;
+  --vtm-neutral-050: #F4F6FA;
+
+  /* Gold – ausschließlich Beleg, Quelle, verifizierter Wert.
+     Keine Schmuckfarbe. */
+  --vtm-gold-700: #8A6512;     /* Text · 5,3:1 auf Weiß */
+  --vtm-gold-600: #A87D18;     /* große Schrift/Grafik · 3,7:1 */
+  --vtm-gold-500: #C9A035;     /* auf Nachtblau 6,9:1 */
+  --vtm-gold-400: #E7C878;     /* auf Nachtblau 10,4:1 */
+  --vtm-gold-100: #F7EFD8;
+  --vtm-gold-050: #FBF7EA;
+
+  /* Coral – nur Fehler, Ausschluss, Risiko. */
+  --vtm-coral-700: #A63A24;    /* Text · 6,5:1 auf Weiß */
+  --vtm-coral-600: #C24B33;    /* Text · 4,8:1 auf Weiß */
+  --vtm-coral-500: #E06A50;    /* nur Grafik/Icon groß */
+  --vtm-coral-100: #FCE9E4;
+  --vtm-coral-050: #FEF4F1;
+
+  /* Mint – nur Bestätigung, Erfolg, Zusage. */
+  --vtm-mint-700: #0C6B4B;     /* Text · 6,5:1 auf Weiß */
+  --vtm-mint-600: #128760;     /* Text · 4,5:1 auf Weiß */
+  --vtm-mint-500: #2BA57C;     /* nur Grafik/Icon groß */
+  --vtm-mint-100: #DFF4EB;
+  --vtm-mint-050: #F0FAF5;
+
+  --vtm-weiss: #FFFFFF;
+  --vtm-papier: #FCFDFF;
+
+  /* Schrift – Familien.
+     Schibsted Grotesk: Display/Headline (journalistische Grotesk)
+     Inter:             UI und Fließtext
+     Newsreader:        redaktionelle Serifenstimme
+     IBM Plex Mono:     Quellen, Daten, Status, Zeit */
+  --vtm-font-display: "Schibsted Grotesk", "Arial Black", "Segoe UI", Arial, sans-serif;
+  --vtm-font-text: "Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --vtm-font-serif: "Newsreader", Georgia, "Times New Roman", serif;
+  --vtm-font-mono: "IBM Plex Mono", "Consolas", "Courier New", monospace;
+
+  /* Schriftgrößen (rem; 1rem = 16px). Displaygrößen skalieren
+     responsiv über clamp(). */
+  --vtm-size-2xs: 0.6875rem;   /* 11 · nur Mono-Meta in Grafiken */
+  --vtm-size-xs: 0.75rem;      /* 12 · Caption, Quellenzeile */
+  --vtm-size-s: 0.875rem;      /* 14 · UI kompakt, Tabellen */
+  --vtm-size-m: 1rem;          /* 16 · UI-Standard, Fließtext */
+  --vtm-size-l: 1.125rem;      /* 18 · Lesetext Artikel, Lead */
+  --vtm-size-xl: 1.25rem;      /* 20 · H5, Einstieg */
+  --vtm-size-2xl: 1.5rem;      /* 24 · H4 */
+  --vtm-size-3xl: 1.875rem;    /* 30 · H3 */
+  --vtm-size-4xl: clamp(1.9rem, 1.4rem + 2vw, 2.375rem);  /* H2 */
+  --vtm-size-5xl: clamp(2.2rem, 1.6rem + 3vw, 3rem);      /* H1 */
+  --vtm-size-6xl: clamp(2.6rem, 1.8rem + 4.5vw, 3.75rem); /* Display */
+  --vtm-size-7xl: clamp(3rem, 2rem + 6vw, 4.75rem);       /* Display XL */
+
+  /* Zeilenhöhen */
+  --vtm-leading-display: 1.06;
+  --vtm-leading-heading: 1.18;
+  --vtm-leading-ui: 1.45;
+  --vtm-leading-text: 1.6;
+  --vtm-leading-artikel: 1.7;
+
+  /* Laufweiten */
+  --vtm-tracking-display: -0.022em;
+  --vtm-tracking-heading: -0.012em;
+  --vtm-tracking-text: 0;
+  --vtm-tracking-mono: 0.01em;
+  --vtm-tracking-label: 0.08em;   /* Versal-Labels, immer mit
+                                     text-transform: uppercase */
+
+  /* Maximale Textbreiten */
+  --vtm-measure-artikel: 42rem;   /* ≈ 66–72 Zeichen Serif 18px */
+  --vtm-measure-text: 38rem;      /* UI-Beschreibungen */
+  --vtm-measure-lead: 34rem;      /* Leads, Intros */
+  --vtm-measure-display: 22ch;    /* Headlines */
+
+  /* Abstände (4-px-Basis) */
+  --vtm-space-2: 0.125rem;
+  --vtm-space-4: 0.25rem;
+  --vtm-space-8: 0.5rem;
+  --vtm-space-12: 0.75rem;
+  --vtm-space-16: 1rem;
+  --vtm-space-24: 1.5rem;
+  --vtm-space-32: 2rem;
+  --vtm-space-48: 3rem;
+  --vtm-space-64: 4rem;
+  --vtm-space-96: 6rem;
+  --vtm-space-128: 8rem;
+
+  /* Radien */
+  --vtm-radius-s: 0.25rem;    /* Chips, Marker */
+  --vtm-radius-m: 0.5rem;     /* Buttons, Eingaben */
+  --vtm-radius-l: 0.75rem;    /* Karten, Datenboxen */
+  --vtm-radius-xl: 1.25rem;   /* Medien, große Flächen */
+  --vtm-radius-rund: 999px;
+
+  /* Linien */
+  --vtm-linie-haar: 1px solid rgb(13 28 60 / 0.12);
+  --vtm-linie-mittel: 1px solid rgb(13 28 60 / 0.20);
+  --vtm-linie-invers: 1px solid rgb(255 255 255 / 0.22);
+
+  /* Schatten – kühl, blaustichig, nie schwarz-hart */
+  --vtm-schatten-s: 0 1px 2px rgb(13 28 60 / 0.06);
+  --vtm-schatten-m: 0 4px 16px rgb(13 28 60 / 0.08);
+  --vtm-schatten-l: 0 12px 40px rgb(13 28 60 / 0.13);
+
+  /* Bewegung */
+  --vtm-dauer-micro: 120ms;   /* Hover, Taste, Fokus */
+  --vtm-dauer-kurz: 200ms;    /* Zustandswechsel */
+  --vtm-dauer-mittel: 320ms;  /* Ein-/Ausblenden, Panels */
+  --vtm-dauer-lang: 560ms;    /* narrative Übergänge */
+  --vtm-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --vtm-ease-eintritt: cubic-bezier(0.16, 1, 0.3, 1);
+  --vtm-ease-austritt: cubic-bezier(0.4, 0, 1, 1);
+
+  /* Ebenen */
+  --vtm-ebene-inhalt: 0;
+  --vtm-ebene-sticky: 100;
+  --vtm-ebene-dropdown: 400;
+  --vtm-ebene-overlay: 800;
+  --vtm-ebene-dialog: 900;
+  --vtm-ebene-toast: 1000;
+
+  /* -----------------------------------------------------------
+     2 · SEMANTISCHE TOKEN
+     ----------------------------------------------------------- */
+
+  /* Text */
+  --sem-text: var(--vtm-nacht-900);
+  --sem-text-sekundaer: var(--vtm-neutral-700);
+  --sem-text-gedaempft: var(--vtm-neutral-500);
+  --sem-text-invers: var(--vtm-weiss);
+  --sem-text-invers-sekundaer: rgb(255 255 255 / 0.78);
+  --sem-text-link: var(--vtm-electric-700);
+  --sem-text-link-invers: var(--vtm-electric-400);
+
+  /* Hintergrund und Fläche */
+  --sem-flaeche-seite: var(--vtm-weiss);
+  --sem-flaeche-soft: var(--vtm-eis-050);
+  --sem-flaeche-eis: var(--vtm-eis-100);
+  --sem-flaeche-anker: var(--vtm-nacht-900);   /* kompakter dunkler
+                                                  Anker, nie ganze
+                                                  Seitenläufe */
+  --sem-flaeche-karte: var(--vtm-weiss);
+  --sem-flaeche-erhoben: var(--vtm-weiss);
+
+  /* Aktion */
+  --sem-aktion: var(--vtm-electric-600);
+  --sem-aktion-hover: var(--vtm-electric-700);
+  --sem-aktion-aktiv: var(--vtm-nacht-800);
+  --sem-aktion-flaeche: var(--vtm-electric-050);
+  --sem-aktion-text-auf: var(--vtm-weiss);
+
+  /* Auswahl und aktiver Zustand */
+  --sem-auswahl-flaeche: var(--vtm-electric-100);
+  --sem-auswahl-linie: var(--vtm-electric-600);
+  --sem-auswahl-text: var(--vtm-electric-700);
+
+  /* Beleg (Gold) – Quelle, Verifizierung, entscheidender Wert */
+  --sem-beleg-text: var(--vtm-gold-700);
+  --sem-beleg-marke: var(--vtm-gold-500);
+  --sem-beleg-marke-invers: var(--vtm-gold-400);
+  --sem-beleg-flaeche: var(--vtm-gold-050);
+  --sem-beleg-linie: var(--vtm-gold-500);
+
+  /* Erfolg / Warnung / Fehler */
+  --sem-erfolg-text: var(--vtm-mint-700);
+  --sem-erfolg-flaeche: var(--vtm-mint-050);
+  --sem-erfolg-linie: var(--vtm-mint-500);
+  --sem-warnung-text: var(--vtm-gold-700);
+  --sem-warnung-flaeche: var(--vtm-gold-050);
+  --sem-fehler-text: var(--vtm-coral-700);
+  --sem-fehler-flaeche: var(--vtm-coral-050);
+  --sem-fehler-linie: var(--vtm-coral-600);
+
+  /* Fokus – immer sichtbar, nie entfernt */
+  --sem-fokus-ring: 0 0 0 2px var(--vtm-weiss), 0 0 0 4px var(--vtm-electric-600);
+  --sem-fokus-ring-invers: 0 0 0 2px var(--vtm-nacht-900), 0 0 0 4px var(--vtm-electric-400);
+
+  /* Deaktiviert */
+  --sem-deaktiviert-text: var(--vtm-neutral-400);
+  --sem-deaktiviert-flaeche: var(--vtm-neutral-050);
+  --sem-deaktiviert-linie: var(--vtm-neutral-200);
+
+  /* -----------------------------------------------------------
+     3 · KOMPONENTEN-TOKEN
+     ----------------------------------------------------------- */
+
+  /* Button */
+  --btn-radius: var(--vtm-radius-m);
+  --btn-hoehe: 2.75rem;                /* 44 px Touchfläche */
+  --btn-hoehe-kompakt: 2.25rem;        /* nur Desktop-Dichte */
+  --btn-pad-x: 1.25rem;
+  --btn-font: 600 var(--vtm-size-m)/1 var(--vtm-font-text);
+  --btn-primaer-bg: var(--sem-aktion);
+  --btn-primaer-bg-hover: var(--sem-aktion-hover);
+  --btn-primaer-text: var(--sem-aktion-text-auf);
+  --btn-sekundaer-linie: var(--vtm-linie-mittel);
+  --btn-sekundaer-text: var(--sem-text);
+  --btn-sekundaer-bg-hover: var(--sem-flaeche-soft);
+
+  /* Eingabefeld */
+  --input-radius: var(--vtm-radius-m);
+  --input-hoehe: 2.75rem;
+  --input-bg: var(--vtm-weiss);
+  --input-linie: var(--vtm-linie-mittel);
+  --input-linie-fokus: var(--vtm-electric-600);
+  --input-linie-fehler: var(--vtm-coral-600);
+  --input-text: var(--sem-text);
+  --input-platzhalter: var(--vtm-neutral-500);
+  --input-label-font: 500 var(--vtm-size-s)/1.3 var(--vtm-font-text);
+
+  /* Navigation */
+  --nav-hoehe: 4rem;
+  --nav-bg: rgb(255 255 255 / 0.92);
+  --nav-linie: var(--vtm-linie-haar);
+  --nav-text: var(--sem-text);
+  --nav-aktiv: var(--sem-auswahl-text);
+  --nav-aktiv-marker: 2px solid var(--sem-auswahl-linie);
+
+  /* Karte */
+  --karte-bg: var(--sem-flaeche-karte);
+  --karte-radius: var(--vtm-radius-l);
+  --karte-linie: var(--vtm-linie-haar);
+  --karte-schatten-hover: var(--vtm-schatten-m);
+  --karte-pad: var(--vtm-space-24);
+
+  /* Artikel */
+  --artikel-messung: var(--vtm-measure-artikel);
+  --artikel-font: 400 var(--vtm-size-l)/var(--vtm-leading-artikel) var(--vtm-font-serif);
+  --artikel-h-font: 700 var(--vtm-size-2xl)/var(--vtm-leading-heading) var(--vtm-font-display);
+  --artikel-meta-font: 500 var(--vtm-size-xs)/1.4 var(--vtm-font-mono);
+  --artikel-zitat-linie: 3px solid var(--vtm-electric-600);
+
+  /* Datenbox */
+  --datenbox-bg: var(--vtm-eis-050);
+  --datenbox-radius: var(--vtm-radius-l);
+  --datenbox-wert-font: 700 var(--vtm-size-4xl)/1.05 var(--vtm-font-display);
+  --datenbox-quelle-font: 500 var(--vtm-size-xs)/1.5 var(--vtm-font-mono);
+  --datenbox-quelle-text: var(--sem-beleg-text);
+
+  /* Diagramm */
+  --chart-standard: var(--vtm-electric-600);
+  --chart-sekundaer: var(--vtm-electric-300);
+  --chart-tertiaer: var(--vtm-nacht-700);
+  --chart-beleg: var(--vtm-gold-500);       /* nur der entscheidende Wert */
+  --chart-raster: var(--vtm-neutral-100);
+  --chart-achse-text: var(--vtm-neutral-500);
+  --chart-label-font: 500 var(--vtm-size-xs)/1.3 var(--vtm-font-mono);
+
+  /* Dialog */
+  --dialog-bg: var(--vtm-weiss);
+  --dialog-radius: var(--vtm-radius-xl);
+  --dialog-schatten: var(--vtm-schatten-l);
+  --dialog-schleier: rgb(8 18 38 / 0.55);
+  --dialog-max-breite: 34rem;
+
+  /* Tooltip */
+  --tooltip-bg: var(--vtm-nacht-900);
+  --tooltip-text: var(--vtm-weiss);
+  --tooltip-radius: var(--vtm-radius-s);
+  --tooltip-font: 500 var(--vtm-size-xs)/1.4 var(--vtm-font-text);
+
+  /* Tabelle */
+  --tabelle-kopf-bg: var(--vtm-eis-050);
+  --tabelle-kopf-font: 600 var(--vtm-size-s)/1.3 var(--vtm-font-text);
+  --tabelle-zeile-linie: var(--vtm-linie-haar);
+  --tabelle-zeile-hover: var(--vtm-eis-050);
+  --tabelle-zahl-font: 500 var(--vtm-size-s)/1.3 var(--vtm-font-mono);
+
+  /* Tabs */
+  --tabs-linie: var(--vtm-linie-haar);
+  --tabs-aktiv-marker: 2px solid var(--vtm-electric-600);
+  --tabs-aktiv-text: var(--sem-auswahl-text);
+  --tabs-text: var(--sem-text-sekundaer);
+
+  /* Status */
+  --status-radius: var(--vtm-radius-rund);
+  --status-font: 600 var(--vtm-size-xs)/1 var(--vtm-font-mono);
+  --status-pad: 0.3125rem 0.625rem;
+
+  /* Newsletter (E-Mail-sichere Entsprechungen, s. Dokumentation) */
+  --newsletter-breite: 600px;
+  --newsletter-pad: 24px;
+  --newsletter-akzent: var(--vtm-electric-600);
+
+  /* Dokument (Brief, Angebot, Studie) */
+  --dokument-rand: 22mm;
+  --dokument-font: 400 10.5pt/1.55 var(--vtm-font-text);
+  --dokument-h1: 700 20pt/1.15 var(--vtm-font-display);
+  --dokument-meta-font: 500 8.5pt/1.4 var(--vtm-font-mono);
+
+  /* Präsentation (16:9-Referenzwerte in pt) */
+  --praes-titel: 700 40pt/1.05 var(--vtm-font-display);
+  --praes-h: 700 28pt/1.15 var(--vtm-font-display);
+  --praes-text: 400 16pt/1.45 var(--vtm-font-text);
+  --praes-meta: 500 11pt/1.3 var(--vtm-font-mono);
+}
+
+/* ---------------------------------------------------------------
+   Reduzierte Bewegung: automatische Bewegung aus, Übergänge minimal
+   --------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --vtm-dauer-micro: 1ms;
+    --vtm-dauer-kurz: 1ms;
+    --vtm-dauer-mittel: 1ms;
+    --vtm-dauer-lang: 1ms;
+  }
+  *, *::before, *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---------------------------------------------------------------
+   Druck: Graustufen-tauglich, keine Flächenverläufe
+   --------------------------------------------------------------- */
+@media print {
+  :root {
+    --sem-flaeche-soft: #FFFFFF;
+    --sem-flaeche-eis: #FFFFFF;
+    --vtm-schatten-s: none;
+    --vtm-schatten-m: none;
+    --vtm-schatten-l: none;
+  }
+}

@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Was die EU-KI-Verordnung für Schadenprozesse bedeutet · VersicherungsTech Magazin</title>
+<meta name="description" content="Seit dem 2. August 2026 gelten die Hochrisiko-Pflichten der KI-Verordnung. Ob automatisierte Schadenbearbeitung darunter fällt, ist offener, als viele Projektpläne unterstellen. Eine Einordnung.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Schibsted+Grotesk:wght@500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../tokens.css">
+<style>
+  /* ---------- Basis ---------- */
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--sem-flaeche-seite);
+    color: var(--sem-text);
+    font: 400 var(--vtm-size-m)/var(--vtm-leading-text) var(--vtm-font-text);
+    -webkit-font-smoothing: antialiased;
+    text-wrap: pretty;
+  }
+  img { max-width: 100%; height: auto; display: block; }
+  a { color: var(--sem-text-link); text-underline-offset: 0.15em; }
+  a:hover { color: var(--sem-aktion-hover); }
+  :focus-visible {
+    outline: none;
+    box-shadow: var(--sem-fokus-ring);
+    border-radius: var(--vtm-radius-s);
+  }
+  .site-fuss :focus-visible { box-shadow: var(--sem-fokus-ring-invers); }
+
+  .skip-link {
+    position: absolute; left: -9999px; top: 0;
+    background: var(--sem-flaeche-anker); color: var(--sem-text-invers);
+    padding: var(--vtm-space-12) var(--vtm-space-24);
+    font: 600 var(--vtm-size-s)/1 var(--vtm-font-text);
+    z-index: var(--vtm-ebene-toast);
+    border-radius: 0 0 var(--vtm-radius-m) 0;
+  }
+  .skip-link:focus-visible { left: 0; }
+
+  .shell {
+    max-width: 72rem;
+    margin-inline: auto;
+    padding-inline: clamp(1rem, 4vw, 2.5rem);
+  }
+
+  .label {
+    font: 600 var(--vtm-size-xs)/1.2 var(--vtm-font-mono);
+    letter-spacing: var(--vtm-tracking-label);
+    text-transform: uppercase;
+  }
+  .mono {
+    font-family: var(--vtm-font-mono);
+    letter-spacing: var(--vtm-tracking-mono);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---------- Systemlabel + Kopf ---------- */
+  .system-label {
+    border-bottom: var(--vtm-linie-haar);
+    padding-block: var(--vtm-space-8);
+    color: var(--sem-text-gedaempft);
+    font: 500 var(--vtm-size-xs)/1.4 var(--vtm-font-mono);
+    letter-spacing: var(--vtm-tracking-mono);
+  }
+  .site-kopf {
+    border-bottom: var(--vtm-linie-haar);
+    background: var(--sem-flaeche-seite);
+  }
+  .site-kopf .shell {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: var(--vtm-space-24);
+    min-height: var(--nav-hoehe);
+  }
+  .site-kopf nav ul {
+    display: flex; gap: var(--vtm-space-8);
+    list-style: none; margin: 0; padding: 0;
+  }
+  .site-kopf nav a {
+    display: inline-flex; align-items: center;
+    min-height: 2.75rem;
+    padding-inline: var(--vtm-space-12);
+    color: var(--nav-text);
+    font: 500 var(--vtm-size-s)/1 var(--vtm-font-text);
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+  }
+  .site-kopf nav a:hover { color: var(--sem-aktion-hover); }
+  .site-kopf nav a[aria-current="page"] {
+    color: var(--nav-aktiv);
+    border-bottom: var(--nav-aktiv-marker);
+  }
+  @media (max-width: 40rem) {
+    .site-kopf nav li:nth-child(3) { display: none; }
+  }
+
+  /* ---------- Artikelkopf ---------- */
+  .artikel-kopf { padding-block: clamp(2.5rem, 6vw, 5rem) 0; }
+  .kategorie {
+    display: inline-flex; align-items: center; gap: var(--vtm-space-12);
+    color: var(--sem-auswahl-text);
+    margin-bottom: var(--vtm-space-24);
+  }
+  .kategorie::before {
+    content: "";
+    width: 1.5rem; height: 2px;
+    background: var(--sem-auswahl-linie);
+  }
+  .artikel-kopf h1 {
+    margin: 0;
+    max-width: var(--vtm-measure-display);
+    font: 800 var(--vtm-size-6xl)/var(--vtm-leading-display) var(--vtm-font-display);
+    letter-spacing: var(--vtm-tracking-display);
+  }
+  .unterzeile {
+    margin: var(--vtm-space-24) 0 0;
+    max-width: var(--vtm-measure-lead);
+    color: var(--sem-text-sekundaer);
+    font: 400 var(--vtm-size-xl)/var(--vtm-leading-ui) var(--vtm-font-text);
+  }
+  .metazeile {
+    display: flex; flex-wrap: wrap; align-items: center;
+    gap: var(--vtm-space-12) var(--vtm-space-16);
+    margin-top: var(--vtm-space-32);
+    padding-block: var(--vtm-space-16);
+    border-top: var(--vtm-linie-haar);
+    border-bottom: var(--vtm-linie-haar);
+    font: var(--artikel-meta-font);
+    font-family: var(--vtm-font-mono);
+    color: var(--sem-text-sekundaer);
+    font-variant-numeric: tabular-nums;
+  }
+  .metazeile .autor {
+    display: inline-flex; align-items: center; gap: var(--vtm-space-8);
+    color: var(--sem-text);
+  }
+  .metazeile img {
+    width: 2rem; height: 2rem;
+    border-radius: var(--vtm-radius-rund);
+    object-fit: cover; object-position: top;
+  }
+  .metazeile .trenner { color: var(--vtm-neutral-300); }
+
+  /* ---------- Aufmacher ---------- */
+  .aufmacher { margin: clamp(2rem, 5vw, 3.5rem) 0 0; }
+  .aufmacher img { width: 100%; border-radius: var(--vtm-radius-xl); }
+  .aufmacher figcaption {
+    display: flex; flex-wrap: wrap; justify-content: space-between;
+    gap: var(--vtm-space-8) var(--vtm-space-24);
+    margin-top: var(--vtm-space-12);
+    color: var(--sem-text-gedaempft);
+    font-size: var(--vtm-size-s);
+  }
+  .aufmacher .credit {
+    font: 500 var(--vtm-size-xs)/1.5 var(--vtm-font-mono);
+    letter-spacing: var(--vtm-tracking-mono);
+  }
+
+  /* ---------- Artikel-Body: Textspalte links der Mitte, Ausbrüche nach rechts ---------- */
+  .artikel-body { padding-block: clamp(2.5rem, 6vw, 4.5rem) 0; }
+  .artikel-body > * { max-width: var(--artikel-messung); }
+  @media (min-width: 64rem) {
+    .artikel-body {
+      display: grid;
+      grid-template-columns: 8rem minmax(0, var(--artikel-messung)) minmax(0, 1fr);
+      column-gap: var(--vtm-space-48);
+    }
+    .artikel-body > * { grid-column: 2; max-width: none; }
+    .artikel-body > .breit { grid-column: 2 / 4; }
+  }
+  .artikel-body p {
+    margin: 0 0 var(--vtm-space-24);
+    font: var(--artikel-font);
+  }
+  .artikel-body .lead {
+    font: 500 var(--vtm-size-xl)/var(--vtm-leading-text) var(--vtm-font-text);
+    color: var(--sem-text);
+    margin-bottom: var(--vtm-space-48);
+  }
+  .artikel-body h2 {
+    margin: var(--vtm-space-64) 0 var(--vtm-space-24);
+    font: var(--artikel-h-font);
+    letter-spacing: var(--vtm-tracking-heading);
+  }
+  .artikel-body h2::before {
+    content: "";
+    display: block;
+    width: 2rem; height: 2px;
+    background: var(--sem-auswahl-linie);
+    margin-bottom: var(--vtm-space-16);
+  }
+
+  /* ---------- Pull-Quote ---------- */
+  .pullquote {
+    margin: var(--vtm-space-48) 0;
+    padding-left: var(--vtm-space-24);
+    border-left: var(--artikel-zitat-linie);
+  }
+  .pullquote p {
+    margin: 0;
+    font: italic 500 var(--vtm-size-3xl)/1.35 var(--vtm-font-serif);
+    letter-spacing: var(--vtm-tracking-heading);
+    color: var(--sem-text);
+  }
+
+  /* ---------- Belegmarke + Quellenzeile (Signatur) ---------- */
+  .belegmarke {
+    display: block;
+    width: 24px; height: 3px;
+    background: var(--sem-beleg-marke);
+    margin-bottom: var(--vtm-space-8);
+  }
+  .quellenzeile {
+    font: var(--datenbox-quelle-font);
+    font-family: var(--vtm-font-mono);
+    letter-spacing: var(--vtm-tracking-mono);
+    color: var(--sem-beleg-text);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---------- Datenbox ---------- */
+  .datenbox {
+    margin: var(--vtm-space-48) 0;
+    background: var(--datenbox-bg);
+    border-radius: var(--datenbox-radius);
+    padding: clamp(1.5rem, 4vw, 2.5rem);
+    display: grid;
+    gap: var(--vtm-space-24);
+  }
+  @media (min-width: 48rem) {
+    .datenbox { grid-template-columns: 5fr 7fr; align-items: end; }
+  }
+  .datenbox .wert {
+    font: var(--datenbox-wert-font);
+    font-family: var(--vtm-font-display);
+    letter-spacing: var(--vtm-tracking-display);
+    font-variant-numeric: tabular-nums;
+  }
+  .datenbox .einheit {
+    display: block;
+    margin-top: var(--vtm-space-8);
+    font: 600 var(--vtm-size-s)/1.4 var(--vtm-font-text);
+    color: var(--sem-text-sekundaer);
+  }
+  .datenbox .erlaeuterung {
+    font: 400 var(--vtm-size-s)/var(--vtm-leading-text) var(--vtm-font-text);
+    color: var(--sem-text-sekundaer);
+    margin: 0 0 var(--vtm-space-16);
+  }
+
+  /* ---------- Diagramm ---------- */
+  .chart {
+    margin: var(--vtm-space-48) 0;
+    padding: clamp(1.25rem, 3vw, 2rem);
+    border: var(--vtm-linie-haar);
+    border-radius: var(--vtm-radius-l);
+    background: var(--sem-flaeche-karte);
+  }
+  .chart .chart-kopf {
+    display: flex; flex-wrap: wrap; align-items: baseline;
+    justify-content: space-between; gap: var(--vtm-space-8) var(--vtm-space-24);
+    margin-bottom: var(--vtm-space-16);
+  }
+  .chart h3 {
+    margin: 0;
+    font: 700 var(--vtm-size-l)/var(--vtm-leading-heading) var(--vtm-font-display);
+  }
+  .demo-chip {
+    display: inline-block;
+    padding: var(--status-pad);
+    border-radius: var(--status-radius);
+    border: var(--vtm-linie-mittel);
+    color: var(--sem-text-sekundaer);
+    font: var(--status-font);
+    font-family: var(--vtm-font-mono);
+    letter-spacing: var(--vtm-tracking-mono);
+    text-transform: uppercase;
+  }
+  .chart svg { width: 100%; height: auto; }
+  .chart .quellenzeile { margin-top: var(--vtm-space-16); }
+  .chart .untertitel {
+    margin: var(--vtm-space-4) 0 0;
+    font: 400 var(--vtm-size-s)/1.5 var(--vtm-font-text);
+    color: var(--sem-text-gedaempft);
+  }
+
+  /* ---------- Hinweis: Einordnung der Unsicherheit ---------- */
+  .hinweis {
+    margin: var(--vtm-space-48) 0;
+    background: var(--sem-flaeche-eis);
+    border-radius: var(--vtm-radius-l);
+    padding: clamp(1.5rem, 4vw, 2rem);
+  }
+  .hinweis .label { color: var(--sem-text-sekundaer); display: block; margin-bottom: var(--vtm-space-12); }
+  .hinweis h3 {
+    margin: 0 0 var(--vtm-space-12);
+    font: 700 var(--vtm-size-xl)/var(--vtm-leading-heading) var(--vtm-font-display);
+  }
+  .hinweis ul {
+    margin: 0; padding-left: 1.1rem;
+    font: 400 var(--vtm-size-m)/var(--vtm-leading-text) var(--vtm-font-text);
+    color: var(--sem-text-sekundaer);
+  }
+  .hinweis li + li { margin-top: var(--vtm-space-8); }
+
+  /* ---------- Tabelle ---------- */
+  .tabelle-rahmen { overflow-x: auto; margin: var(--vtm-space-32) 0 var(--vtm-space-48); }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 34rem;
+    font-size: var(--vtm-size-s);
+  }
+  caption {
+    text-align: left;
+    padding-bottom: var(--vtm-space-12);
+    font: 700 var(--vtm-size-m)/1.3 var(--vtm-font-display);
+  }
+  th, td {
+    text-align: left;
+    padding: var(--vtm-space-12) var(--vtm-space-16);
+    border-bottom: var(--tabelle-zeile-linie);
+    vertical-align: top;
+  }
+  thead th {
+    background: var(--tabelle-kopf-bg);
+    font: var(--tabelle-kopf-font);
+    font-family: var(--vtm-font-text);
+  }
+  tbody tr:hover { background: var(--tabelle-zeile-hover); }
+  .zahl {
+    text-align: right;
+    font: var(--tabelle-zahl-font);
+    font-family: var(--vtm-font-mono);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  /* ---------- Sponsored-Kennzeichnung (Demo) ---------- */
+  .kennzeichnung-demo {
+    margin: var(--vtm-space-64) 0;
+  }
+  .kennzeichnung-demo h2 { margin-top: 0; }
+  .sponsored-beispiel {
+    border: var(--vtm-linie-haar);
+    border-radius: var(--karte-radius);
+    background: var(--sem-flaeche-soft);
+    padding: var(--karte-pad);
+  }
+  .sponsored-label {
+    display: inline-block;
+    padding: var(--status-pad);
+    border-radius: var(--status-radius);
+    background: var(--vtm-weiss);
+    border: var(--vtm-linie-mittel);
+    color: var(--sem-text-sekundaer);
+    font: var(--status-font);
+    font-family: var(--vtm-font-mono);
+    letter-spacing: var(--vtm-tracking-label);
+    text-transform: uppercase;
+  }
+  .sponsored-beispiel h3 {
+    margin: var(--vtm-space-16) 0 var(--vtm-space-8);
+    font: 700 var(--vtm-size-xl)/var(--vtm-leading-heading) var(--vtm-font-display);
+  }
+  .sponsored-beispiel p {
+    margin: 0;
+    font: 400 var(--vtm-size-s)/var(--vtm-leading-text) var(--vtm-font-text);
+    color: var(--sem-text-sekundaer);
+    max-width: var(--vtm-measure-text);
+  }
+  .demo-unterschrift {
+    margin-top: var(--vtm-space-12);
+    color: var(--sem-text-gedaempft);
+    font: 500 var(--vtm-size-xs)/1.5 var(--vtm-font-mono);
+    letter-spacing: var(--vtm-tracking-mono);
+  }
+
+  /* ---------- Quellenverzeichnis ---------- */
+  .quellen { margin: var(--vtm-space-64) 0 var(--vtm-space-96); }
+  .quellen h2 { margin-top: 0; }
+  .quellen ol {
+    margin: 0; padding: 0;
+    list-style: none;
+    counter-reset: quelle;
+  }
+  .quellen li {
+    counter-increment: quelle;
+    display: grid;
+    grid-template-columns: 2.25rem 1fr;
+    gap: var(--vtm-space-12);
+    padding-block: var(--vtm-space-12);
+    border-bottom: var(--vtm-linie-haar);
+    font: 400 var(--vtm-size-s)/1.6 var(--vtm-font-mono);
+    letter-spacing: var(--vtm-tracking-mono);
+    color: var(--sem-text-sekundaer);
+    font-variant-numeric: tabular-nums;
+  }
+  .quellen li::before {
+    content: counter(quelle, decimal-leading-zero);
+    color: var(--sem-beleg-text);
+    font-weight: 600;
+  }
+
+  /* ---------- Weiterlesen ---------- */
+  .weiterlesen {
+    border-top: var(--vtm-linie-haar);
+    padding-block: clamp(3rem, 8vw, 6rem);
+  }
+  .weiterlesen .label { color: var(--sem-text-sekundaer); display: block; margin-bottom: var(--vtm-space-32); }
+  .teaser-raster { display: grid; gap: var(--vtm-space-32); }
+  @media (min-width: 56rem) {
+    .teaser-raster { grid-template-columns: repeat(12, 1fr); }
+    .teaser-gross { grid-column: 1 / 8; }
+    .teaser-klein { grid-column: 9 / 13; margin-top: var(--vtm-space-64); }
+  }
+  .teaser { position: relative; }
+  .teaser img {
+    border-radius: var(--vtm-radius-l);
+    margin-bottom: var(--vtm-space-16);
+  }
+  .teaser .kategorie { margin-bottom: var(--vtm-space-12); }
+  .teaser h3 { margin: 0 0 var(--vtm-space-8); }
+  .teaser-gross h3 { font: 700 var(--vtm-size-3xl)/var(--vtm-leading-heading) var(--vtm-font-display); letter-spacing: var(--vtm-tracking-heading); }
+  .teaser-klein h3 { font: 700 var(--vtm-size-xl)/var(--vtm-leading-heading) var(--vtm-font-display); }
+  .teaser-klein { border-top: 2px solid var(--sem-text); padding-top: var(--vtm-space-24); }
+  .teaser h3 a { color: inherit; text-decoration: none; }
+  .teaser h3 a::after { content: ""; position: absolute; inset: 0; }
+  .teaser h3 a:hover { color: var(--sem-aktion-hover); }
+  .teaser h3 a:focus-visible { box-shadow: none; }
+  .teaser:has(h3 a:focus-visible) { box-shadow: var(--sem-fokus-ring); border-radius: var(--vtm-radius-s); }
+  .teaser p {
+    margin: 0;
+    color: var(--sem-text-sekundaer);
+    font-size: var(--vtm-size-s);
+    max-width: var(--vtm-measure-text);
+  }
+
+  /* ---------- Newsletter-CTA ---------- */
+  .newsletter-cta { background: var(--sem-flaeche-soft); }
+  .newsletter-cta .shell {
+    padding-block: clamp(3rem, 8vw, 6rem);
+    display: grid; gap: var(--vtm-space-32);
+  }
+  @media (min-width: 56rem) {
+    .newsletter-cta .shell { grid-template-columns: 7fr 5fr; align-items: center; gap: var(--vtm-space-64); }
+  }
+  .newsletter-cta h2 {
+    margin: var(--vtm-space-12) 0;
+    font: 800 var(--vtm-size-4xl)/var(--vtm-leading-heading) var(--vtm-font-display);
+    letter-spacing: var(--vtm-tracking-heading);
+    max-width: var(--vtm-measure-display);
+  }
+  .newsletter-cta .beschreibung {
+    margin: 0 0 var(--vtm-space-16);
+    color: var(--sem-text-sekundaer);
+    max-width: var(--vtm-measure-text);
+  }
+  .newsletter-form label {
+    display: block;
+    font: var(--input-label-font);
+    font-family: var(--vtm-font-text);
+    margin-bottom: var(--vtm-space-8);
+  }
+  .newsletter-form .zeile { display: flex; flex-wrap: wrap; gap: var(--vtm-space-12); }
+  .newsletter-form input[type="email"] {
+    flex: 1 1 14rem;
+    height: var(--input-hoehe);
+    padding-inline: var(--vtm-space-16);
+    border: var(--input-linie);
+    border-radius: var(--input-radius);
+    background: var(--input-bg);
+    color: var(--input-text);
+    font: 400 var(--vtm-size-m)/1 var(--vtm-font-text);
+  }
+  .newsletter-form input[type="email"]::placeholder { color: var(--input-platzhalter); }
+  .newsletter-form input[type="email"]:focus-visible {
+    border-color: var(--input-linie-fokus);
+    box-shadow: var(--sem-fokus-ring);
+  }
+  .btn-primaer {
+    display: inline-flex; align-items: center; justify-content: center;
+    height: var(--btn-hoehe);
+    padding-inline: var(--btn-pad-x);
+    border: 0;
+    border-radius: var(--btn-radius);
+    background: var(--btn-primaer-bg);
+    color: var(--btn-primaer-text);
+    font: var(--btn-font);
+    font-family: var(--vtm-font-text);
+    cursor: pointer;
+    transition: background-color var(--vtm-dauer-micro) var(--vtm-ease-standard);
+  }
+  .btn-primaer:hover { background: var(--btn-primaer-bg-hover); }
+  .btn-primaer:active { background: var(--sem-aktion-aktiv); }
+  .form-hinweis {
+    margin: var(--vtm-space-12) 0 0;
+    font: 500 var(--vtm-size-xs)/1.5 var(--vtm-font-mono);
+    letter-spacing: var(--vtm-tracking-mono);
+    color: var(--sem-text-gedaempft);
+  }
+
+  /* ---------- Footer (kompakter dunkler Anker) ---------- */
+  .site-fuss {
+    background: var(--sem-flaeche-anker);
+    color: var(--sem-text-invers-sekundaer);
+  }
+  .site-fuss .shell {
+    padding-block: var(--vtm-space-48);
+    display: flex; flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--vtm-space-24) var(--vtm-space-48);
+    align-items: flex-start;
+  }
+  .site-fuss p {
+    margin: 0;
+    font: 400 var(--vtm-size-xs)/1.7 var(--vtm-font-mono);
+    letter-spacing: var(--vtm-tracking-mono);
+  }
+  .site-fuss img { margin-bottom: var(--vtm-space-16); }
+  .site-fuss a { color: var(--sem-text-link-invers); }
+  .site-fuss nav { display: flex; gap: var(--vtm-space-16); }
+  .site-fuss nav a {
+    display: inline-flex; align-items: center; min-height: 2.75rem;
+    font: 500 var(--vtm-size-s)/1 var(--vtm-font-text);
+    text-decoration: none;
+  }
+  .site-fuss nav a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<a class="skip-link" href="#inhalt">Zum Inhalt springen</a>
+
+<div class="system-label"><div class="shell">VTM Design System 5.0 · Signal · Beispielseite</div></div>
+
+<header class="site-kopf">
+  <div class="shell">
+    <a href="#" aria-label="VersicherungsTech Magazin – Startseite">
+      <img src="../assets/logo/vtm-logo-farbe.png" alt="VTM – VersicherungsTech Magazin" width="168" height="30">
+    </a>
+    <nav aria-label="Hauptnavigation">
+      <ul>
+        <li><a href="#" aria-current="page">Magazin</a></li>
+        <li><a href="#">Podcast</a></li>
+        <li><a href="#">Briefing</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="inhalt">
+  <article>
+    <header class="artikel-kopf shell">
+      <p class="kategorie label">Regulierung</p>
+      <h1>Was die EU-KI-Verordnung für Schaden&shy;prozesse bedeutet</h1>
+      <p class="unterzeile">Seit dem 2.&nbsp;August 2026 gelten die Hochrisiko-Pflichten der KI-Verordnung. Ob automatisierte Schadenbearbeitung darunter fällt, ist offener, als viele Projektpläne unterstellen.</p>
+      <div class="metazeile">
+        <span class="autor">
+          <img src="../assets/team/maximilian-hempel.jpg" alt="Porträt von Maximilian Hempel" width="32" height="32">
+          Von Maximilian Hempel
+        </span>
+        <span class="trenner" aria-hidden="true">·</span>
+        <time datetime="2026-08-05">5. August 2026</time>
+        <span class="trenner" aria-hidden="true">·</span>
+        <span>Lesedauer 8 Min.</span>
+        <span class="trenner" aria-hidden="true">·</span>
+        <span>Stand: <time datetime="2026-08-05">05.08.2026</time></span>
+      </div>
+    </header>
+
+    <figure class="aufmacher shell">
+      <img src="../assets/bilder/motiv-rechenzentrum.jpg" alt="Serverreihen in einem Rechenzentrum, in kühles blaues Licht getaucht" width="1600" height="893">
+      <figcaption>
+        <span>In Rechenzentren wie diesem laufen die Modelle, deren Einsatz die KI-Verordnung nun stuft: nach Risiko, nicht nach Technologie.</span>
+        <span class="credit">Illustration: VTM</span>
+      </figcaption>
+    </figure>
+
+    <div class="artikel-body shell">
+      <p class="lead">Die Verordnung (EU) 2024/1689 ist seit August 2024 in Kraft, ihre Pflichten greifen gestuft. Für Versicherer stellt der 2.&nbsp;August 2026 die entscheidende Frage neu: Welche Systeme in der Schadenbearbeitung gelten als Hochrisiko-KI — und was folgt daraus für Dunkelverarbeitung, Betrugserkennung und Kundenkommunikation? Eine Einordnung.</p>
+
+      <h2 id="regelung">Was die Verordnung regelt — und was nicht</h2>
+      <p>Die KI-Verordnung ordnet Systeme nicht nach Technologie, sondern nach Risiko: verbotene Praktiken, Hochrisiko-Systeme mit umfangreichen Pflichten, Transparenzpflichten für bestimmte Anwendungen, darunter alles Übrige weitgehend unreguliert. Für die Versicherungsbranche ist Anhang&nbsp;III die zentrale Stelle. Dort steht unter Nummer&nbsp;5 Buchstabe&nbsp;c ausdrücklich: Systeme für die Risikobewertung und Preisbildung bei natürlichen Personen in der Lebens- und Krankenversicherung sind Hochrisiko-KI.</p>
+      <p>Von Schadenbearbeitung steht dort nichts. Wer daraus Entwarnung liest, greift allerdings zu kurz. Erstens kann die Kommission Anhang&nbsp;III nach Artikel&nbsp;7 erweitern, wenn sich vergleichbare Risiken zeigen. Zweitens bleiben für vollautomatisierte Einzelfallentscheidungen — etwa die Ablehnung einer Schadenmeldung ohne menschliche Prüfung — die Grenzen aus Artikel&nbsp;22 der Datenschutz-Grundverordnung bestehen; die KI-Verordnung tritt daneben, sie ersetzt nichts. Drittens gelten Transparenzpflichten aus Artikel&nbsp;50 unabhängig von der Risikostufe: Wer Kundinnen und Kunden in der Schadenmeldung einen Chatbot vorsetzt, muss das offenlegen.</p>
+
+      <h2 id="grauzone">Die Grauzone: Schaden ist nicht Tarif</h2>
+      <p>Die Einstufung eines konkreten Systems hängt an seiner Zweckbestimmung — und genau hier beginnt die Auslegungsarbeit. Ein Modell, das Schadenmeldungen lediglich vorsortiert und an Sachbearbeiter übergibt, ist rechtlich anders zu bewerten als eines, das Leistungsentscheidungen in der Krankenversicherung faktisch determiniert. Artikel&nbsp;6 Absatz&nbsp;3 nimmt Systeme aus, die nur vorbereitende oder eng begrenzte Aufgaben erfüllen; ob eine Dunkelverarbeitungsstrecke darunter fällt, muss der Anbieter oder Betreiber selbst begründen und dokumentieren.</p>
+      <p>Belastbare Rechtsprechung zu diesen Abgrenzungen gibt es noch nicht, und die Auslegungspraxis der Aufsichtsbehörden entsteht gerade erst. Seriös lässt sich derzeit nur sagen: Die Frage „Hochrisiko oder nicht?“ ist für weite Teile der Schadenbearbeitung keine gesetzlich entschiedene, sondern eine im Einzelfall zu begründende. Genau diese Begründung — schriftlich, vor Inbetriebnahme — ist die eigentliche neue Pflicht.</p>
+
+      <blockquote class="pullquote">
+        <p>„Die Verordnung fragt nicht, ob die Maschine schneller entscheidet als der Sachbearbeiter. Sie fragt, wer die Entscheidung verantwortet — und ob das System sie erklären kann.“</p>
+      </blockquote>
+
+      <p>Dass die Branche die Debatte führt, zeigt sich weniger in Pressemitteilungen als in den Fachformaten, in denen Praktiker ihre Projekte offenlegen. Der Insurance Monday Podcast, Teil des VTM-Netzwerks, gehört zu den reichweitenstärksten deutschsprachigen Formaten an dieser Schnittstelle von Versicherung und Technologie.</p>
+
+      <aside class="datenbox breit" aria-label="Kennzahl: Podcast-Reichweite">
+        <div>
+          <span class="wert">35.000</span>
+          <span class="einheit">Podcast-Downloads pro Monat<br>Insurance Monday</span>
+        </div>
+        <div>
+          <p class="erlaeuterung">Reichweite des Insurance Monday Podcast im VTM-Netzwerk. Die Zahl beschreibt monatliche Downloads, keine eindeutigen Hörerinnen und Hörer — beides wird in der Branche häufig vermischt.</p>
+          <span class="belegmarke" aria-hidden="true"></span>
+          <p class="quellenzeile">Quelle: Podcast-Hosting-Statistik · Stand: 08/2026</p>
+        </div>
+      </aside>
+
+      <h2 id="fristen">Was jetzt konkret gilt: die Fristen</h2>
+      <p>Die Verordnung trat am 1.&nbsp;August 2024 in Kraft, ihre Pflichten greifen seitdem in Stufen. Für Bestandssysteme und Hochrisiko-KI in regulierten Produkten laufen längere Übergangsfristen — ein Grund mehr, das eigene Systeminventar nicht nach Stichtagen, sondern nach Zweckbestimmung zu sortieren.</p>
+
+      <div class="tabelle-rahmen breit">
+        <table>
+          <caption>Geltungsbeginn der KI-Verordnung nach Regelungsbereich</caption>
+          <thead>
+            <tr>
+              <th scope="col">Regelungsbereich</th>
+              <th scope="col">Fundstelle</th>
+              <th scope="col" class="zahl">Frist ab Inkrafttreten</th>
+              <th scope="col" class="zahl">Stichtag</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Verbotene Praktiken, KI-Kompetenz</td>
+              <td>Art. 5, Art. 4</td>
+              <td class="zahl">6 Monate</td>
+              <td class="zahl">02.02.2025</td>
+            </tr>
+            <tr>
+              <td>KI-Modelle mit allgemeinem Verwendungszweck, Governance</td>
+              <td>Kap. V</td>
+              <td class="zahl">12 Monate</td>
+              <td class="zahl">02.08.2025</td>
+            </tr>
+            <tr>
+              <td>Hochrisiko-Systeme nach Anhang III, Transparenzpflichten</td>
+              <td>Anhang III, Art. 50</td>
+              <td class="zahl">24 Monate</td>
+              <td class="zahl">02.08.2026</td>
+            </tr>
+            <tr>
+              <td>Hochrisiko-KI in regulierten Produkten</td>
+              <td>Anhang I</td>
+              <td class="zahl">36 Monate</td>
+              <td class="zahl">02.08.2027</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2 id="praxis">Woran Versicherer jetzt arbeiten</h2>
+      <p>In den Projekten, über die VTM berichtet, wiederholt sich ein Muster: Zuerst entsteht ein Inventar aller Systeme, die über Menschen entscheiden oder Entscheidungen vorbereiten. Dann wird pro System die Einstufung begründet und dokumentiert. Erst danach beginnt die eigentliche Umsetzungsarbeit — Protokollierung, menschliche Aufsicht, Datenqualität. Wie eine solche Bestandsaufnahme aussehen kann, zeigt das folgende Diagramm mit fiktiven Werten.</p>
+
+      <figure class="chart breit">
+        <div class="chart-kopf">
+          <div>
+            <h3 id="chart-titel">Automatisiert bearbeitete Schadenmeldungen nach Sparte</h3>
+            <p class="untertitel" id="chart-untertitel">Anteil ohne manuelle Einzelfallprüfung, fiktives Beispielportfolio</p>
+          </div>
+          <span class="demo-chip">Demonstrationsinhalt des Design Systems</span>
+        </div>
+        <svg viewBox="0 0 640 268" role="img" aria-labelledby="chart-titel chart-untertitel" aria-describedby="chart-beschreibung">
+          <desc id="chart-beschreibung">Balkendiagramm mit Beispielwerten: Kfz 58,0 Prozent (hervorgehobener Belegwert), Hausrat 41,5 Prozent, Haftpflicht 27,0 Prozent, Wohngebäude 18,5 Prozent.</desc>
+          <!-- Raster -->
+          <g stroke="#E8ECF2" stroke-width="1">
+            <line x1="140" y1="16" x2="140" y2="228"></line>
+            <line x1="300" y1="16" x2="300" y2="228"></line>
+            <line x1="460" y1="16" x2="460" y2="228"></line>
+            <line x1="620" y1="16" x2="620" y2="228"></line>
+          </g>
+          <!-- Balken -->
+          <g>
+            <rect x="140" y="28"  width="464" height="28" rx="2" fill="#C9A035"></rect>
+            <rect x="140" y="80"  width="332" height="28" rx="2" fill="#1F4EFF"></rect>
+            <rect x="140" y="132" width="216" height="28" rx="2" fill="#1F4EFF"></rect>
+            <rect x="140" y="184" width="148" height="28" rx="2" fill="#1F4EFF"></rect>
+          </g>
+          <!-- Kategorien, Mono 12px -->
+          <g font-family="IBM Plex Mono, Consolas, monospace" font-size="12" fill="#5C6980">
+            <text x="128" y="46"  text-anchor="end">Kfz</text>
+            <text x="128" y="98"  text-anchor="end">Hausrat</text>
+            <text x="128" y="150" text-anchor="end">Haftpflicht</text>
+            <text x="128" y="202" text-anchor="end">Wohngebäude</text>
+          </g>
+          <!-- Wertlabels -->
+          <g font-family="IBM Plex Mono, Consolas, monospace" font-size="12">
+            <text x="592" y="46" text-anchor="end" fill="#0D1C3C" font-weight="600">58,0&#8239;%</text>
+            <text x="480" y="98"  fill="#3A4763">41,5&#8239;%</text>
+            <text x="364" y="150" fill="#3A4763">27,0&#8239;%</text>
+            <text x="296" y="202" fill="#3A4763">18,5&#8239;%</text>
+          </g>
+          <!-- Achse -->
+          <line x1="140" y1="228" x2="620" y2="228" stroke="#B6BFCF" stroke-width="1"></line>
+          <g font-family="IBM Plex Mono, Consolas, monospace" font-size="12" fill="#5C6980">
+            <text x="140" y="250" text-anchor="middle">0&#8239;%</text>
+            <text x="300" y="250" text-anchor="middle">20&#8239;%</text>
+            <text x="460" y="250" text-anchor="middle">40&#8239;%</text>
+            <text x="620" y="250" text-anchor="middle">60&#8239;%</text>
+          </g>
+        </svg>
+        <figcaption>
+          <span class="belegmarke" aria-hidden="true"></span>
+          <p class="quellenzeile" style="margin:0;">Quelle: fiktive Beispielwerte, keine Marktdaten · Demonstrationsinhalt des Design Systems · Stand: 08/2026</p>
+        </figcaption>
+      </figure>
+
+      <aside class="hinweis breit" aria-labelledby="hinweis-titel">
+        <span class="label">Einordnung der Unsicherheit</span>
+        <h3 id="hinweis-titel">Was die Daten in diesem Beitrag nicht belegen</h3>
+        <ul>
+          <li>Ob konkrete Schadensysteme als Hochrisiko-KI einzustufen sind, ist nicht höchstrichterlich geklärt; Aufsichtspraxis und Leitlinien entwickeln sich noch.</li>
+          <li>Das Balkendiagramm zeigt fiktive Beispielwerte zur Demonstration des Design Systems — es belegt keinen Automatisierungsgrad im Markt.</li>
+          <li>Die Podcast-Kennzahl misst Downloads, nicht Hörerinnen und Hörer, und sagt nichts über die Zusammensetzung der Zielgruppe aus.</li>
+        </ul>
+      </aside>
+
+      <p>Für Schadenverantwortliche heißt das: Die KI-Verordnung ist kein Stichtagsprojekt, das am 2.&nbsp;August 2026 endete, sondern der Beginn einer dauerhaften Dokumentations- und Begründungspflicht. Häuser, die ihr Systeminventar kennen, streiten derzeit über Auslegungsfragen. Alle anderen streiten noch über Zuständigkeiten. Dieser Unterschied wird sichtbar werden — spätestens, wenn die Aufsicht zum ersten Mal nach der Einstufungsbegründung fragt.</p>
+
+      <section class="kennzeichnung-demo breit" aria-labelledby="kennzeichnung-titel">
+        <h2 id="kennzeichnung-titel">So kennzeichnet VTM Sponsored Content</h2>
+        <p style="font: 400 var(--vtm-size-m)/var(--vtm-leading-text) var(--vtm-font-text); color: var(--sem-text-sekundaer); max-width: var(--vtm-measure-text);">Bezahlte Inhalte erscheinen bei VTM nie im Gewand der Redaktion. Sie tragen das folgende Label sichtbar vor der Überschrift — im Magazin, im Briefing und auf LinkedIn gleichermaßen:</p>
+        <div class="sponsored-beispiel">
+          <span class="sponsored-label">Sponsored Content · Kennzeichnung nach §6 TMG-Logik</span>
+          <h3>So sähe die Überschrift eines gesponserten Beitrags aus</h3>
+          <p>Der Anriss eines Sponsored-Beitrags folgt derselben Typografie wie redaktionelle Teaser — unterscheidbar wird er allein durch das Label und die abgesetzte Fläche, nicht durch kleingedruckte Fußnoten.</p>
+        </div>
+        <p class="demo-unterschrift">Darstellung: Kennzeichnungs-Demo, kein realer Sponsored-Beitrag</p>
+      </section>
+
+      <section class="quellen" aria-labelledby="quellen-titel">
+        <h2 id="quellen-titel">Quellen</h2>
+        <ol>
+          <li><span>Verordnung (EU) 2024/1689 des Europäischen Parlaments und des Rates vom 13. Juni 2024 („KI-Verordnung“), Amtsblatt der EU, 12.07.2024, EUR-Lex 32024R1689.</span></li>
+          <li><span>KI-Verordnung, Anhang III Nr. 5 Buchst. c (Risikobewertung und Preisbildung, Lebens- und Krankenversicherung) sowie Art. 6 Abs. 3 (Ausnahmen von der Hochrisiko-Einstufung).</span></li>
+          <li><span>KI-Verordnung, Art. 4 (KI-Kompetenz), Art. 7 (Änderung des Anhangs III), Art. 50 (Transparenzpflichten), Art. 113 (Geltungsbeginn).</span></li>
+          <li><span>Verordnung (EU) 2016/679 (DSGVO), Art. 22 (automatisierte Entscheidungen im Einzelfall).</span></li>
+          <li><span>Podcast-Hosting-Statistik Insurance Monday · Stand: 08/2026.</span></li>
+        </ol>
+      </section>
+    </div>
+  </article>
+
+  <section class="weiterlesen" aria-labelledby="weiterlesen-titel">
+    <div class="shell">
+      <span class="label" id="weiterlesen-titel">Weiterlesen</span>
+      <div class="teaser-raster">
+        <article class="teaser teaser-gross">
+          <img src="../assets/bilder/motiv-datenstrom.jpg" alt="Abstrahierte Lichtspuren, die Datenströme andeuten" width="1600" height="893" loading="lazy">
+          <p class="kategorie label">Analyse</p>
+          <h3><a href="#">Dunkelverarbeitung unter Protokollpflicht: Was Artikel 12 von Schadensystemen verlangt</a></h3>
+          <p>Hochrisiko-Systeme müssen ihre Entscheidungen aufzeichnen — automatisch, manipulationssicher, über Jahre. Was das für gewachsene Dunkelverarbeitungsstrecken bedeutet.</p>
+        </article>
+        <article class="teaser teaser-klein">
+          <p class="kategorie label">Hintergrund</p>
+          <h3><a href="#">Wer kontrolliert KI in der Versicherung? Die offene Frage der nationalen Aufsicht</a></h3>
+          <p>Die Verordnung steht, die Zuständigkeit in Deutschland ist es noch nicht abschließend. Warum die Antwort für Versicherer mehr ändert als mancher Verordnungsartikel.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="newsletter-cta" aria-labelledby="cta-titel">
+    <div class="shell">
+      <div>
+        <span class="label" style="color: var(--sem-text-sekundaer);">VTM Briefing</span>
+        <h2 id="cta-titel">Regulierung, verständlich eingeordnet. Jede Woche.</h2>
+        <p class="beschreibung">Das VTM Briefing bündelt die Signale der Woche zu KI und Automatisierung in der Versicherungsbranche — mit Priorisierung statt Linkliste. Über 6.000 Empfängerinnen und Empfänger, rund 50&#8239;% Öffnungsrate.</p>
+        <span class="belegmarke" aria-hidden="true"></span>
+        <p class="quellenzeile">Quelle: Newsletter-Statistik VTM · Stand: 08/2026</p>
+      </div>
+      <form class="newsletter-form" action="#" method="post">
+        <label for="cta-email">E-Mail-Adresse</label>
+        <div class="zeile">
+          <input type="email" id="cta-email" name="email" autocomplete="email" required placeholder="vorname.name@unternehmen.de">
+          <button type="submit" class="btn-primaer">Briefing abonnieren</button>
+        </div>
+        <p class="form-hinweis">Kostenlos · Abmeldung jederzeit · keine Weitergabe an Dritte</p>
+      </form>
+    </div>
+  </section>
+</main>
+
+<footer class="site-fuss">
+  <div class="shell">
+    <div>
+      <img src="../assets/logo/vtm-logo-weiss.png" alt="VTM – VersicherungsTech Magazin" width="141" height="29">
+      <p>VersicherungsTech Media UG (haftungsbeschränkt)<br>
+      Moitzfeld 17 · 51429 Bergisch Gladbach<br>
+      HRB 126738 Amtsgericht Köln · Geschäftsführer: Maximilian Hempel<br>
+      <a href="mailto:info@versicherungstech-magazin.de">info@versicherungstech-magazin.de</a></p>
+    </div>
+    <nav aria-label="Rechtliches">
+      <a href="#">Impressum</a>
+      <a href="#">Datenschutz</a>
+    </nav>
+  </div>
+</footer>
+</body>
+</html>
