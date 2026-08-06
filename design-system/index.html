@@ -93,6 +93,8 @@ li { margin-block: .375rem; }
 .hero-signal { position: relative; min-height: 280px; }
 .hero-signal svg { width: 100%; height: auto; display: block; }
 @media (max-width: 900px) { .hero-raster { grid-template-columns: minmax(0, 1fr); } .hero-signal { max-width: 24rem; } }
+/* Sehr schmale Geräte: „Marktgeräusch“ muss ungetrennt in 288px passen */
+@media (max-width: 360px) { .hero h1 { font-size: 2.35rem; } }
 
 /* ------- Inhaltsverzeichnis ------- */
 .toc { columns: 3; gap: var(--vtm-space-32); }
@@ -278,7 +280,7 @@ footer.site img { height: 22px; width: auto; }
   <div class="hero-raster">
     <div>
       <p class="hero-eyebrow">Verbindliche Arbeitsgrundlage · Version 5.0 · Stand 08/2026</p>
-      <h1 id="hero-titel">Aus Markt&shy;geräusch ein <em>belast&shy;bares Signal.</em></h1>
+      <h1 id="hero-titel">Aus Marktgeräusch ein <em>belastbares Signal.</em></h1>
       <p class="hero-lead">
         Das Design System des VersicherungsTech Magazins regelt Marke, Redaktion,
         Produkte und Kommunikation in einem gemeinsamen System — von der Website über
