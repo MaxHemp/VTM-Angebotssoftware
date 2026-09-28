@@ -73,6 +73,7 @@ const Store = {
       version: 1,
       users: JSON.parse(JSON.stringify(SEED_USERS)),
       kunden: JSON.parse(JSON.stringify(SEED_KUNDEN)),
+      kontakte: [], deals: [], aktivitaeten: [],
       offers: [],
       katalog: JSON.parse(JSON.stringify(SEED_KATALOG)),
       bundles: JSON.parse(JSON.stringify(SEED_BUNDLES)),
@@ -388,17 +389,30 @@ document.getElementById("modal-bg").addEventListener("click",e=>{ if(e.target.id
 
 /* ---------- Router ---------- */
 const Router = {
+  params: {},
   route(){
     if(!Auth.user) return;
     const h = location.hash || "#/dashboard";
     const parts = h.replace(/^#\//,"").split("/");
-    const name = parts[0]||"dashboard";
+    let name = parts[0]||"dashboard";
 
     if(name==="neu"){ Views.newOffer(); return; }
     if(name==="angebot" && parts[1]){ this.show("editor"); Editor.open(parts[1]); this.mark("angebote"); return; }
+    /* alte Lesezeichen */
+    if(name==="kunden"){ history.replaceState(null,"","#/firmen"); name="firmen"; }
 
-    const known=["dashboard","angebote","kunden","katalog","freigaben","vorlagen","einstellungen"];
+    /* Detailansichten des CRM */
+    const detail={firma:"firmen", kontakt:"kontakte", deal:"pipeline"};
+    if(detail[name] && parts[1]){
+      this.params={id:decodeURIComponent(parts[1])};
+      this.show(name); this.mark(detail[name]);
+      Views.render(name);
+      return;
+    }
+
+    const known=["dashboard","pipeline","firmen","kontakte","aufgaben","berichte","angebote","katalog","freigaben","vorlagen","einstellungen"];
     const v = known.includes(name)?name:"dashboard";
+    this.params={};
     this.show(v); this.mark(v);
     Views.render(v);
   },
@@ -420,9 +434,16 @@ const Views = {
 
   render(name){
     Views.updateNavCounts();
-    if(name==="dashboard") this.dashboard();
+    if(name==="dashboard") CRM.dashboard();
+    if(name==="pipeline") CRM.pipeline();
+    if(name==="firmen") CRM.firmenList();
+    if(name==="firma") CRM.firmaDetail(Router.params.id);
+    if(name==="kontakte") CRM.kontakteList();
+    if(name==="kontakt") CRM.kontaktDetail(Router.params.id);
+    if(name==="deal") CRM.dealDetail(Router.params.id);
+    if(name==="aufgaben") CRM.aufgaben();
+    if(name==="berichte") CRM.berichte();
     if(name==="angebote") this.offers();
-    if(name==="kunden") this.customers();
     if(name==="katalog") this.catalog();
     if(name==="freigaben") this.approvals();
     if(name==="vorlagen") this.templates();
@@ -434,62 +455,16 @@ const Views = {
     const mine = Auth.isAdmin()?pending:pending.filter(o=>o.createdBy===Auth.user.id);
     const el=document.getElementById("nav-freigaben-count");
     if(mine.length){ el.textContent=mine.length; el.style.display=""; } else el.style.display="none";
+    /* fällige eigene Aufgaben (heute + überfällig) */
+    const today=localISO();
+    const due=CRM.akts().filter(a=>a.typ==="aufgabe" && !a.erledigt && a.ownerId===Auth.user.id && a.faellig && a.faellig<=today).length;
+    const ta=document.getElementById("nav-aufgaben-count");
+    if(ta){ if(due){ ta.textContent=due; ta.style.display=""; } else ta.style.display="none"; }
   },
 
   offerRowMeta(o){
     const c=Store.calc(o.doc);
     return {c, kunde:o.doc.kunde.firma||"(ohne Firma)", nr:o.doc.meta.nr||"—"};
-  },
-
-  /* ===== Dashboard ===== */
-  dashboard(){
-    const offers=Store.activeOffers();
-    const open=offers.filter(o=>["entwurf","pruefung","freigegeben","versendet"].includes(o.status));
-    const year=new Date().getFullYear();
-    const won=offers.filter(o=>o.status==="angenommen" && (o.doc.meta.datum||"").startsWith(String(year)));
-    const lost=offers.filter(o=>o.status==="abgelehnt" && (o.doc.meta.datum||"").startsWith(String(year)));
-    const pipeline=open.reduce((a,o)=>a+Store.calc(o.doc).nettoR,0);
-    const wonSum=won.reduce((a,o)=>a+Store.calc(o.doc).nettoR,0);
-    const quote=(won.length+lost.length)?Math.round(won.length/(won.length+lost.length)*100):null;
-    const pending=offers.filter(o=>o.status==="pruefung");
-
-    const today=todayISO();
-    const wv=open.filter(o=>o.doc.intern && o.doc.intern.wiedervorlage && o.doc.intern.wiedervorlage<=today)
-      .sort((a,b)=>(a.doc.intern.wiedervorlage||"").localeCompare(b.doc.intern.wiedervorlage||""));
-    const expiring=offers.filter(o=>["freigegeben","versendet"].includes(o.status) && o.doc.meta.gueltig && o.doc.meta.gueltig>=today && o.doc.meta.gueltig<=addDays(today,7));
-    const recent=[...offers].sort((a,b)=>(b.updatedAt||"").localeCompare(a.updatedAt||"")).slice(0,6);
-
-    document.getElementById("dash-greeting").textContent =
-      `${new Date().toLocaleDateString("de-DE",{weekday:"long",day:"numeric",month:"long",year:"numeric"})} · angemeldet als ${Auth.user.name}`;
-
-    const li=(o,extra)=>`<li>
-      <div class="lp-main"><b>${esc(this.offerRowMeta(o).nr)} · ${esc(this.offerRowMeta(o).kunde)}</b>
-      <span>${esc(o.doc.meta.betreff||"")}${extra?" · "+extra:""}</span></div>
-      <div style="display:flex;gap:8px;align-items:center">${badge(o)}
-      <button class="btn" onclick="location.hash='#/angebot/${o.id}'">Öffnen</button></div></li>`;
-
-    document.getElementById("dash-content").innerHTML=`
-      <div class="kpi-row">
-        <div class="kpi-tile"><div class="kt-label">Offene Angebote</div><div class="kt-value">${open.length}</div><div class="kt-note">Entwurf bis versendet</div></div>
-        <div class="kpi-tile"><div class="kt-label">Pipeline (netto)</div><div class="kt-value">${fmtEUR(pipeline)}</div><div class="kt-note">Summe offener Angebote</div></div>
-        <div class="kpi-tile dark"><div class="kt-label">Gewonnen ${year}</div><div class="kt-value">${fmtEUR(wonSum)}</div><div class="kt-note">${won.length} Angebote angenommen</div></div>
-        <div class="kpi-tile"><div class="kt-label">Abschlussquote ${year}</div><div class="kt-value">${quote===null?"—":quote+" %"}</div><div class="kt-note">${won.length} gewonnen · ${lost.length} verloren</div></div>
-        ${Auth.isAdmin()?`<div class="kpi-tile"><div class="kt-label">Offene Freigaben</div><div class="kt-value">${pending.length}</div><div class="kt-note">${pending.length?'<a href="#/freigaben">Zur Freigabe-Liste</a>':"Nichts zu prüfen"}</div></div>`:""}
-      </div>
-      <div class="cardgrid cols-2">
-        <div class="card"><h2>Wiedervorlagen fällig</h2>
-          ${wv.length?`<ul class="list-plain">${wv.map(o=>li(o,"Wiedervorlage "+fmtDate(o.doc.intern.wiedervorlage))).join("")}</ul>`
-          :`<div class="empty">Keine fälligen Wiedervorlagen. Termine werden im Angebot unter „Interne Steuerung" gesetzt.</div>`}
-        </div>
-        <div class="card"><h2>Läuft in den nächsten 7 Tagen ab</h2>
-          ${expiring.length?`<ul class="list-plain">${expiring.map(o=>li(o,"gültig bis "+fmtDate(o.doc.meta.gueltig))).join("")}</ul>`
-          :`<div class="empty">Kein Angebot läuft in den nächsten sieben Tagen ab.</div>`}
-        </div>
-        <div class="card" style="grid-column:1/-1"><h2>Zuletzt bearbeitet</h2>
-          ${recent.length?`<ul class="list-plain">${recent.map(o=>li(o,"bearbeitet "+fmtDateTime(o.updatedAt))).join("")}</ul>`
-          :`<div class="empty"><b>Noch keine Angebote</b>Lege das erste Angebot an – Katalog und Vorlagen sind bereits eingerichtet.<br><button class="btn blue" onclick="Views.newOffer()">＋ Neues Angebot</button></div>`}
-        </div>
-      </div>`;
   },
 
   /* ===== Angebote ===== */
@@ -548,15 +523,37 @@ const Views = {
     }).join("")}</tbody></table>`;
   },
 
-  newOffer(){
+  /* ctx (optional): {kundeId, kontaktId, dealId} – aus dem CRM heraus
+     wird das Angebot mit Firma, Ansprechpartner und Chance vorbefüllt */
+  newOffer(ctx){
+    ctx=ctx||{};
     const o={
       id: uid("a"), status:"entwurf",
       createdBy: Auth.user.id, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(),
-      history:[], freigabe:null, kundeId:null,
+      history:[], freigabe:null, kundeId:null, kontaktId:null, dealId:null,
       doc: Store.emptyDoc()
     };
-    addHistory(o,"Angebot angelegt");
-    Store.state.offers.push(o); Store.save();
+    const d=ctx.dealId?CRM.deal(ctx.dealId):null;
+    const f=CRM.firma(ctx.kundeId||(d&&d.kundeId));
+    if(f){
+      o.kundeId=f.id;
+      Object.assign(o.doc.kunde,{firma:f.firma,strasse:f.strasse||"",plzort:f.plzort||""});
+      let k=CRM.kontakt(ctx.kontaktId||(d&&d.kontaktId));
+      if(!k){ const ks=CRM.kontakteVon(f.id); k=ks.find(x=>x.primary)||ks[0]; }
+      if(k){ o.kontaktId=k.id; Object.assign(o.doc.kunde,{anrede:k.anrede||"",name:CRM.kontaktName(k),funktion:k.funktion||"",email:k.email||""}); }
+      if(!d){ const od=CRM.dealsVon(f.id).filter(x=>CRM.isOpen(x)); if(od.length===1) o.dealId=od[0].id; }
+    }
+    if(d){
+      o.dealId=d.id;
+      o.doc.meta.betreff=d.titel;
+      const ow=Store.state.users.find(u=>u.id===d.ownerId);
+      if(ow) o.doc.meta.betreuer=ow.name;
+      if(CRM.isOpen(d) && STAGE_IDX[d.stage]<STAGE_IDX.angebot) CRM.setStage(d,"angebot");
+    }
+    addHistory(o, f?`Angebot für ${f.firma} angelegt`:"Angebot angelegt");
+    Store.state.offers.push(o);
+    if(f) CRM.sys("Angebot angelegt",{kundeId:f.id,kontaktId:o.kontaktId||"",dealId:o.dealId||"",offerId:o.id});
+    Store.save();
     location.hash="#/angebot/"+o.id;
   },
 
@@ -598,116 +595,6 @@ const Views = {
     a.download=`vtm-angebote-${todayISO()}.csv`;
     document.body.appendChild(a); a.click();
     setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500);
-  },
-
-  /* ===== Kunden ===== */
-  customers(){
-    const el=document.getElementById("kunden-search");
-    if(!el._bound){ el._bound=true; el.addEventListener("input",()=>this.renderCustomersTable()); }
-    this.renderCustomersTable();
-  },
-
-  renderCustomersTable(){
-    const q=(document.getElementById("kunden-search").value||"").toLowerCase();
-    const list=[...Store.activeKunden()]
-      .filter(k=>!q||[k.firma,k.name,k.plzort,k.email].join(" ").toLowerCase().includes(q))
-      .sort((a,b)=>(a.firma||"").localeCompare(b.firma||""));
-    document.getElementById("kunden-count").textContent=`${list.length} von ${Store.activeKunden().length} Kunden`;
-    const host=document.getElementById("kunden-table");
-    if(!list.length){
-      host.innerHTML=`<div class="empty"><b>Noch keine Kunden</b>Kunden entstehen automatisch beim Speichern aus einem Angebot, per Excel-/CSV-Import – oder hier manuell.<br>
-        <button class="btn" onclick="document.getElementById('kunden-import-file').click()">Excel/CSV importieren</button>
-        <button class="btn blue" onclick="Views.editCustomer()">＋ Neuer Kunde</button></div>`;
-      return;
-    }
-    host.innerHTML=`<table class="data"><thead><tr>
-      <th>Firma</th><th>Ansprechpartner/in</th><th>E-Mail</th><th>Ort</th><th class="num">Angebote</th><th></th>
-    </tr></thead><tbody>${list.map(k=>{
-      const cnt=Store.activeOffers().filter(o=>o.kundeId===k.id || (o.doc.kunde.firma&&o.doc.kunde.firma===k.firma)).length;
-      return `<tr>
-        <td><b>${esc(k.firma)}</b>${k.notiz?`<span class="sub">${esc(k.notiz)}</span>`:""}</td>
-        <td>${esc([k.anrede,k.name].filter(Boolean).join(" "))}${k.funktion?`<span class="sub">${esc(k.funktion)}</span>`:""}</td>
-        <td class="mono">${esc(k.email||"")}</td>
-        <td>${esc(k.plzort||"")}</td>
-        <td class="num">${cnt}</td>
-        <td class="num">
-          <button class="btn blue" onclick="Views.offerForCustomer('${k.id}')">＋ Angebot</button>
-          <button class="btn" onclick="Views.editCustomer('${k.id}')">Bearbeiten</button>
-          ${Auth.isAdmin()?`<button class="btn danger" onclick="Views.deleteCustomer('${k.id}')">Löschen</button>`:""}
-        </td></tr>`;
-    }).join("")}</tbody></table>`;
-  },
-
-  editCustomer(id){
-    const k=id?Store.kunde(id):{id:null,firma:"",anrede:"Frau",name:"",funktion:"",email:"",telefon:"",strasse:"",plzort:"",notiz:""};
-    if(id && !k) return;
-    Modal.open(`<h3>${id?"Kunde bearbeiten":"Neuer Kunde"}</h3>
-      <div class="row single"><label><span>Firma *</span><input type="text" id="ck-firma" value="${esc(k.firma)}"></label></div>
-      <div class="row">
-        <label><span>Anrede</span><select id="ck-anrede">
-          <option${k.anrede==="Frau"?" selected":""}>Frau</option>
-          <option${k.anrede==="Herr"?" selected":""}>Herr</option>
-          <option value=""${!k.anrede?" selected":""}>Neutral</option></select></label>
-        <label><span>Ansprechpartner/in</span><input type="text" id="ck-name" value="${esc(k.name)}"></label>
-      </div>
-      <div class="row">
-        <label><span>Funktion</span><input type="text" id="ck-funktion" value="${esc(k.funktion)}"></label>
-        <label><span>E-Mail</span><input type="email" id="ck-email" value="${esc(k.email)}"></label>
-      </div>
-      <div class="row">
-        <label><span>Telefon</span><input type="text" id="ck-telefon" value="${esc(k.telefon||"")}"></label>
-        <label><span>Straße, Nr.</span><input type="text" id="ck-strasse" value="${esc(k.strasse)}"></label>
-      </div>
-      <div class="row"><label><span>PLZ, Ort</span><input type="text" id="ck-plzort" value="${esc(k.plzort)}"></label></div>
-      <div class="row single"><label><span>Notiz (intern)</span><textarea id="ck-notiz" rows="3">${esc(k.notiz||"")}</textarea></label></div>
-      <div class="modal-actions">
-        <button class="btn" onclick="Modal.close()">Abbrechen</button>
-        <button class="btn blue" id="ck-save">Speichern</button>
-      </div>`);
-    document.getElementById("ck-save").onclick=()=>{
-      const firma=document.getElementById("ck-firma").value.trim();
-      if(!firma){ toast("Bitte eine Firma angeben"); document.getElementById("ck-firma").focus(); return; }
-      const data={
-        firma, anrede:document.getElementById("ck-anrede").value,
-        name:document.getElementById("ck-name").value.trim(),
-        funktion:document.getElementById("ck-funktion").value.trim(),
-        email:document.getElementById("ck-email").value.trim(),
-        telefon:document.getElementById("ck-telefon").value.trim(),
-        strasse:document.getElementById("ck-strasse").value.trim(),
-        plzort:document.getElementById("ck-plzort").value.trim(),
-        notiz:document.getElementById("ck-notiz").value.trim()
-      };
-      data.updatedAt=new Date().toISOString();
-      if(id){ Object.assign(Store.kunde(id),data); }
-      else { Store.state.kunden.push(Object.assign({id:uid("k"),createdAt:new Date().toISOString()},data)); }
-      Store.save(); Modal.close(); toast("Kunde gespeichert");
-      if(location.hash.includes("kunden")) this.renderCustomersTable();
-      Editor.fillCustomerSelect();
-    };
-  },
-
-  deleteCustomer(id){
-    const k=Store.kunde(id); if(!k) return;
-    Modal.confirm("Kunde löschen?",
-      `<b>${esc(k.firma)}</b> wird aus dem Kundenstamm gelöscht. Bereits erstellte Angebote bleiben unverändert erhalten.`,
-      "Löschen",()=>{
-        k.deleted=true; k.updatedAt=new Date().toISOString(); Store.save();
-        toast("Kunde gelöscht"); this.renderCustomersTable();
-      },true);
-  },
-
-  offerForCustomer(id){
-    const k=Store.kunde(id); if(!k) return;
-    const o={
-      id: uid("a"), status:"entwurf",
-      createdBy: Auth.user.id, createdAt:new Date().toISOString(), updatedAt:new Date().toISOString(),
-      history:[], freigabe:null, kundeId:id,
-      doc: Store.emptyDoc()
-    };
-    Object.assign(o.doc.kunde,{firma:k.firma,anrede:k.anrede||"",name:k.name||"",funktion:k.funktion||"",email:k.email||"",strasse:k.strasse||"",plzort:k.plzort||""});
-    addHistory(o,`Angebot für ${k.firma} angelegt`);
-    Store.state.offers.push(o); Store.save();
-    location.hash="#/angebot/"+o.id;
   },
 
   /* ===== Katalog ===== */
@@ -853,6 +740,7 @@ const Views = {
     o.status="freigegeben";
     o.freigabe=Object.assign(o.freigabe||{},{decision:"approved",decidedBy:Auth.user.id,decidedByName:Auth.user.name,decidedAt:new Date().toISOString(),comment:""});
     addHistory(o,"Freigegeben durch "+Auth.user.name);
+    CRM.onOfferStatus(o,"freigegeben");
     o.updatedAt=new Date().toISOString(); Store.save();
     toast(`Angebot ${o.doc.meta.nr||""} freigegeben`);
     this.approvals(); this.updateNavCounts();
@@ -1338,6 +1226,12 @@ const Editor = {
     const o=this.offer; if(!o) return;
     document.getElementById("editor-id").innerHTML=`<b>${esc(o.doc.meta.nr||"ohne Nummer")}</b> · angelegt von ${esc((Store.state.users.find(u=>u.id===o.createdBy)||{}).name||"—")}`;
     document.getElementById("editor-status").innerHTML=badge(o);
+    const links=[];
+    const lf=CRM.firma(o.kundeId), ld=CRM.deal(o.dealId);
+    if(lf) links.push(`<a href="#/firma/${sid(lf.id)}">${esc(lf.firma)}</a>`);
+    if(ld) links.push(`<a href="#/deal/${sid(ld.id)}">Chance: ${esc(ld.titel)}</a>`);
+    const le=document.getElementById("editor-links");
+    if(le) le.innerHTML=links.join(" · ");
 
     const host=document.getElementById("editor-workflow-actions");
     const acts=[];
@@ -1377,6 +1271,7 @@ const Editor = {
     o.status="pruefung";
     o.freigabe={requestedBy:Auth.user.id,requestedByName:Auth.user.name,requestedAt:new Date().toISOString(),reason:approvalReason(o),decision:null,comment:""};
     addHistory(o,"Zur Freigabe eingereicht ("+o.freigabe.reason+")");
+    CRM.onOfferStatus(o,"pruefung");
     this.save(false);
     toast("Zur Freigabe eingereicht");
     this.updateBar(); Views.updateNavCounts();
@@ -1386,6 +1281,7 @@ const Editor = {
     const o=this.offer;
     o.status=st;
     addHistory(o,text);
+    CRM.onOfferStatus(o,st);
     this.save(false);
     toast(text);
     this.updateBar(); Views.updateNavCounts();
@@ -1422,9 +1318,25 @@ const Editor = {
   },
   fillCustomerSelect(){
     const sel=document.getElementById("kunde-select"); if(!sel) return;
-    sel.innerHTML=`<option value="">— Kunde wählen —</option>`+
-      [...Store.activeKunden()].sort((a,b)=>(a.firma||"").localeCompare(b.firma||""))
-      .map(k=>`<option value="${k.id}">${esc(k.firma)}${k.name?" · "+esc(k.name):""}</option>`).join("");
+    const cur=this.offer?this.offer.kundeId:"";
+    sel.innerHTML=`<option value="">— Firma wählen —</option>`+
+      [...Store.activeKunden()].sort((a,b)=>(a.firma||"").localeCompare(b.firma||"","de"))
+      .map(k=>`<option value="${sid(k.id)}"${k.id===cur?" selected":""}>${esc(k.firma)}</option>`).join("");
+    this.fillKontaktSelect(); this.fillDealSelect();
+  },
+  fillKontaktSelect(){
+    const sel=document.getElementById("kontakt-select"); if(!sel) return;
+    const o=this.offer, kid=o?o.kundeId:"";
+    const list=kid?CRM.kontakteVon(kid):[];
+    sel.innerHTML=`<option value="">${kid?(list.length?"— Ansprechpartner wählen —":"— keine Kontakte hinterlegt —"):"— erst Firma wählen —"}</option>`+
+      list.map(k=>`<option value="${sid(k.id)}"${o&&k.id===o.kontaktId?" selected":""}>${esc(CRM.kontaktName(k))}${k.funktion?" · "+esc(k.funktion):""}</option>`).join("");
+  },
+  fillDealSelect(){
+    const sel=document.getElementById("deal-select"); if(!sel) return;
+    const o=this.offer, kid=o?o.kundeId:"";
+    const list=kid?CRM.dealsVon(kid).filter(d=>CRM.isOpen(d)||(o&&d.id===o.dealId)):[];
+    sel.innerHTML=`<option value="">— wird beim Freigeben automatisch angelegt —</option>`+
+      list.map(d=>`<option value="${sid(d.id)}"${o&&d.id===o.dealId?" selected":""}>${esc(d.titel)} · ${esc(stageLabel(d.stage))}</option>`).join("");
   },
   fillTemplateSelect(){
     const sel=document.getElementById("anschreiben-tpl"); if(!sel) return;
@@ -1432,29 +1344,79 @@ const Editor = {
       .map(t=>`<option value="${t.id}">${esc(t.name)}</option>`).join("")||`<option value="">Keine Vorlagen</option>`;
   },
 
+  applyKontakt(k){
+    const o=this.offer;
+    if(k){
+      o.kontaktId=k.id;
+      Object.assign(this.s.kunde,{anrede:k.anrede||"",name:CRM.kontaktName(k),funktion:k.funktion||"",email:k.email||""});
+    } else {
+      /* Personenfelder nur leeren, wenn sie aus einem CRM-Kontakt stammten */
+      if(o.kontaktId) Object.assign(this.s.kunde,{name:"",funktion:"",email:""});
+      o.kontaktId=null;
+    }
+  },
   pickCustomer(id){
-    if(!id||!this.s) return;
-    const k=Store.kunde(id); if(!k) return;
-    Object.assign(this.s.kunde,{firma:k.firma,anrede:k.anrede||"",name:k.name||"",funktion:k.funktion||"",email:k.email||"",strasse:k.strasse||"",plzort:k.plzort||""});
-    this.offer.kundeId=id;
+    if(!this.s) return;
+    const o=this.offer;
+    if(!id){ o.kundeId=null; this.applyKontakt(null); o.dealId=null; this.fillKontaktSelect(); this.fillDealSelect(); this.pushToInputs(); this.renderAll(); this.scheduleSave(); return; }
+    const f=CRM.firma(id); if(!f) return;
+    o.kundeId=f.id;
+    Object.assign(this.s.kunde,{firma:f.firma,strasse:f.strasse||"",plzort:f.plzort||""});
+    const ks=CRM.kontakteVon(f.id);
+    this.applyKontakt(ks.find(x=>x.primary)||ks[0]||null);
+    if(o.dealId){ const d=CRM.deal(o.dealId); if(!d||d.kundeId!==f.id) o.dealId=null; }
+    if(!o.dealId){ const od=CRM.dealsVon(f.id).filter(d=>CRM.isOpen(d)); if(od.length===1) o.dealId=od[0].id; }
+    this.fillKontaktSelect(); this.fillDealSelect();
     this.pushToInputs(); this.renderAll(); this.scheduleSave();
-    toast(`Kundendaten von ${k.firma} übernommen`);
+    toast(`Daten von ${f.firma} übernommen`);
+  },
+  pickKontakt(id){
+    if(!this.s) return;
+    const k=CRM.kontakt(id);
+    if(k) this.applyKontakt(k); else this.offer.kontaktId=null;
+    this.pushToInputs(); this.renderAll(); this.scheduleSave();
+  },
+  pickDeal(id){
+    if(!this.s) return;
+    const d=CRM.deal(id);
+    this.offer.dealId=d?d.id:null;
+    if(d && !this.s.meta.betreff){ this.s.meta.betreff=d.titel; this.pushToInputs(); this.renderAll(); }
+    this.scheduleSave();
   },
 
+  /* Eingetippte Kundendaten als Firma + Kontakt ins CRM übernehmen */
   saveAsCustomer(){
-    const kd=this.s.kunde;
-    if(!kd.firma){ toast("Bitte zuerst eine Firma eintragen"); return; }
-    let k=Store.activeKunden().find(x=>x.firma.toLowerCase()===kd.firma.toLowerCase());
-    if(k){
-      Object.assign(k,{anrede:kd.anrede,name:kd.name,funktion:kd.funktion,email:kd.email,strasse:kd.strasse,plzort:kd.plzort,updatedAt:new Date().toISOString()});
-      toast(`Kunde „${k.firma}" aktualisiert`);
-    } else {
-      k=Object.assign({id:uid("k"),createdAt:new Date().toISOString(),updatedAt:new Date().toISOString(),telefon:"",notiz:""},JSON.parse(JSON.stringify(kd)));
-      Store.state.kunden.push(k);
-      toast(`Kunde „${k.firma}" angelegt`);
+    const kd=this.s.kunde, o=this.offer;
+    if(!(kd.firma||"").trim()){ toast("Bitte zuerst eine Firma eintragen"); return; }
+    const now=new Date().toISOString();
+    let f=CRM.firma(o.kundeId);
+    if(!f) f=CRM.firmen().find(x=>(x.firma||"").trim().toLowerCase()===kd.firma.trim().toLowerCase());
+    const neu=!f;
+    if(f) Object.assign(f,{firma:kd.firma.trim(),strasse:kd.strasse||f.strasse||"",plzort:kd.plzort||f.plzort||"",updatedAt:now});
+    else {
+      f={id:uid("k"),firma:kd.firma.trim(),status:"interessent",branche:"",ownerId:Auth.user.id,website:"",telefon:"",
+         strasse:kd.strasse||"",plzort:kd.plzort||"",notiz:"",createdBy:Auth.user.id,createdAt:now,updatedAt:now};
+      Store.state.kunden.push(f);
     }
-    this.offer.kundeId=k.id;
-    Store.save(); this.fillCustomerSelect();
+    o.kundeId=f.id;
+    if((kd.name||"").trim() || (kd.email||"").trim()){
+      const ks=CRM.kontakteVon(f.id);
+      let k=CRM.kontakt(o.kontaktId);
+      if(k && k.kundeId!==f.id) k=null;
+      if(!k && kd.email) k=ks.find(x=>(x.email||"").toLowerCase()===kd.email.trim().toLowerCase());
+      if(!k && kd.name) k=ks.find(x=>CRM.kontaktName(x).toLowerCase()===kd.name.trim().toLowerCase());
+      const n=CRM.splitName(kd.name);
+      if(k) Object.assign(k,{anrede:kd.anrede||"",vorname:n.vorname,nachname:n.nachname,funktion:kd.funktion||"",email:(kd.email||"").trim()||k.email||"",updatedAt:now});
+      else {
+        k={id:uid("kt"),kundeId:f.id,anrede:kd.anrede||"",vorname:n.vorname,nachname:n.nachname,funktion:kd.funktion||"",rolle:"",
+           email:(kd.email||"").trim(),telefon:"",mobil:"",linkedin:"",primary:!ks.length,notiz:"",createdBy:Auth.user.id,createdAt:now,updatedAt:now};
+        Store.state.kontakte.push(k);
+      }
+      o.kontaktId=k.id;
+    }
+    o.updatedAt=now;
+    Store.save(); this.fillCustomerSelect(); this.updateBar();
+    toast(neu?`Firma „${f.firma}“ im CRM angelegt`:`„${f.firma}“ im CRM aktualisiert`);
   },
 
   /* ---------- Tabs ---------- */
@@ -2024,6 +1986,8 @@ const App = {
   },
   async init(){
     Store.load();
+    if(CRM.migrate()) Store.persist();
+    CRM.init();
     Editor.bindInputs();
     Auth.loginUI();
     await this.handleJoinLink();

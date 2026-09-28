@@ -1,9 +1,72 @@
-# VTM Angebotsdesk
+# ADAM · CRM & Angebote
 
-Interne **Angebotssoftware für das Vertriebsteam** des
-VersicherungsTech Magazins (VTM). Statische Webanwendung ohne
-Build-Tools und ohne Server-Abhängigkeiten – einfach deployen,
-Domain verbinden, loslegen.
+**Vertriebsplattform des VersicherungsTech Magazins (VTM):** modernes
+CRM (Firmen, Kontakte, Pipeline, Aktivitäten, Aufgaben, Berichte)
+und Angebotssoftware (Angebot, Vertrag, Rechnung) in einer
+Anwendung. Statische Webanwendung ohne Build-Tools; Team-Daten
+synchronisieren über ein kleines Supabase-Backend.
+
+Live: `https://adam.versicherungstech-magazin.de`
+
+## CRM-Konzept
+
+ADAM ist auf den VTM-Mediavertrieb zugeschnitten: kleines Team,
+lange Entscheidungswege bei Versicherern, Angebote als Kernprodukt.
+Deshalb ist das CRM eng mit der Angebotserstellung verzahnt statt
+ein separates System daneben zu sein.
+
+**Datenmodell**
+
+| Objekt | Inhalt |
+|---|---|
+| **Firma** | Lebenszyklus *Lead → Interessent → Kunde → Inaktiv*, Branche, Betreuung, Website, Zentrale, Adresse, Notiz |
+| **Kontakt** | gehört zu einer Firma; Funktion, Rolle im Einkaufsprozess (Entscheider, Budgetverantwortlich …), E-Mail, Telefon, Mobil, LinkedIn, Hauptkontakt |
+| **Verkaufschance** | Pipeline-Phasen *Lead 10 % · Qualifiziert 25 % · Angebot 50 % · Verhandlung 75 % · Gewonnen · Verloren*; Wert, Wahrscheinlichkeit, erwarteter Abschluss, Quelle, Verlustgrund |
+| **Aktivität** | Notiz, Anruf, E-Mail, Meeting, Aufgabe (Fälligkeit + Zuständigkeit) sowie automatische System-Einträge |
+| **Angebot** | wie bisher – jetzt verknüpft mit Firma, Kontakt und Verkaufschance |
+
+**Automatiken**
+
+- *Angebot aus einer Verkaufschance erstellen* → Firma, Ansprechpartner,
+  Titel und Betreuung sind vorbefüllt; die Chance springt in „Angebot".
+- *Angebot freigegeben/versendet* → Timeline-Eintrag; fehlt eine
+  Verknüpfung, legt ADAM Firma, Kontakt und Chance automatisch an.
+- *Angebot angenommen* → Chance gewonnen, Firma wird „Kunde".
+  *Abgelehnt* → Timeline-Eintrag.
+- Der Wert einer Chance folgt dem aktuellen Angebot (oder bleibt
+  manuell festgelegt); die Wahrscheinlichkeit folgt der Phase.
+- Jeder Phasenwechsel, Gewinn und Verlust (mit Grund) landet in der
+  Timeline von Chance, Firma und Kontakt.
+
+**Oberflächen**
+
+- **Dashboard** – offene/gewichtete Pipeline, Umsatz und Quote des
+  Jahres, eigene fällige Aufgaben, Pipeline nach Phase, anstehende
+  Abschlüsse, Angebote im Blick, ruhende Kunden (60+ Tage ohne
+  Kontakt), Team-Aktivität.
+- **Pipeline** – Kanban mit Drag & Drop, Summen je Phase,
+  Betreuer-Filter; Verlust fragt nach dem Grund.
+- **Firmen / Kontakte** – Listen mit Filtern und 360°-Ansichten:
+  Schnellerfassung (Notiz, Anruf, E-Mail, Meeting, Aufgabe), Timeline,
+  Kontakte, Chancen, Angebote. Excel-/CSV-Import legt Firmen und
+  mehrere Kontakte je Firma an.
+- **Aufgaben** – Meine/Team, überfällig/heute/demnächst, inklusive
+  Angebots-Wiedervorlagen.
+- **Berichte** – Umsatz je Monat, Forecast nach Abschlussmonat,
+  Team-Übersicht, Quellen, Verlustgründe, CSV-Export.
+- **Schnellsuche** – `Strg/Cmd + K` über Firmen, Kontakte, Chancen
+  und Angebote.
+
+**Rechte:** Firmen löschen nur Administration; Chancen die
+Administration oder die Betreuung; Kontakte und Einträge die
+Administration oder wer sie angelegt hat.
+
+**Übernahme der Bestandsdaten:** Beim ersten Start werden bisherige
+Kunden zu Firmen, deren Ansprechpartner zu Kontakten; freigegebene
+bzw. versendete, angenommene oder abgelehnte Angebote erhalten ihre
+Verkaufschance, und die Angebots-Historie wird in die Timeline
+übernommen. Die Migration ist idempotent und nutzt deterministische
+IDs, damit parallele Geräte keine Dubletten erzeugen.
 
 Gebaut nach dem **VTM Brand & Design System „Master Next"**
 (Kapitel Webanwendungen: Cobalt-Seitenleiste, Inter/Plus Jakarta
@@ -171,7 +234,8 @@ Build-Schritt; Schriften kommen von Google Fonts.
 |---|---|
 | `index.html` | Markup: Login, App-Shell, alle Bereiche, Editor, A4-Vorschau |
 | `app.css` | Design-Tokens „Master Next" + UI- und Dokument-Styles + Print |
-| `app.js` | Store, Auth/Rollen, Router, Views, Editor, Word-Export |
+| `app.js` | Store, Auth/Rollen, Router, Angebots-Views, Editor, Word-Export |
+| `crm.js` | CRM: Datenmodell-Helfer, Migration, Automatiken, Dashboard, Pipeline, Firmen, Kontakte, Chancen, Aufgaben, Berichte, Schnellsuche |
 | `sync.js` | Team-Synchronisation: Supabase-Anbindung, Merge-Logik, Statusanzeige |
 | `import.js` | Excel-/CSV-Kontaktimport: ZIP-/XLSX-Leser, CSV-Parser, Spaltenerkennung |
 | `supabase-setup.sql` | Einmaliges SQL-Setup für das Backend |

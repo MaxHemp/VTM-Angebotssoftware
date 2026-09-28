@@ -4,11 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
-<title>VTM Angebotsdesk · Angebote, Verträge &amp; Rechnungen</title>
+<title>ADAM · CRM &amp; Angebote · VersicherungsTech Magazin</title>
 <link rel="icon" type="image/png" href="assets/vtm-logo-color.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="app.css?v=14">
+<link rel="stylesheet" href="app.css?v=15">
 </head>
 <body>
 
@@ -19,7 +19,7 @@
       <img src="assets/vtm-logo-color.png" alt="">
       <b>VersicherungsTech<br>Magazin</b>
     </div>
-    <div class="lc-sub">Angebotsdesk · Team-Login</div>
+    <div class="lc-sub">ADAM · CRM &amp; Angebote</div>
     <div class="login-error" id="login-error" role="alert"></div>
     <div class="login-info" id="login-info"></div>
     <label><span>E-Mail-Adresse</span>
@@ -54,17 +54,24 @@
   <aside class="sidebar">
     <div class="sb-brand">
       <img src="assets/vtm-logo-white.png" alt="">
-      <div><b>VTM Angebotsdesk</b><span>Sales · Master Next</span></div>
+      <div><b>ADAM</b><span>CRM &amp; Angebote</span></div>
     </div>
     <nav id="mainnav" aria-label="Hauptnavigation">
+      <button type="button" class="nav-search" onclick="CRM.openSearch()">Suchen …<kbd>Strg K</kbd></button>
       <a href="#/dashboard" data-nav="dashboard">Dashboard</a>
+      <div class="nv-sep">Vertrieb</div>
+      <a href="#/pipeline" data-nav="pipeline">Pipeline</a>
+      <a href="#/firmen" data-nav="firmen">Firmen</a>
+      <a href="#/kontakte" data-nav="kontakte">Kontakte</a>
+      <a href="#/aufgaben" data-nav="aufgaben">Aufgaben <span class="nv-count" id="nav-aufgaben-count" style="display:none"></span></a>
+      <div class="nv-sep">Angebote</div>
       <a href="#/angebote" data-nav="angebote">Angebote</a>
       <a href="#/neu" data-nav="neu">＋ Neues Angebot</a>
-      <a href="#/kunden" data-nav="kunden">Kunden</a>
-      <a href="#/katalog" data-nav="katalog">Produkte &amp; Leistungen</a>
       <a href="#/freigaben" data-nav="freigaben">Freigaben <span class="nv-count" id="nav-freigaben-count" style="display:none"></span></a>
+      <a href="#/katalog" data-nav="katalog">Produkte &amp; Leistungen</a>
       <a href="#/vorlagen" data-nav="vorlagen">Vorlagen</a>
-      <div class="nv-sep">Verwaltung</div>
+      <div class="nv-sep">Auswertung &amp; Verwaltung</div>
+      <a href="#/berichte" data-nav="berichte">Berichte</a>
       <a href="#/einstellungen" data-nav="einstellungen">Einstellungen</a>
     </nav>
     <div class="sb-user">
@@ -82,7 +89,9 @@
       <div class="pagehead">
         <div><h1>Dashboard</h1><div class="ph-sub" id="dash-greeting"></div></div>
         <div class="spacer"></div>
-        <button class="btn blue" onclick="Views.newOffer()">＋ Neues Angebot</button>
+        <button type="button" class="btn" onclick="CRM.editAkt(null,{typ:'aufgabe'})">＋ Aufgabe</button>
+        <button type="button" class="btn" onclick="CRM.editDeal()">＋ Verkaufschance</button>
+        <button type="button" class="btn blue" onclick="Views.newOffer()">＋ Neues Angebot</button>
       </div>
       <div class="content" id="dash-content"></div>
     </section>
@@ -121,6 +130,7 @@
         <button class="btn" onclick="Editor.backToList()">← Angebote</button>
         <span class="eb-id" id="editor-id">—</span>
         <span id="editor-status"></span>
+        <span class="editor-links" id="editor-links"></span>
         <div class="spacer"></div>
         <span class="autosave" id="editor-autosave"></span>
         <button class="btn" onclick="Editor.save(true)">Speichern</button>
@@ -145,9 +155,15 @@
             <fieldset>
               <legend>Kunde</legend>
               <div class="row">
-                <label><span>Aus Kundenliste übernehmen</span>
-                  <select id="kunde-select" onchange="Editor.pickCustomer(this.value)"><option value="">— Kunde wählen —</option></select></label>
-                <label><span>&nbsp;</span><button type="button" class="btn" style="width:100%" onclick="Editor.saveAsCustomer()">Als Kunde speichern</button></label>
+                <label><span>Firma aus dem CRM</span>
+                  <select id="kunde-select" onchange="Editor.pickCustomer(this.value)"><option value="">— Firma wählen —</option></select></label>
+                <label><span>Ansprechpartner/in</span>
+                  <select id="kontakt-select" onchange="Editor.pickKontakt(this.value)"><option value="">— erst Firma wählen —</option></select></label>
+              </div>
+              <div class="row">
+                <label><span>Verkaufschance</span>
+                  <select id="deal-select" onchange="Editor.pickDeal(this.value)"><option value="">— wird beim Freigeben automatisch angelegt —</option></select></label>
+                <label><span>&nbsp;</span><button type="button" class="btn" style="width:100%" onclick="Editor.saveAsCustomer()">Eingaben im CRM speichern</button></label>
               </div>
               <div class="row">
                 <label class="single" style="grid-column:1/-1"><span>Firma</span><input type="text" data-k="kunde.firma" placeholder="Muster Versicherung AG"></label>
@@ -292,24 +308,55 @@
       </div>
     </section>
 
-    <!-- ===== KUNDEN ===== -->
-    <section class="view" id="view-kunden" hidden>
+    <!-- ===== PIPELINE ===== -->
+    <section class="view" id="view-pipeline" hidden><div id="pipeline-root"></div></section>
+
+    <!-- ===== FIRMEN ===== -->
+    <section class="view" id="view-firmen" hidden>
       <div class="pagehead">
-        <div><h1>Kunden</h1><div class="ph-sub">Gemeinsamer Kundenstamm des Teams</div></div>
+        <div><h1>Firmen</h1><div class="ph-sub">Kunden, Interessenten und Leads – mit Kontakten, Verkaufschancen und Verlauf</div></div>
         <div class="spacer"></div>
-        <button class="btn" onclick="document.getElementById('kunden-import-file').click()">Excel/CSV importieren</button>
+        <button type="button" class="btn" onclick="document.getElementById('kunden-import-file').click()">Excel/CSV importieren</button>
         <input type="file" id="kunden-import-file" accept=".xlsx,.csv,.tsv,.txt" style="display:none" onchange="ContactImport.handleFile(this)">
-        <button class="btn blue" onclick="Views.editCustomer()">＋ Neuer Kunde</button>
+        <button type="button" class="btn blue" onclick="CRM.editFirma()">＋ Neue Firma</button>
       </div>
       <div class="content">
         <div class="toolbar">
-          <input type="search" id="kunden-search" placeholder="Suchen: Firma, Ansprechpartner, Ort …" aria-label="Kunden durchsuchen">
+          <input type="search" id="firmen-search" placeholder="Suchen: Firma, Ort, Ansprechpartner …" aria-label="Firmen durchsuchen">
+          <select id="firmen-status" aria-label="Nach Status filtern"><option value="">Alle Status</option></select>
+          <select id="firmen-branche" aria-label="Nach Branche filtern"><option value="">Alle Branchen</option></select>
+          <select id="firmen-owner" aria-label="Nach Betreuung filtern"><option value="">Alle Betreuer</option></select>
           <div class="spacer"></div>
-          <span class="result-count" id="kunden-count"></span>
+          <span class="result-count" id="firmen-count"></span>
         </div>
-        <div class="card table-scroll" id="kunden-table"></div>
+        <div class="card table-scroll" id="firmen-table"></div>
       </div>
     </section>
+    <section class="view" id="view-firma" hidden><div id="firma-root"></div></section>
+
+    <!-- ===== KONTAKTE ===== -->
+    <section class="view" id="view-kontakte" hidden>
+      <div class="pagehead">
+        <div><h1>Kontakte</h1><div class="ph-sub">Alle Ansprechpartner über alle Firmen hinweg</div></div>
+        <div class="spacer"></div>
+        <button type="button" class="btn blue" onclick="CRM.editKontakt()">＋ Neuer Kontakt</button>
+      </div>
+      <div class="content">
+        <div class="toolbar">
+          <input type="search" id="kontakte-search" placeholder="Suchen: Name, E-Mail, Funktion, Firma …" aria-label="Kontakte durchsuchen">
+          <select id="kontakte-rolle" aria-label="Nach Rolle filtern"><option value="">Alle Rollen</option></select>
+          <div class="spacer"></div>
+          <span class="result-count" id="kontakte-count"></span>
+        </div>
+        <div class="card table-scroll" id="kontakte-table"></div>
+      </div>
+    </section>
+    <section class="view" id="view-kontakt" hidden><div id="kontakt-root"></div></section>
+
+    <!-- ===== VERKAUFSCHANCE, AUFGABEN, BERICHTE ===== -->
+    <section class="view" id="view-deal" hidden><div id="deal-root"></div></section>
+    <section class="view" id="view-aufgaben" hidden><div id="aufgaben-root"></div></section>
+    <section class="view" id="view-berichte" hidden><div id="berichte-root"></div></section>
 
     <!-- ===== KATALOG ===== -->
     <section class="view" id="view-katalog" hidden>
@@ -355,9 +402,10 @@
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-<script src="data.js?v=14"></script>
-<script src="sync.js?v=14"></script>
-<script src="import.js?v=14"></script>
-<script src="app.js?v=14"></script>
+<script src="data.js?v=15"></script>
+<script src="sync.js?v=15"></script>
+<script src="import.js?v=15"></script>
+<script src="crm.js?v=15"></script>
+<script src="app.js?v=15"></script>
 </body>
 </html>

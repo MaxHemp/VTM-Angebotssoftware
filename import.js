@@ -25,6 +25,10 @@ const ContactImport = {
     {k:"funktion",label:"Funktion"},
     {k:"email",   label:"E-Mail"},
     {k:"telefon", label:"Telefon"},
+    {k:"mobil",   label:"Mobil"},
+    {k:"linkedin",label:"LinkedIn-Profil"},
+    {k:"website", label:"Website (Firma)"},
+    {k:"branche", label:"Branche (Firma)"},
     {k:"strasse", label:"Straße, Nr."},
     {k:"plz",     label:"PLZ"},
     {k:"ort",     label:"Ort"},
@@ -40,7 +44,11 @@ const ContactImport = {
     name:    ["name","ansprechpartner","ansprechpartnerin","kontakt","kontaktperson","contact","contactname","fullname","vollstaendigername"],
     funktion:["funktion","position","rolle","role","jobtitle","title","berufsbezeichnung","stelle","abteilung","department"],
     email:   ["email","emailadresse","mail","mailadresse","emailaddress","epost"],
-    telefon: ["telefon","telefonnummer","tel","phone","phonenumber","mobil","mobile","handy","rufnummer"],
+    telefon: ["telefon","telefonnummer","tel","phone","phonenumber","rufnummer","festnetz","durchwahl"],
+    mobil:   ["mobil","mobile","handy","mobilnummer","mobiltelefon","mobilephone","cell"],
+    linkedin:["linkedin","linkedinprofil","linkedinurl","linkedinprofile"],
+    website: ["website","webseite","homepage","url","web","internet","domain"],
+    branche: ["branche","industry","sektor","segment","sector"],
     strasse: ["strasse","strassenr","strassehausnummer","street","streetaddress","adresse","address","anschrift","adresszeile"],
     plz:     ["plz","postleitzahl","zip","zipcode","postalcode","postcode"],
     ort:     ["ort","stadt","city","wohnort","sitz"],
@@ -59,7 +67,7 @@ const ContactImport = {
     if(!h) return "";
     for(const k of Object.keys(this.HEADERS)) if(this.HEADERS[k].includes(h)) return k;
     /* Teiltreffer – spezifische Felder vor dem generischen „name" */
-    const order=["email","telefon","plzort","plz","ort","strasse","funktion","vorname","nachname","anrede","firma","notiz","name"];
+    const order=["email","linkedin","mobil","telefon","website","plzort","plz","ort","strasse","branche","funktion","vorname","nachname","anrede","firma","notiz","name"];
     for(const k of order) if(this.HEADERS[k].some(w=>h.includes(w))) return k;
     return "";
   },
@@ -70,6 +78,7 @@ const ContactImport = {
     if(!vals.length) return "";
     const share=re=>vals.filter(v=>re.test(String(v))).length/vals.length;
     if(share(/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i)>0.6) return "email";
+    if(share(/linkedin\.com\//i)>0.6) return "linkedin";
     if(share(/^[+()\d][\d\s\-/()]{5,}$/)>0.6) return "telefon";
     if(share(/^\d{4,5}\s+\S/)>0.6) return "plzort";
     if(share(/^\d{4,5}$/)>0.6) return "plz";
@@ -288,7 +297,7 @@ const ContactImport = {
         </tr>`).join("")}</tbody></table>
       </div>
       <div id="imp-warn"></div>
-      <label class="switch" style="margin-top:12px"><input type="checkbox" id="imp-update" checked> Bereits vorhandene Kunden ergänzen (Abgleich über E-Mail bzw. Firma); sonst überspringen</label>
+      <label class="switch" style="margin-top:12px"><input type="checkbox" id="imp-update" checked> Vorhandene Firmen und Kontakte um neue Angaben ergänzen (Abgleich über Firmenname bzw. E-Mail); sonst überspringen</label>
       <div class="modal-actions">
         <button class="btn" onclick="Modal.close()">Abbrechen</button>
         <button class="btn blue" id="imp-run">${a.data.length} Zeile${a.data.length===1?"":"n"} importieren</button>
@@ -309,64 +318,68 @@ const ContactImport = {
   run(){
     const p=this._pending; if(!p) return;
     const map=[];
-    document.querySelectorAll("#modal select[data-col]").forEach(s=>map[parseInt(s.dataset.col,10)]=s.value);
+    document.querySelectorAll("#modal select[data-col]").forEach(sel=>map[parseInt(sel.dataset.col,10)]=sel.value);
     const update=document.getElementById("imp-update").checked;
-
-    const get=(row,field)=>{
-      const i=map.indexOf(field);
-      return i<0?"":String(row[i]||"").trim();
-    };
-    let neu=0, aktualisiert=0, uebersprungen=0, ohneDaten=0;
-    const now=new Date().toISOString();
+    const get=(row,field)=>{ const i=map.indexOf(field); return i<0?"":String(row[i]||"").trim(); };
+    const now=new Date().toISOString(), me=Auth.user?Auth.user.id:"";
+    const S=Store.state;
+    const cnt={firmen:0, kontakte:0, ergaenzt:0, uebersprungen:0, ohneDaten:0};
+    /* nur leere Felder befüllen – vorhandene Angaben nie überschreiben */
+    const fill=(rec,data)=>{ let ch=false; for(const [k,v] of Object.entries(data)){ if(v && !rec[k]){ rec[k]=v; ch=true; } } if(ch) rec.updatedAt=now; return ch; };
 
     p.data.forEach(row=>{
       const vorname=get(row,"vorname"), nachname=get(row,"nachname");
-      const name=[vorname,nachname].filter(Boolean).join(" ") || get(row,"name");
+      const full=get(row,"name");
+      const n=(vorname||nachname)?{vorname,nachname}:CRM.splitName(full);
+      const personName=[n.vorname,n.nachname].filter(Boolean).join(" ");
       const email=get(row,"email");
-      let firma=get(row,"firma") || name;
-      if(!firma && !email){ ohneDaten++; return; }
-      if(!firma) firma=email;
+      const firmaName=get(row,"firma") || personName || email;
+      if(!firmaName){ cnt.ohneDaten++; return; }
+      const hasPerson=!!(personName||email);
 
       const plzort=get(row,"plzort") || [get(row,"plz"),get(row,"ort")].filter(Boolean).join(" ");
-      const daten={
-        firma, name,
-        anrede:this.normAnrede(get(row,"anrede")),
-        funktion:get(row,"funktion"),
-        email, telefon:get(row,"telefon"),
-        strasse:get(row,"strasse"), plzort,
-        notiz:get(row,"notiz")
-      };
+      const firmaData={strasse:get(row,"strasse"), plzort, website:get(row,"website"), branche:get(row,"branche"),
+        telefon:hasPerson?"":get(row,"telefon")};
 
-      const vorhanden=Store.activeKunden().find(k=>
-        (email && k.email && k.email.toLowerCase()===email.toLowerCase()) ||
-        (!email && k.firma && k.firma.toLowerCase()===firma.toLowerCase()));
-
-      if(vorhanden){
-        if(!update){ uebersprungen++; return; }
-        /* nur befüllte Werte übernehmen – nichts überschreiben mit Leere */
-        let geaendert=false;
-        for(const [k,v] of Object.entries(daten)){
-          if(v && vorhanden[k]!==v){ vorhanden[k]=v; geaendert=true; }
-        }
-        if(geaendert){ vorhanden.updatedAt=now; aktualisiert++; }
-        else uebersprungen++;
-      } else {
-        Store.state.kunden.push(Object.assign(
-          {id:uid("k"),createdAt:now,updatedAt:now,telefon:"",notiz:""}, daten));
-        neu++;
+      /* Firma: Abgleich über den Namen */
+      let f=CRM.firmen().find(x=>(x.firma||"").trim().toLowerCase()===firmaName.toLowerCase());
+      let rowChanged=false, rowNew=false;
+      if(f){ if(update && fill(f,firmaData)) rowChanged=true; }
+      else {
+        f=Object.assign({id:uid("k"), firma:firmaName, status:"lead", branche:"", ownerId:me, website:"", telefon:"",
+          strasse:"", plzort:"", notiz:"", createdBy:me, createdAt:now, updatedAt:now}, Object.fromEntries(Object.entries(firmaData).filter(([,v])=>v)));
+        S.kunden.push(f); cnt.firmen++; rowNew=true;
       }
+
+      /* Kontakt: Abgleich über E-Mail (firmenübergreifend), sonst Name innerhalb der Firma */
+      if(hasPerson){
+        const kData={anrede:this.normAnrede(get(row,"anrede")), vorname:n.vorname, nachname:n.nachname, funktion:get(row,"funktion"),
+          email, telefon:get(row,"telefon"), mobil:get(row,"mobil"), linkedin:get(row,"linkedin"), notiz:get(row,"notiz")};
+        let k=email?CRM.kontakte().find(x=>(x.email||"").toLowerCase()===email.toLowerCase()):null;
+        if(!k && personName) k=CRM.kontakteVon(f.id).find(x=>CRM.kontaktName(x).toLowerCase()===personName.toLowerCase());
+        if(k){ if(update && fill(k,kData)) rowChanged=true; }
+        else {
+          S.kontakte.push(Object.assign({id:uid("kt"), kundeId:f.id, rolle:"", primary:!CRM.kontakteVon(f.id).length,
+            createdBy:me, createdAt:now, updatedAt:now}, kData));
+          cnt.kontakte++; rowNew=true;
+        }
+      } else if(get(row,"notiz") && update){
+        if(fill(f,{notiz:get(row,"notiz")})) rowChanged=true;
+      }
+      if(!rowNew){ if(rowChanged) cnt.ergaenzt++; else cnt.uebersprungen++; }
     });
 
     Store.save();
     this._pending=null;
+    const plural=(n,a,b)=>`${n} ${n===1?a:b}`;
     Modal.open(`<h3>Import abgeschlossen</h3>
-      <div class="notice success"><b>${neu}</b> neue Kunden angelegt${aktualisiert?`, <b>${aktualisiert}</b> ergänzt`:""}.</div>
-      ${(uebersprungen||ohneDaten)?`<p style="font-size:12.5px;color:var(--text-secondary)">
-        ${uebersprungen?`${uebersprungen} Zeile${uebersprungen===1?"":"n"} übersprungen (bereits vorhanden bzw. keine neuen Angaben).`:""}
-        ${ohneDaten?`${ohneDaten} Zeile${ohneDaten===1?"":"n"} ohne Firma und ohne E-Mail ignoriert.`:""}</p>`:""}
-      <p style="font-size:12.5px;color:var(--text-secondary);margin-top:8px">${Sync.enabled()?"Die Kunden werden automatisch mit dem Team synchronisiert.":"Hinweis: Ohne Team-Server bleiben die Kunden nur auf diesem Gerät."}</p>
-      <div class="modal-actions"><button class="btn blue" onclick="Modal.close()">Fertig</button></div>`);
-    Views.renderCustomersTable();
+      <div class="notice success"><b>${plural(cnt.firmen,"Firma","Firmen")}</b> und <b>${plural(cnt.kontakte,"Kontakt","Kontakte")}</b> neu angelegt${cnt.ergaenzt?`, <b>${cnt.ergaenzt}</b> vorhandene ergänzt`:""}.</div>
+      ${(cnt.uebersprungen||cnt.ohneDaten)?`<p style="font-size:12.5px;color:var(--text-secondary)">
+        ${cnt.uebersprungen?`${plural(cnt.uebersprungen,"Zeile","Zeilen")} übersprungen (bereits vorhanden, keine neuen Angaben).`:""}
+        ${cnt.ohneDaten?`${plural(cnt.ohneDaten,"Zeile","Zeilen")} ohne Firma, Name und E-Mail ignoriert.`:""}</p>`:""}
+      <p style="font-size:12.5px;color:var(--text-secondary);margin-top:8px">Neue Firmen starten im Status „Lead“ und sind Dir als Betreuung zugeordnet. ${Sync.enabled()?"Alles wird automatisch mit dem Team synchronisiert.":"Hinweis: Ohne Team-Server bleiben die Daten nur auf diesem Gerät."}</p>
+      <div class="modal-actions"><button type="button" class="btn blue" onclick="Modal.close()">Fertig</button></div>`);
+    CRM.rerender();
     Editor.fillCustomerSelect();
   }
 };

@@ -8,7 +8,8 @@
    dann wird neu gelesen, gemerged und erneut versucht.
 
    Merge-Regeln:
-   - offers/kunden/users/templates: pro Datensatz (id) gewinnt
+   - offers/kunden/users/templates und die CRM-Sammlungen
+     kontakte/deals/aktivitaeten: pro Datensatz (id) gewinnt
      der neuere updatedAt-Stempel; Löschungen sind Tombstones
      ({deleted:true}) und synchronisieren dadurch sauber.
    - katalog/bundles: als Ganzes, neuerer Stempel gewinnt.
@@ -114,6 +115,10 @@ const Sync = {
     m.kunden   = this.mergeById(local.kunden,   remote.kunden);
     m.users    = this.mergeById(local.users,    remote.users);
     m.templates= this.mergeById(local.templates,remote.templates);
+    /* CRM-Sammlungen */
+    m.kontakte = this.mergeById(local.kontakte, remote.kontakte);
+    m.deals    = this.mergeById(local.deals,    remote.deals);
+    m.aktivitaeten = this.mergeById(local.aktivitaeten, remote.aktivitaeten);
     if(this.ts(local.katalogUpdatedAt)>this.ts(remote.katalogUpdatedAt)){
       m.katalog=JSON.parse(JSON.stringify(local.katalog)); m.katalogUpdatedAt=local.katalogUpdatedAt;
     }
@@ -179,6 +184,7 @@ const Sync = {
 
     Store.state=merged;
     Store.persist();
+    if(typeof CRM!=="undefined" && CRM.migrate()) Store.save();
 
     if(Auth.user){
       const fresh=Store.state.users.find(u=>u.id===Auth.user.id);
